@@ -59,6 +59,7 @@ class AMP_Autoloader {
 		'AMP_Twitter_Embed_Handler'          => 'includes/embeds/class-amp-twitter-embed',
 		'AMP_Vimeo_Embed_Handler'            => 'includes/embeds/class-amp-vimeo-embed',
 		'AMP_Vine_Embed_Handler'             => 'includes/embeds/class-amp-vine-embed',
+		'AMP_WordPress_Embed_Handler'        => 'includes/embeds/class-amp-wordpress-embed-handler',
 		'AMP_YouTube_Embed_Handler'          => 'includes/embeds/class-amp-youtube-embed',
 		'AMP_Analytics_Options_Submenu'      => 'includes/options/class-amp-analytics-options-submenu',
 		'AMP_Options_Menu'                   => 'includes/options/class-amp-options-menu',

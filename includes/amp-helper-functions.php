@@ -810,6 +810,7 @@ function amp_get_content_embed_handlers( $post = null ) {
 			'AMP_Gfycat_Embed_Handler'      => [],
 			'AMP_Hulu_Embed_Handler'        => [],
 			'AMP_Imgur_Embed_Handler'       => [],
+			'AMP_WordPress_Embed_Handler'   => [],
 		],
 		$post
 	);

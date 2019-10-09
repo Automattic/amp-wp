@@ -6395,6 +6395,31 @@ class AMP_Allowed_Tags_Generated {
 				),
 			),
 		),
+		'amp-wordpress-embed' => array(
+			array(
+				'attr_spec_list' => array(
+					'data-url' => array(
+						'mandatory' => true,
+						'value_url' => array(
+							'allow_relative' => false,
+							'protocol' => array(
+								'https',
+							),
+						),
+					),
+				),
+				'tag_spec' => array(
+					'amp_layout' => array(
+						'supported_layouts' => array(
+							3,
+						),
+					),
+					'requires_extension' => array(
+						'amp-wordpress-embed',
+					),
+				),
+			),
+		),
 		'amp-yotpo' => array(
 			array(
 				'attr_spec_list' => array(
@@ -14926,6 +14951,32 @@ class AMP_Allowed_Tags_Generated {
 							'latest',
 						),
 					),
+				),
+			),
+			array(
+				'attr_spec_list' => array(
+					'async' => array(
+						'mandatory' => true,
+						'value' => array(
+							'',
+						),
+					),
+					'nonce' => array(),
+					'type' => array(
+						'value_casei' => array(
+							'text/javascript',
+						),
+					),
+				),
+				'tag_spec' => array(
+					'extension_spec' => array(
+						'name' => 'amp-wordpress-embed',
+						'version' => array(
+							'0.1',
+							'latest',
+						),
+					),
+					'spec_url' => 'https://amp.dev/documentation/components/amp-wordpress-embed',
 				),
 			),
 			array(
