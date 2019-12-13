@@ -103,6 +103,7 @@ class AMP_Autoloader {
 		'AMP_Validation_Callback_Wrapper'    => 'includes/validation/class-amp-validation-callback-wrapper',
 		'AMP_Validated_URL_Post_Type'        => 'includes/validation/class-amp-validated-url-post-type',
 		'AMP_Validation_Error_Taxonomy'      => 'includes/validation/class-amp-validation-error-taxonomy',
+		'AMP_Debug'                          => 'includes/validation/class-amp-debug',
 		'AMP_CLI_Namespace'                  => 'includes/cli/class-amp-cli-namespace',
 		'AMP_CLI_Validation_Command'         => 'includes/cli/class-amp-cli-validation-command',
 		'AMP_String_Utils'                   => 'includes/utils/class-amp-string-utils',

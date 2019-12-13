@@ -24,3 +24,22 @@ class AMP_Test_World_Sanitizer extends AMP_Base_Sanitizer {
 		return [ 'styles' ];
 	}
 }
+
+// Stub class for WP_Admin_Bar.
+class AMP_Test_WP_Admin_Bar {
+	/**
+	 * The nodes in the admin bar.
+	 *
+	 * @var array
+	 */
+	public $nodes = [];
+
+	/**
+	 * Adds a node to display in the admin bar.
+	 *
+	 * @param array $node The node to add.
+	 */
+	public function add_node( $node ) {
+		array_push( $this->nodes, $node );
+	}
+}

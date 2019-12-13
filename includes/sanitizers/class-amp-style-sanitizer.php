@@ -2671,7 +2671,7 @@ class AMP_Style_Sanitizer extends AMP_Base_Sanitizer {
 					esc_html__( 'The %s element is populated with:', 'amp' ),
 					'style[amp-custom]'
 				) . "\n" . implode( "\n", $included_sources ) . "\n";
-				if ( self::has_required_php_css_parser() ) {
+				if ( self::has_required_php_css_parser() && ! AMP_Debug::has_flag( AMP_Debug::DISABLE_TREE_SHAKING_QUERY_VAR ) ) {
 					$comment .= sprintf(
 						/* translators: 1: number of included bytes. 2: percentage of total CSS actually included after tree shaking. 3: total included size. */
 						esc_html__( 'Total included size: %1$s bytes (%2$d%% of %3$s total after tree shaking)', 'amp' ),
@@ -3073,7 +3073,7 @@ class AMP_Style_Sanitizer extends AMP_Base_Sanitizer {
 							$this->has_used_attributes( $parsed_selector[ self::SELECTOR_EXTRACTED_ATTRIBUTES ] )
 						)
 					);
-					if ( $should_include ) {
+					if ( $should_include || AMP_Debug::has_flag( AMP_Debug::DISABLE_TREE_SHAKING_QUERY_VAR ) ) {
 						$selectors[] = $selector;
 					}
 				}
@@ -3171,7 +3171,7 @@ class AMP_Style_Sanitizer extends AMP_Base_Sanitizer {
 			}
 
 			// Report validation error if size is now too big.
-			if ( $current_concatenated_size + $this->pending_stylesheets[ $i ]['size'] > $max_bytes ) {
+			if ( $current_concatenated_size + $this->pending_stylesheets[ $i ]['size'] > $max_bytes && ! AMP_Debug::has_flag( AMP_Debug::DISABLE_TREE_SHAKING_QUERY_VAR ) ) {
 				$validation_error = [
 					'code'      => self::STYLESHEET_TOO_LONG,
 					'type'      => AMP_Validation_Error_Taxonomy::CSS_ERROR_TYPE,

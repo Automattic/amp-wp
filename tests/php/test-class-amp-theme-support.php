@@ -61,7 +61,8 @@ class Test_AMP_Theme_Support extends WP_UnitTestCase {
 		AMP_Validation_Manager::reset_validation_results();
 		remove_theme_support( AMP_Theme_Support::SLUG );
 		remove_theme_support( 'custom-header' );
-		$_REQUEST                = []; // phpcs:ignore WordPress.CSRF.NonceVerification.NoNonceVerification
+		$_REQUEST                = [];
+		$_GET                    = [];
 		$_SERVER['QUERY_STRING'] = '';
 		unset( $_SERVER['REQUEST_URI'] );
 		unset( $_SERVER['REQUEST_METHOD'] );
@@ -72,6 +73,7 @@ class Test_AMP_Theme_Support extends WP_UnitTestCase {
 		AMP_HTTP::$headers_sent = [];
 		remove_all_filters( 'theme_root' );
 		remove_all_filters( 'template' );
+		remove_all_filters( 'show_admin_bar' );
 	}
 
 	/**
@@ -1603,6 +1605,13 @@ class Test_AMP_Theme_Support extends WP_UnitTestCase {
 		$this->assertEquals( $initial_ob_level + 1, ob_get_level() );
 		ob_end_flush();
 		$this->assertEquals( $initial_ob_level, ob_get_level() );
+
+		// When this query var is present, this method should exit early, and shouldn't buffer the output.
+		$_GET[ AMP_Debug::AMP_FLAGS_QUERY_VAR ][ AMP_Debug::DISABLE_POST_PROCESSING_QUERY_VAR ] = '1';
+		wp_set_current_user( self::factory()->user->create( [ 'role' => 'administrator' ] ) );
+		$initial_ob_level = ob_get_level();
+		AMP_Theme_Support::start_output_buffering();
+		$this->assertEquals( $initial_ob_level, ob_get_level() );
 	}
 
 	/**
@@ -1890,7 +1899,14 @@ class Test_AMP_Theme_Support extends WP_UnitTestCase {
 		$last_server_timing_header = array_pop( $server_timing_headers );
 		$this->assertStringStartsWith( 'amp_processor_cache_hit;', $last_server_timing_header['value'] );
 		$this->assertCount( count( $server_timing_headers ), $initial_server_timing_headers );
+		$this->reset_post_processor_cache_effectiveness();
 
+		// Test that the response is not cached if a certain query var is present.
+		$_GET[ AMP_Debug::AMP_FLAGS_QUERY_VAR ][ AMP_Debug::DISABLE_RESPONSE_CACHE_QUERY_VAR ] = '1';
+		wp_set_current_user( self::factory()->user->create( [ 'role' => 'administrator' ] ) );
+		$call_prepare_response();
+		$server_timing_headers = $this->get_server_timing_headers();
+		$this->assertCount( count( $server_timing_headers ), $this->get_server_timing_headers() );
 		// phpcs:enable WordPress.WP.EnqueuedResources.NonEnqueuedScript, WordPress.WP.EnqueuedResources.NonEnqueuedStylesheet
 	}
 

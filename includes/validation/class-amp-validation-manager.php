@@ -185,7 +185,7 @@ class AMP_Validation_Manager {
 			$args
 		);
 
-		self::$should_locate_sources = $args['should_locate_sources'];
+		self::$should_locate_sources = $args['should_locate_sources'] && ! AMP_Debug::has_flag( AMP_Debug::PREVENT_REDIRECT_TO_NON_AMP_QUERY_VAR );
 
 		AMP_Validated_URL_Post_Type::register();
 		AMP_Validation_Error_Taxonomy::register();
@@ -485,12 +485,15 @@ class AMP_Validation_Manager {
 		 */
 		if ( $is_single_version_available ) {
 			$wp_admin_bar->add_node( $validate_item );
+			self::add_debugging_option_nodes( $wp_admin_bar, $amp_url );
 		} elseif ( ! is_amp_endpoint() ) {
 			$wp_admin_bar->add_node( $link_item );
 			$wp_admin_bar->add_node( $validate_item );
+			self::add_debugging_option_nodes( $wp_admin_bar, $amp_url );
 		} else {
 			$wp_admin_bar->add_node( $validate_item );
 			$wp_admin_bar->add_node( $link_item );
+			self::add_debugging_option_nodes( $wp_admin_bar, $amp_url );
 		}
 
 		if ( AMP_Theme_Support::is_paired_available() && $error_count <= 0 && amp_is_dev_mode() ) {
@@ -529,6 +532,50 @@ class AMP_Validation_Manager {
 		}
 
 		self::$amp_admin_bar_item_added = true;
+	}
+
+	/**
+	 * Adds the debugging option links to the admin bar.
+	 *
+	 * @param WP_Admin_Bar $wp_admin_bar The admin bar to add the nodes to.
+	 * @param string       $amp_url The URL of the AMP endpoint.
+	 */
+	public static function add_debugging_option_nodes( &$wp_admin_bar, $amp_url ) {
+		$parent_node_id = 'amp-debug';
+		$wp_admin_bar->add_node(
+			[
+				'parent' => 'amp',
+				'id'     => $parent_node_id,
+				'title'  => esc_html__( 'Debugging options', 'amp' ),
+			]
+		);
+
+		foreach ( AMP_Debug::get_all_query_vars() as $query_var => $title ) {
+			$wp_admin_bar->add_node(
+				[
+					'parent' => $parent_node_id,
+					'id'     => $query_var,
+					'title'  => self::get_debugging_option_title( $title, $query_var ),
+					'href'   => add_query_arg( AMP_Debug::AMP_FLAGS_QUERY_VAR, [ $query_var => 'true' ], $amp_url ),
+				]
+			);
+		}
+	}
+
+	/**
+	 * Gets the debugging option title.
+	 *
+	 * If the current URL has the debugging option query var present, the title starts with a 'check mark' emoji.
+	 * For example, if the URL has the 'Prevent redirect' query var present,
+	 * the title in the Admin Bar will be '☑ Prevent redirect'.
+	 *
+	 * @param string $title_text The title of the option, like 'Prevent redirect'.
+	 * @param string $query_var The query var of the option.
+	 * @return string The debugging option title, possible with a 'check mark' emoji at the beginning.
+	 */
+	public static function get_debugging_option_title( $title_text, $query_var ) {
+		$checkbox = AMP_Debug::has_flag( $query_var ) ? '☑' : '☐';
+		return sprintf( '<span class="amp-debug-option" style="font-family:Roboto,Oxygen-Sans,sans-serif;font-size:17px">%s</span> %s', $checkbox, esc_html( $title_text ) );
 	}
 
 	/**

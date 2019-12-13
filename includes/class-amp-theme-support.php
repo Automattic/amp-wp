@@ -527,7 +527,7 @@ class AMP_Theme_Support {
 	 */
 	public static function redirect_non_amp_url( $status = 302, $exit = true ) {
 		$current_url = amp_get_current_url();
-		$non_amp_url = amp_remove_endpoint( $current_url );
+		$non_amp_url = remove_query_arg( AMP_Debug::AMP_FLAGS_QUERY_VAR, amp_remove_endpoint( $current_url ) );
 		if ( $non_amp_url === $current_url ) {
 			return false;
 		}
@@ -1972,6 +1972,10 @@ class AMP_Theme_Support {
 			newrelic_disable_autorum();
 		}
 
+		if ( AMP_Debug::has_flag( AMP_Debug::DISABLE_POST_PROCESSING_QUERY_VAR ) ) {
+			return;
+		}
+
 		ob_start( [ __CLASS__, 'finish_output_buffering' ] );
 		self::$is_output_buffering = true;
 	}
@@ -2107,6 +2111,8 @@ class AMP_Theme_Support {
 			! AMP_Validation_Manager::should_validate_response()
 			&&
 			! is_customize_preview()
+			&&
+			! AMP_Debug::has_flag( AMP_Debug::DISABLE_RESPONSE_CACHE_QUERY_VAR )
 		);
 
 		// When response caching is enabled, determine if it should be turned off for cache misses.
@@ -2221,7 +2227,15 @@ class AMP_Theme_Support {
 				AMP_HTTP::send_server_timing( 'amp_processor_cache_hit', -$prepare_response_start );
 
 				// Redirect to non-AMP version.
-				if ( ! amp_is_canonical() && ! is_singular( AMP_Story_Post_Type::POST_TYPE_SLUG ) && $blocking_error_count > 0 ) {
+				if (
+					! amp_is_canonical()
+					&&
+					! is_singular( AMP_Story_Post_Type::POST_TYPE_SLUG )
+					&&
+					$blocking_error_count > 0
+					&&
+					! AMP_Debug::has_flag( AMP_Debug::PREVENT_REDIRECT_TO_NON_AMP_QUERY_VAR )
+				) {
 					if ( AMP_Validation_Manager::has_cap() ) {
 						$non_amp_url = add_query_arg( AMP_Validation_Manager::VALIDATION_ERRORS_QUERY_VAR, $blocking_error_count, $non_amp_url );
 					}
@@ -2366,7 +2380,7 @@ class AMP_Theme_Support {
 					$script->appendChild( $dom->createTextNode( 'document.addEventListener( "DOMContentLoaded", function() { document.write = function( text ) { throw new Error( "[AMP-WP] Prevented document.write() call with: "  + text ); }; } );' ) );
 					$head->appendChild( $script );
 				}
-			} elseif ( ! self::is_customize_preview_iframe() ) {
+			} elseif ( ! self::is_customize_preview_iframe() && ! AMP_Debug::has_flag( AMP_Debug::PREVENT_REDIRECT_TO_NON_AMP_QUERY_VAR ) ) {
 				$response = esc_html__( 'Redirecting to non-AMP version.', 'amp' );
 
 				if ( $cache_response ) {
@@ -2377,6 +2391,9 @@ class AMP_Theme_Support {
 				if ( AMP_Validation_Manager::has_cap() ) {
 					$non_amp_url = add_query_arg( AMP_Validation_Manager::VALIDATION_ERRORS_QUERY_VAR, $blocking_error_count, $non_amp_url );
 				}
+
+				// Remove debugging query args.
+				$non_amp_url = remove_query_arg( AMP_Debug::AMP_FLAGS_QUERY_VAR, $non_amp_url );
 
 				/*
 				 * Temporary redirect because AMP page may return with blocking validation errors when auto-accepting sanitization

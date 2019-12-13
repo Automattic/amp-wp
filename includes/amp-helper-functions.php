@@ -302,6 +302,11 @@ function is_amp_endpoint() {
 		return true;
 	}
 
+	// If a certain debugging flag is present, AMP should be disabled.
+	if ( AMP_Debug::has_flag( AMP_Debug::DISABLE_AMP_QUERY_VAR ) ) {
+		return false;
+	}
+
 	$has_amp_query_var = (
 		isset( $_GET[ amp_get_slug() ] ) // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		||

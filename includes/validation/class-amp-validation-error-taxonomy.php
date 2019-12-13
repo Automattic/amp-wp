@@ -259,6 +259,7 @@ class AMP_Validation_Error_Taxonomy {
 		}
 
 		self::accept_validation_errors( AMP_Core_Theme_Sanitizer::get_acceptable_errors( get_template() ) );
+		add_filter( 'amp_validation_error_sanitized', [ __CLASS__, 'conditionally_change_sanitization' ], 10, 2 );
 	}
 
 	/**
@@ -2994,5 +2995,33 @@ class AMP_Validation_Error_Taxonomy {
 			$text  = __( 'Kept', 'amp' );
 		}
 		return sprintf( '<span class="status-text %s">%s</span>', esc_attr( $class ), esc_html( $text ) );
+	}
+
+	/**
+	 * Possibly changes the sanitization of an error, based on the presence of query vars and the proper permission.
+	 *
+	 * This enables rejecting all validation errors, given the proper permissions and a query var.
+	 * Likewise, it enables accepting only 'excessive_css' errors.
+	 *
+	 * @param bool|null $sanitized A boolean to change the sanitization of the error, or null to not change it.
+	 * @param array     $error The error to examine.
+	 * @return bool|null The filtered sanitization, false meaning that it will be rejected, and null meaning to not change the sanitization.
+	 */
+	public static function conditionally_change_sanitization( $sanitized, $error ) {
+		if ( AMP_Debug::has_flag( AMP_Debug::REJECT_ALL_VALIDATION_ERRORS_QUERY_VAR ) ) {
+			return false;
+		}
+
+		if (
+			AMP_Debug::has_flag( AMP_Debug::ACCEPT_EXCESSIVE_CSS_ERROR_QUERY_VAR )
+			&&
+			isset( $error['code'] )
+			&&
+			'excessive_css' === $error['code']
+		) {
+			return true;
+		}
+
+		return $sanitized;
 	}
 }

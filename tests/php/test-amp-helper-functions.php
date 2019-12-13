@@ -28,6 +28,7 @@ class Test_AMP_Helper_Functions extends WP_UnitTestCase {
 		$wp_scripts     = null;
 		$show_admin_bar = null;
 		$pagenow        = 'index.php'; // Since clean_up_global_scope() doesn't.
+		$_GET           = [];
 
 		if ( class_exists( 'WP_Block_Type_Registry' ) ) {
 			foreach ( WP_Block_Type_Registry::get_instance()->get_all_registered() as $block ) {
@@ -490,6 +491,24 @@ class Test_AMP_Helper_Functions extends WP_UnitTestCase {
 		global $wp_actions;
 		unset( $wp_actions['wp'] );
 		$this->assertTrue( is_amp_endpoint() );
+	}
+
+	/**
+	 * Test is_amp_endpoint() with a debugging query var to disable AMP.
+	 *
+	 * @covers ::is_amp_endpoint()
+	 * @expectedIncorrectUsage is_amp_endpoint
+	 */
+	public function test_is_amp_endpoint_with_debug_query_var() {
+		add_theme_support( AMP_Theme_Support::SLUG );
+
+		// The query var is present, but the user doesn't have the right permission, so this should return true.
+		$_GET[ AMP_Debug::AMP_FLAGS_QUERY_VAR ][ AMP_Debug::DISABLE_AMP_QUERY_VAR ] = '1';
+		$this->assertTrue( is_amp_endpoint() );
+
+		// Now that the user has the right permission, this should return false, meaning the query var forced AMP to be disabled.
+		wp_set_current_user( $this->factory()->user->create( [ 'role' => 'administrator' ] ) );
+		$this->assertFalse( is_amp_endpoint() );
 	}
 
 	/**
