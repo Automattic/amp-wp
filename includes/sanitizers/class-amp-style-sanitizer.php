@@ -6,6 +6,7 @@
  */
 
 use Amp\AmpWP\Dom\Document;
+use Amp\AmpWP\Component\Keyframes;
 use Sabberworm\CSS\RuleSet\DeclarationBlock;
 use Sabberworm\CSS\CSSList\CSSList;
 use Sabberworm\CSS\Property\Selector;
@@ -1202,6 +1203,13 @@ class AMP_Style_Sanitizer extends AMP_Base_Sanitizer {
 		$stylesheet   = trim( $element->textContent );
 		$cdata_spec   = $is_keyframes ? $this->style_keyframes_cdata_spec : $this->style_custom_cdata_spec;
 
+		if ( ! $is_keyframes ) {
+			$keyframes_component = new Keyframes( $stylesheet, $this->style_keyframes_cdata_spec['css_spec']['declaration'] );
+			$keyframes_component->remove_eligible_keyframes();
+			$stylesheet = $keyframes_component->get_stylesheet();
+			$keyframes  = $keyframes_component->get_removed_keyframes();
+		}
+
 		// Honor the style's media attribute.
 		$media = $element->getAttribute( 'media' );
 		if ( $media && 'all' !== $media ) {
@@ -1233,6 +1241,10 @@ class AMP_Style_Sanitizer extends AMP_Base_Sanitizer {
 			'cached'             => $parsed['cached'],
 			'imported_font_urls' => $parsed['imported_font_urls'],
 		];
+
+		if ( ! empty( $keyframes ) ) {
+			$this->pending_stylesheets[] = $this->get_pending_keyframes_stylesheet( $keyframes, $element );
+		}
 
 		// Remove from DOM since we'll be adding it to a newly-created style[amp-custom] element later.
 		$element->parentNode->removeChild( $element );
@@ -1296,6 +1308,13 @@ class AMP_Style_Sanitizer extends AMP_Base_Sanitizer {
 			return;
 		}
 
+		if ( ! $element->hasAttribute( 'amp-keyframes' ) ) {
+			$keyframes_component = new Keyframes( $stylesheet, $this->style_keyframes_cdata_spec['css_spec']['declaration'] );
+			$keyframes_component->remove_eligible_keyframes();
+			$keyframes  = $keyframes_component->get_removed_keyframes();
+			$stylesheet = $keyframes_component->get_stylesheet();
+		}
+
 		// Honor the link's media attribute.
 		$media = $element->getAttribute( 'media' );
 		if ( $media && 'all' !== $media ) {
@@ -1330,6 +1349,10 @@ class AMP_Style_Sanitizer extends AMP_Base_Sanitizer {
 			'imported_font_urls' => $parsed['imported_font_urls'],
 		];
 
+		if ( ! empty( $keyframes ) ) {
+			$this->pending_stylesheets[] = $this->get_pending_keyframes_stylesheet( $keyframes, $element, [ 'stylesheet_url' => $href ] );
+		}
+
 		// Remove now that styles have been processed.
 		$element->parentNode->removeChild( $element );
 
@@ -1356,6 +1379,45 @@ class AMP_Style_Sanitizer extends AMP_Base_Sanitizer {
 
 		// Fall back to doing an HTTP request for the stylesheet is not accessible directly from the filesystem.
 		return $this->fetch_external_stylesheet( $stylesheet_url );
+	}
+
+	/**
+	 * Gets a pending stylesheet with a @keyframes rule.
+	 *
+	 * @param string     $keyframes The @keyframes style rules.
+	 * @param DOMElement $element   Element with the stylesheet.
+	 * @param array      $options   To pass to get_parsed_stylesheet.
+	 * @return array Pending keyframes stylesheet.
+	 */
+	private function get_pending_keyframes_stylesheet( $keyframes, $element, $options = [] ) {
+		$parsed = $this->get_parsed_stylesheet(
+			$keyframes,
+			array_merge(
+				[
+					'allowed_at_rules'   => $this->style_keyframes_cdata_spec['css_spec']['allowed_at_rules'],
+					'property_whitelist' => $this->style_keyframes_cdata_spec['css_spec']['declaration'],
+					'validate_keyframes' => $this->style_keyframes_cdata_spec['css_spec']['validate_keyframes'],
+					'spec_name'          => self::STYLE_AMP_KEYFRAMES_SPEC_NAME,
+				],
+				$options
+			)
+		);
+
+		return [
+			'group'              => self::STYLE_AMP_KEYFRAMES_GROUP_INDEX,
+			'original_size'      => (int) strlen( $keyframes ),
+			'final_size'         => null,
+			'element'            => $element,
+			'origin'             => 'style_element',
+			'sources'            => $this->current_sources,
+			'priority'           => $this->get_stylesheet_priority( $element ),
+			'tokens'             => $parsed['tokens'],
+			'hash'               => $parsed['hash'],
+			'parse_time'         => $parsed['parse_time'],
+			'shake_time'         => null,
+			'cached'             => $parsed['cached'],
+			'imported_font_urls' => $parsed['imported_font_urls'],
+		];
 	}
 
 	/**
@@ -1442,7 +1504,7 @@ class AMP_Style_Sanitizer extends AMP_Base_Sanitizer {
 		$parsed      = null;
 		$cache_key   = null;
 		$cached      = true;
-		$cache_group = 'amp-parsed-stylesheet-v26'; // This should be bumped whenever the PHP-CSS-Parser is updated or parsed format is updated.
+		$cache_group = 'amp-parsed-stylesheet-v27'; // This should be bumped whenever the PHP-CSS-Parser is updated or parsed format is updated.
 
 		$cache_impacting_options = array_merge(
 			wp_array_slice_assoc(

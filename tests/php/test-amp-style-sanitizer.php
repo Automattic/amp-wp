@@ -170,10 +170,24 @@ class AMP_Style_Sanitizer_Test extends WP_UnitTestCase {
 			],
 
 			'allowed_at_rules_retained' => [
-				'<style>@media screen and ( max-width: 640px ) { body { font-size: small; } } @font-face { font-family: "Open Sans"; src: url("/fonts/OpenSans-Regular-webfont.woff2") format("woff2"); } @supports (display: grid) { div { display: grid; } } @-moz-keyframes appear { from { opacity: 0.0; } to { opacity: 1.0; } } @keyframes appear { from { opacity: 0.0; } to { opacity: 1.0; } }</style><div></div>',
+				'<style>@media screen and ( max-width: 640px ) { body { font-size: small; } } @font-face { font-family: "Open Sans"; src: url("/fonts/OpenSans-Regular-webfont.woff2") format("woff2"); } @supports (display: grid) { div { display: grid; } } @-moz-keyframes appear { from { opacity: 0.0; } to { opacity: 1.0; } }</style><div></div>',
 				'<div></div>',
 				[
-					'@media screen and ( max-width: 640px ){body{font-size:small}}@font-face{font-family:"Open Sans";src:url("/fonts/OpenSans-Regular-webfont.woff2") format("woff2")}@supports (display: grid){div{display:grid}}@-moz-keyframes appear{from{opacity:0}to{opacity:1}}@keyframes appear{from{opacity:0}to{opacity:1}}',
+					'@media screen and ( max-width: 640px ){body{font-size:small}}@font-face{font-family:"Open Sans";src:url("/fonts/OpenSans-Regular-webfont.woff2") format("woff2")}@supports (display: grid){div{display:grid}}@-moz-keyframes appear{from{opacity:0}to{opacity:1}}',
+				],
+			],
+
+			'keyframes_eligible_for_style_amp_keyframes_removed' => [
+				'<style>@keyframes offset { 0% { offset-distance: 0% } 50% { offset-distance: 50% } 100% { offset-distance: 100% } }</style><div></div>',
+				'<div></div>',
+				[ '' ],
+			],
+
+			'keyframes_not_eligible_for_style_amp_keyframes_not_removed' => [
+				'<style>@keyframes border { from { border-bottom: 0 } to { border-bottom: 20px } }</style><div></div>',
+				'<div></div>',
+				[
+					'@keyframes border{from{border-bottom:0}to{border-bottom:20px}}',
 				],
 			],
 
@@ -699,10 +713,15 @@ class AMP_Style_Sanitizer_Test extends WP_UnitTestCase {
 				'audio{border:solid 1px yellow}',
 				'amp-audio{border:solid 1px yellow}',
 			],
-			'keyframes' => [
+			'keyframes_eligible_for_style_amp_keyframes_removed' => [
 				'<div>test</div>',
 				'span {color:red;} @keyframes foo { from: { opacity:0; } 50% {opacity:0.5} 75%,80% { opacity:0.6 } to { opacity:1 }  }',
-				'@keyframes foo{from:{opacity:0}50%{opacity:.5}75%,80%{opacity:.6}to{opacity:1}}',
+				'',
+			],
+			'keyframes_not_eligible_for_style_amp_custom_not_removed' => [
+				'<div>test</div>',
+				'span {color:red;} @keyframes margin { from: { margin-top:0 } 50% { margin-top:10px } 75%,80% { margin-top:16px } to { margin-top:20px } }',
+				'@keyframes margin{from:{margin-top:0}50%{margin-top:10px}75%,80%{margin-top:16px}to{margin-top:20px}}',
 			],
 			'type_class_names' => [
 				'<audio src="https://example.org/foo.mp3" width="100" height="100" class="audio iframe video img form">',
