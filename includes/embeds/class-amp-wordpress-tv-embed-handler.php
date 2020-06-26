@@ -6,6 +6,8 @@
  * @since 1.4
  */
 
+use AmpProject\Dom\Document;
+
 /**
  * Class AMP_WordPress_TV_Embed_Handler
  *
@@ -14,39 +16,31 @@
 class AMP_WordPress_TV_Embed_Handler extends AMP_Base_Embed_Handler {
 
 	/**
-	 * The URL pattern to determine if an embed URL is for this type, copied from WP_oEmbed.
+	 * Base URL used for identifying embeds.
 	 *
-	 * @see https://github.com/WordPress/wordpress-develop/blob/e13480/src/wp-includes/class-wp-oembed.php#L64
+	 * @var string
 	 */
-	const URL_PATTERN = '#https?://wordpress\.tv/.*#i';
+	protected $base_embed_url = 'https://video.wordpress.com/embed/';
 
 	/**
-	 * Register embed.
+	 * Get all raw embeds from the DOM.
+	 *
+	 * @param Document $dom Document.
+	 * @return DOMNodeList A list of DOMElement nodes.
 	 */
-	public function register_embed() {
-		add_filter( 'embed_oembed_html', [ $this, 'filter_oembed_html' ], 10, 2 );
+	protected function get_raw_embed_nodes( Document $dom ) {
+		return $dom->xpath->query( sprintf( '//iframe[ starts-with( @src, "%s" ) ]', $this->base_embed_url ) );
 	}
 
 	/**
-	 * Unregister embed.
-	 */
-	public function unregister_embed() {
-		remove_filter( 'embed_oembed_html', [ $this, 'filter_oembed_html' ], 10 );
-	}
-
-	/**
-	 * Filters the oembed HTML to make it valid AMP.
+	 * Make embed AMP compatible.
 	 *
-	 * @param mixed  $cache The cached rendered markup.
-	 * @param string $url   The embed URL.
-	 * @return string The filtered embed markup.
+	 * @param DOMElement $node DOM element.
 	 */
-	public function filter_oembed_html( $cache, $url ) {
-		if ( ! preg_match( self::URL_PATTERN, $url ) ) {
-			return $cache;
-		}
+	protected function sanitize_raw_embed( DOMElement $node ) {
+		$node->setAttribute( 'layout', 'responsive' );
 
-		$modified_block_content = preg_replace( '#<script(?:\s.*?)?>.*?</script>#s', '', $cache );
-		return null !== $modified_block_content ? $modified_block_content : $cache;
+		$this->remove_script_sibling( $node, 'v0.wordpress.com/js/next/videopress-iframe.js' );
+		$this->unwrap_p_element( $node );
 	}
 }

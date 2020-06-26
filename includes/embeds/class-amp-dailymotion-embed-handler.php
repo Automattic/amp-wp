@@ -5,6 +5,8 @@
  * @package AMP
  */
 
+use AmpProject\Dom\Document;
+
 /**
  * Class AMP_DailyMotion_Embed_Handler
  *
@@ -12,8 +14,12 @@
  */
 class AMP_DailyMotion_Embed_Handler extends AMP_Base_Embed_Handler {
 
-	const URL_PATTERN = '#https?:\/\/(www\.)?dailymotion\.com\/video\/.*#i';
-	const RATIO       = 0.5625;
+	/**
+	 * The 16:9 aspect ratio in decimal form.
+	 *
+	 * @var float
+	 */
+	const RATIO = 0.5625;
 
 	/**
 	 * Default width.
@@ -28,6 +34,20 @@ class AMP_DailyMotion_Embed_Handler extends AMP_Base_Embed_Handler {
 	 * @var int
 	 */
 	protected $DEFAULT_HEIGHT = 338;
+
+	/**
+	 * Default AMP tag to be used when sanitizing embeds.
+	 *
+	 * @var string
+	 */
+	protected $amp_tag = 'amp-dailymotion';
+
+	/**
+	 * Base URL used for identifying embeds.
+	 *
+	 * @var string
+	 */
+	protected $base_embed_url = 'https://www.dailymotion.com/embed/video/';
 
 	/**
 	 * AMP_DailyMotion_Embed_Handler constructor.
@@ -45,89 +65,51 @@ class AMP_DailyMotion_Embed_Handler extends AMP_Base_Embed_Handler {
 	}
 
 	/**
-	 * Register embed.
+	 * Get all raw embeds from the DOM.
+	 *
+	 * @param Document $dom Document.
+	 * @return DOMNodeList A list of DOMElement nodes.
 	 */
-	public function register_embed() {
-		wp_embed_register_handler( 'amp-dailymotion', self::URL_PATTERN, [ $this, 'oembed' ], -1 );
+	protected function get_raw_embed_nodes( Document $dom ) {
+		return $dom->xpath->query( sprintf( '//iframe[ starts-with( @src, "%s" ) ]', $this->base_embed_url ) );
 	}
 
 	/**
-	 * Unregister embed.
-	 */
-	public function unregister_embed() {
-		wp_embed_unregister_handler( 'amp-dailymotion', -1 );
-	}
-
-	/**
-	 * Render oEmbed.
+	 * Make embed AMP compatible.
 	 *
-	 * @see \WP_Embed::shortcode()
-	 *
-	 * @param array  $matches URL pattern matches.
-	 * @param array  $attr    Shortcode attributes.
-	 * @param string $url     URL.
-	 * @param string $rawattr Unmodified shortcode attributes.
-	 * @return string Rendered oEmbed.
+	 * @param DOMElement $node DOM element.
 	 */
-	public function oembed( $matches, $attr, $url, $rawattr ) {
-		$video_id = $this->get_video_id_from_url( $url );
-		return $this->render(
-			[
-				'video_id' => $video_id,
-			]
-		);
-	}
+	protected function sanitize_raw_embed( DOMElement $node ) {
+		$iframe_src = $node->getAttribute( 'src' );
 
-	/**
-	 * Render.
-	 *
-	 * @param array $args Args.
-	 * @return string Rendered.
-	 */
-	public function render( $args ) {
-		$args = wp_parse_args(
-			$args,
-			[
-				'video_id' => false,
-			]
-		);
-
-		if ( empty( $args['video_id'] ) ) {
-			return AMP_HTML_Utils::build_tag(
-				'a',
-				[
-					'href'  => esc_url_raw( $args['url'] ),
-					'class' => 'amp-wp-embed-fallback',
-				],
-				esc_html( $args['url'] )
-			);
+		$video_id = strtok( substr( $iframe_src, strlen( $this->base_embed_url ) ), '/?#' );
+		if ( empty( $video_id ) ) {
+			return;
 		}
 
-		$this->did_convert_elements = true;
+		$attributes = [
+			'data-videoid' => $video_id,
+			'layout'       => 'responsive',
+			'width'        => $this->args['width'],
+			'height'       => $this->args['height'],
+		];
 
-		return AMP_HTML_Utils::build_tag(
-			'amp-dailymotion',
-			[
-				'data-videoid' => $args['video_id'],
-				'layout'       => 'responsive',
-				'width'        => $this->args['width'],
-				'height'       => $this->args['height'],
-			]
+		if ( $node->hasAttribute( 'width' ) ) {
+			$attributes['width'] = $node->getAttribute( 'width' );
+		}
+
+		if ( $node->hasAttribute( 'height' ) ) {
+			$attributes['height'] = $node->getAttribute( 'height' );
+		}
+
+		$amp_node = AMP_DOM_Utils::create_node(
+			Document::fromNode( $node ),
+			$this->amp_tag,
+			$attributes
 		);
-	}
 
-	/**
-	 * Determine the video ID from the URL.
-	 *
-	 * @param string $url URL.
-	 * @return string Video ID.
-	 */
-	private function get_video_id_from_url( $url ) {
-		$parsed_url = wp_parse_url( $url );
-		parse_str( $parsed_url['path'], $path );
-		$tok = explode( '/', $parsed_url['path'] );
-		$tok = explode( '_', $tok[2] );
+		$this->unwrap_p_element( $node );
 
-		return $tok[0];
+		$node->parentNode->replaceChild( $amp_node, $node );
 	}
 }

@@ -36,14 +36,12 @@ class AMP_Embed_Sanitizer extends AMP_Base_Sanitizer {
 	}
 
 	/**
-	 * Checks if each embed_handler has sanitize_raw_method and calls it.
+	 * Allow each embed handler sanitize their respective raw embeds.
 	 */
 	public function sanitize() {
 
 		foreach ( $this->embed_handlers as $embed_handler ) {
-			if ( method_exists( $embed_handler, 'sanitize_raw_embeds' ) ) {
-				$embed_handler->sanitize_raw_embeds( $this->dom, $this->args );
-			}
+			$embed_handler->sanitize_raw_embeds( $this->dom );
 		}
 	}
 }

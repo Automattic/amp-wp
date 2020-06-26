@@ -5,6 +5,7 @@
  * @package AMP
  */
 
+use AmpProject\AmpWP\Embed\Registerable;
 use AmpProject\Attribute;
 use AmpProject\Dom\Document;
 
@@ -13,7 +14,7 @@ use AmpProject\Dom\Document;
  *
  * @since 1.0
  */
-class AMP_Core_Block_Handler extends AMP_Base_Embed_Handler {
+class AMP_Core_Block_Handler extends AMP_Base_Embed_Handler implements Registerable {
 
 	/**
 	 * Attribute to store the original width on a video or iframe just before WordPress removes it.
@@ -354,5 +355,23 @@ class AMP_Core_Block_Handler extends AMP_Base_Embed_Handler {
 				$element->removeAttribute( 'style' );
 			}
 		}
+	}
+
+	/**
+	 * Get all raw embeds from the DOM.
+	 *
+	 * @param Document $dom Document.
+	 * @return DOMNodeList|null A list of DOMElement nodes, or null if not implemented.
+	 */
+	protected function get_raw_embed_nodes( Document $dom ) { // phpcs:ignore VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable
+		return null;
+	}
+
+	/**
+	 * Make embed AMP compatible.
+	 *
+	 * @param DOMElement $node DOM element.
+	 */
+	protected function sanitize_raw_embed( DOMElement $node ) { // phpcs:ignore VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable
 	}
 }

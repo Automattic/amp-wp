@@ -84,7 +84,7 @@ class AMP_Scribd_Embed_Handler_Test extends WP_UnitTestCase {
 
 			'document_embed' => [
 				$this->scribd_doc_url . PHP_EOL,
-				'<p><iframe title="Synthesis of Knowledge: Effects of Fire and Thinning Treatments on Understory Vegetation in Dry U.S. Forests" class="scribd_iframe_embed" src="https://www.scribd.com/embeds/110799637/content" data-aspect-ratio="1.2941176470588236" scrolling="no" id="110799637" width="500" height="750" frameborder="0" sandbox="allow-popups allow-scripts"></iframe></p>' . PHP_EOL,
+				'<iframe title="Synthesis of Knowledge: Effects of Fire and Thinning Treatments on Understory Vegetation in Dry U.S. Forests" class="scribd_iframe_embed" src="https://www.scribd.com/embeds/110799637/content" data-aspect-ratio="1.2941176470588236" scrolling="no" id="110799637" width="500" height="750" frameborder="0" sandbox=" allow-popups allow-scripts" layout="responsive"></iframe>' . PHP_EOL,
 			],
 		];
 
@@ -92,7 +92,7 @@ class AMP_Scribd_Embed_Handler_Test extends WP_UnitTestCase {
 		if ( version_compare( strtok( get_bloginfo( 'version' ), '-' ), '5.1', '<' ) ) {
 			$data['document_embed'] = [
 				$this->scribd_doc_url . PHP_EOL,
-				'<p><iframe class="scribd_iframe_embed" src="https://www.scribd.com/embeds/110799637/content" data-aspect-ratio="1.2941176470588236" scrolling="no" id="110799637" width="500" height="750" frameborder="0" sandbox="allow-popups allow-scripts"></iframe></p>' . PHP_EOL,
+				'<iframe class="scribd_iframe_embed" src="https://www.scribd.com/embeds/110799637/content" data-aspect-ratio="1.2941176470588236" scrolling="no" id="110799637" width="500" height="750" frameborder="0" sandbox=" allow-popups allow-scripts" layout="responsive"></iframe>' . PHP_EOL,
 			];
 		}
 
@@ -102,8 +102,6 @@ class AMP_Scribd_Embed_Handler_Test extends WP_UnitTestCase {
 	/**
 	 * Test conversion.
 	 *
-	 * @covers AMP_Scribd_Embed_Handler::filter_embed_oembed_html()
-	 * @covers AMP_Scribd_Embed_Handler::sanitize_iframe()
 	 * @dataProvider get_conversion_data
 	 *
 	 * @param $source
@@ -111,10 +109,14 @@ class AMP_Scribd_Embed_Handler_Test extends WP_UnitTestCase {
 	 */
 	public function test__conversion( $source, $expected ) {
 		$embed = new AMP_Scribd_Embed_Handler();
-		$embed->register_embed();
-		$filtered_content = apply_filters( 'the_content', $source );
 
-		$this->assertEquals( $expected, $filtered_content );
+		$filtered_content = apply_filters( 'the_content', $source );
+		$dom              = AMP_DOM_Utils::get_dom_from_content( $filtered_content );
+		$embed->sanitize_raw_embeds( $dom );
+
+		$content = AMP_DOM_Utils::get_content_from_dom( $dom );
+
+		$this->assertEquals( $expected, $content );
 	}
 
 	/**
@@ -146,10 +148,12 @@ class AMP_Scribd_Embed_Handler_Test extends WP_UnitTestCase {
 	 */
 	public function test__get_scripts( $source, $expected ) {
 		$embed = new AMP_Scribd_Embed_Handler();
-		$embed->register_embed();
-		$source = apply_filters( 'the_content', $source );
 
-		$validating_sanitizer = new AMP_Tag_And_Attribute_Sanitizer( AMP_DOM_Utils::get_dom_from_content( $source ) );
+		$filtered_content = apply_filters( 'the_content', $source );
+		$dom              = AMP_DOM_Utils::get_dom_from_content( $filtered_content );
+		$embed->sanitize_raw_embeds( $dom );
+
+		$validating_sanitizer = new AMP_Tag_And_Attribute_Sanitizer( $dom );
 		$validating_sanitizer->sanitize();
 
 		$scripts = array_merge(

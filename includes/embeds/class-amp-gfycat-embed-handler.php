@@ -6,76 +6,80 @@
  * @since 1.0
  */
 
+use AmpProject\Dom\Document;
+
 /**
  * Class AMP_Gfycat_Embed_Handler
  */
 class AMP_Gfycat_Embed_Handler extends AMP_Base_Embed_Handler {
+
 	/**
-	 * Regex matched to produce output amp-gfycat.
+	 * Default AMP tag to be used when sanitizing embeds.
 	 *
 	 * @var string
 	 */
-	const URL_PATTERN = '#https?://(www\.)?gfycat\.com/.*#i';
+	protected $amp_tag = 'amp-gfycat';
 
 	/**
-	 * Register embed.
-	 */
-	public function register_embed() {
-		add_filter( 'embed_oembed_html', [ $this, 'filter_embed_oembed_html' ], 10, 3 );
-	}
-
-	/**
-	 * Unregister embed.
-	 */
-	public function unregister_embed() {
-		remove_filter( 'embed_oembed_html', [ $this, 'filter_embed_oembed_html' ], 10 );
-	}
-
-	/**
-	 * Filter oEmbed HTML for Gfycat to prepare it for AMP.
+	 * Base URL used for identifying embeds.
 	 *
-	 * @param mixed  $return The oEmbed HTML.
-	 * @param string $url    The attempted embed URL.
-	 * @param array  $attr   Attributes.
-	 * @return string Embed.
+	 * @var string
 	 */
-	public function filter_embed_oembed_html( $return, $url, $attr ) {
-		$parsed_url = wp_parse_url( $url );
-		if ( false !== strpos( $parsed_url['host'], 'gfycat.com' ) ) {
-			if ( preg_match( '/width=["\']?(\d+)/', $return, $matches ) ) {
-				$attr['width'] = $matches[1];
-			}
-			if ( preg_match( '/height=["\']?(\d+)/', $return, $matches ) ) {
-				$attr['height'] = $matches[1];
-			}
+	protected $base_embed_url = 'https://gfycat.com/ifr/';
 
-			if ( empty( $attr['height'] ) ) {
-				return $return;
-			}
+	/**
+	 * Get all raw embeds from the DOM.
+	 *
+	 * @param Document $dom Document.
+	 * @return DOMNodeList A list of DOMElement nodes.
+	 */
+	protected function get_raw_embed_nodes( Document $dom ) {
+		return $dom->xpath->query( sprintf( '//iframe[ starts-with( @src, "%s" ) ]', $this->base_embed_url ) );
+	}
 
-			$attributes = wp_array_slice_assoc( $attr, [ 'width', 'height' ] );
+	/**
+	 * Make embed AMP compatible.
+	 *
+	 * @param DOMElement $node DOM element.
+	 */
+	protected function sanitize_raw_embed( DOMElement $node ) {
+		$iframe_src = $node->getAttribute( 'src' );
 
-			if ( empty( $attr['width'] ) ) {
-				$attributes['layout'] = 'fixed-height';
-				$attributes['width']  = 'auto';
-			}
-
-			$pieces = explode( '/detail/', $parsed_url['path'] );
-			if ( ! isset( $pieces[1] ) ) {
-				if ( ! preg_match( '/\/([A-Za-z0-9]+)/', $parsed_url['path'], $matches ) ) {
-					return $return;
-				}
-				$attributes['data-gfyid'] = $matches[1];
-			} else {
-				$attributes['data-gfyid'] = $pieces[1];
-			}
-
-			$return = AMP_HTML_Utils::build_tag(
-				'amp-gfycat',
-				$attributes
-			);
+		$gfycat_id = strtok( substr( $iframe_src, strlen( $this->base_embed_url ) ), '/?#' );
+		if ( empty( $gfycat_id ) ) {
+			// Nothing to do if the ID could not be found.
+			return;
 		}
-		return $return;
+
+		$attributes = [
+			'data-gfyid' => $gfycat_id,
+			'layout'     => 'responsive',
+			'height'     => $this->args['height'],
+			'width'      => $this->args['width'],
+		];
+
+		if ( '100%' === $node->getAttribute( 'width' ) && '100%' === $node->getAttribute( 'height' ) ) {
+			$attributes['layout'] = 'fill';
+			unset( $attributes['width'], $attributes['height'] );
+		} else {
+			if ( $node->hasAttribute( 'width' ) ) {
+				$attributes['width'] = $node->getAttribute( 'width' );
+			}
+
+			if ( $node->hasAttribute( 'height' ) ) {
+				$attributes['height'] = $node->getAttribute( 'height' );
+			}
+		}
+
+		$amp_node = AMP_DOM_Utils::create_node(
+			Document::fromNode( $node ),
+			'amp-gfycat',
+			$attributes
+		);
+
+		$this->unwrap_p_element( $node );
+
+		$node->parentNode->replaceChild( $amp_node, $node );
 	}
 }
 

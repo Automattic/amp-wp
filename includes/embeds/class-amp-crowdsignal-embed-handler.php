@@ -8,59 +8,128 @@
  * @since 1.2
  */
 
+use AmpProject\AmpWP\Embed\Registerable;
+use AmpProject\Dom\Document;
+
 /**
  * Class AMP_Crowdsignal_Embed_Handler
  */
-class AMP_Crowdsignal_Embed_Handler extends AMP_Base_Embed_Handler {
+class AMP_Crowdsignal_Embed_Handler extends AMP_Base_Embed_Handler implements Registerable {
 
 	/**
-	 * Register embed.
+	 * Register the embed.
+	 *
+	 * @return void
 	 */
 	public function register_embed() {
-		add_filter( 'embed_oembed_html', [ $this, 'filter_embed_oembed_html' ], 10, 3 );
+		if ( version_compare( get_bloginfo( 'version' ), '5.2', '>=' ) ) {
+			return;
+		}
+
+		// The oEmbed providers for CrowdSignal embeds are outdated on WP < 5.1. Updating the providers here will
+		// allow for the oEmbed HTML to be fetched, and can then sanitized later below.
+		$formats = [
+			'#https?://(.+\.)?polldaddy\.com/.*#i',
+			'#https?://poll\.fm/.*#i',
+			'#https?://(.+\.)?survey\.fm/.*#i', // Not available on WP 5.2.
+		];
+
+		foreach ( $formats as $format ) {
+			wp_oembed_add_provider( $format, 'https://api.crowdsignal.com/oembed', true );
+		}
 	}
 
 	/**
-	 * Unregister embed.
+	 * Unregister the embed.
+	 *
+	 * @return void
 	 */
 	public function unregister_embed() {
-		remove_filter( 'embed_oembed_html', [ $this, 'filter_embed_oembed_html' ], 10 );
 	}
 
 	/**
-	 * Filter oEmbed HTML for Crowdsignal for AMP output.
+	 * Get all raw embeds from the DOM.
 	 *
-	 * @param string $cache Cache for oEmbed.
-	 * @param string $url   Embed URL.
-	 * @param array  $attr  Shortcode attributes.
-	 * @return string Embed.
+	 * @param Document $dom Document.
+	 * @return DOMNodeList A list of DOMElement nodes.
 	 */
-	public function filter_embed_oembed_html( $cache, $url, $attr ) {
-		$parsed_url = wp_parse_url( $url );
-		if ( empty( $parsed_url['host'] ) || empty( $parsed_url['path'] ) || ! preg_match( '#(^|\.)(?P<host>polldaddy\.com|crowdsignal\.com|survey\.fm|poll\.fm)#', $parsed_url['host'], $matches ) ) {
-			return $cache;
+	protected function get_raw_embed_nodes( Document $dom ) {
+		$queries = [
+			// For poll embeds.
+			'//iframe[ @class="cs-iframe-embed" and starts-with( @src, "https://poll.fm/" ) ]',
+			// For survey embeds.
+			'//div[ @class="pd-embed" and @data-settings ]',
+		];
+
+		return $dom->xpath->query( implode( ' | ', $queries ) );
+	}
+
+	/**
+	 * Make embed AMP compatible.
+	 *
+	 * @param DOMElement $node DOM element.
+	 */
+	protected function sanitize_raw_embed( DOMElement $node ) {
+		$is_poll = 'cs-iframe-embed' === $node->getAttribute( 'class' );
+
+		if ( $is_poll ) {
+			$this->sanitize_poll_embed( $node );
+		} else {
+			$this->sanitize_survey_embed( $node );
+		}
+	}
+
+	/**
+	 * Sanitize poll embed.
+	 *
+	 * @param DOMElement $node Poll embed.
+	 */
+	private function sanitize_poll_embed( DOMElement $node ) {
+		// Replace the `noscript` parent element with the iframe.
+		$node->parentNode->parentNode->replaceChild( $node, $node->parentNode );
+
+		$this->unwrap_p_element( $node );
+		$this->remove_script_sibling( $node, 'https://secure.polldaddy.com', '', false );
+	}
+
+	/**
+	 * Sanitize survey embed.
+	 *
+	 * @param DOMElement $node Survey embed.
+	 */
+	private function sanitize_survey_embed( DOMElement $node ) {
+		$settings = json_decode( $node->getAttribute( 'data-settings' ), false );
+
+		// We can't form the iframe URL without a domain and survey ID.
+		if ( ! ( property_exists( $settings, 'domain' ) || property_exists( $settings, 'id' ) ) ) {
+			return;
 		}
 
-		$parsed_url['host'] = $matches['host'];
+		// Logic for building the iframe `src` can be found in https://polldaddy.com/survey.js.
+		$iframe_src = sprintf(
+			'https://%s/%s?%s',
+			$settings->domain,
+			$settings->id,
+			property_exists( $settings, 'auto' ) && $settings->auto ? 'ft=1&iframe=' . amp_get_current_url() : 'iframe=1'
+		);
 
-		$output = '';
+		$iframe_node = AMP_DOM_Utils::create_node(
+			Document::fromNode( $node ),
+			'iframe',
+			[
+				'src'               => $iframe_src,
+				'layout'            => 'responsive',
+				'width'             => 600,
+				'height'            => 600,
+				'frameborder'       => 0,
+				'scrolling'         => 'no',
+				'allowtransparency' => 'true',
+				'sandbox'           => 'allow-scripts allow-same-origin',
+			]
+		);
 
-		// Poll oEmbed responses include noscript which can be used as the AMP response.
-		if ( preg_match( '#<noscript>(.+?)</noscript>#s', $cache, $matches ) ) {
-			$output = $matches[1];
-		}
+		$this->remove_script_sibling( $node, null, 'https://polldaddy.com/survey.js' );
 
-		if ( empty( $output ) ) {
-			if ( ! empty( $attr['title'] ) ) {
-				$name = $attr['title'];
-			} elseif ( 'survey.fm' === $parsed_url['host'] || preg_match( '#^/s/#', $parsed_url['path'] ) ) {
-				$name = __( 'View Survey', 'amp' );
-			} else {
-				$name = __( 'View Poll', 'amp' );
-			}
-			$output = sprintf( '<a href="%s" target="_blank">%s</a>', esc_url( $url ), esc_html( $name ) );
-		}
-
-		return $output;
+		$node->parentNode->replaceChild( $iframe_node, $node );
 	}
 }

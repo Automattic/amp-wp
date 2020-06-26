@@ -6,6 +6,7 @@
  */
 
 use AmpProject\Amp;
+use AmpProject\AmpWP\Embed\Registerable;
 use AmpProject\AmpWP\Option;
 use AmpProject\AmpWP\RemoteRequest\CachedRemoteGetRequest;
 use AmpProject\AmpWP\ConfigurationArgument;
@@ -1179,8 +1180,9 @@ class AMP_Theme_Support {
 				);
 				continue;
 			}
-
-			$embed_handler->register_embed();
+			if ( $embed_handler instanceof Registerable ) {
+				$embed_handler->register_embed();
+			}
 			$embed_handlers[] = $embed_handler;
 		}
 

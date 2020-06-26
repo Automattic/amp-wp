@@ -5,6 +5,8 @@
  * @package AMP
  */
 
+use AmpProject\AmpWP\Embed\Registerable;
+
 /**
  * Class AMP_Content
  *
@@ -184,7 +186,9 @@ class AMP_Content {
 				continue;
 			}
 
-			$embed_handler->register_embed();
+			if ( $embed_handler instanceof Registerable ) {
+				$embed_handler->register_embed();
+			}
 			$embed_handlers[] = $embed_handler;
 		}
 
@@ -198,8 +202,9 @@ class AMP_Content {
 	 */
 	private function unregister_embed_handlers( $embed_handlers ) {
 		foreach ( $embed_handlers as $embed_handler ) {
-			$this->add_scripts( $embed_handler->get_scripts() ); // @todo Why add_scripts here? Shouldn't it be array_diff()?
-			$embed_handler->unregister_embed();
+			if ( $embed_handler instanceof Registerable ) {
+				$embed_handler->unregister_embed();
+			}
 		}
 	}
 

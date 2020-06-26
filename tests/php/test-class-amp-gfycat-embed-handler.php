@@ -35,7 +35,7 @@ class AMP_Gfycat_Embed_Handler_Test extends WP_UnitTestCase {
 				if ( false === strpos( $url, 'tautwhoppingcougar' ) ) {
 					return $pre;
 				}
-				return '<iframe src=\'https://gfycat.com/ifr/tautwhoppingcougar\' frameborder=\'0\' scrolling=\'no\' width=\'100\' height=\'100\'  allowfullscreen></iframe>';
+				return '<iframe class="wp-embedded-content" sandbox="allow-scripts" security="restricted" title="Melanie Raccoon riding bike-side angle (reddit)" src=\'https://gfycat.com/ifr/tautwhoppingcougar#?secret=Brq0P9wYCr\' data-secret=\'Brq0P9wYCr\' frameborder=\'0\' scrolling=\'no\' width=\'100%\' height=\'100%\'></iframe>';
 			},
 			10,
 			2
@@ -56,17 +56,17 @@ class AMP_Gfycat_Embed_Handler_Test extends WP_UnitTestCase {
 
 			'url_simple'      => [
 				'https://gfycat.com/tautwhoppingcougar' . PHP_EOL,
-				'<p><amp-gfycat width="100" height="100" data-gfyid="tautwhoppingcougar"></amp-gfycat></p>' . PHP_EOL,
+				'<amp-gfycat data-gfyid="tautwhoppingcougar" layout="fill"></amp-gfycat>' . PHP_EOL,
 			],
 
 			'url_with_detail' => [
 				'https://gfycat.com/gifs/detail/tautwhoppingcougar' . PHP_EOL,
-				'<p><amp-gfycat width="100" height="100" data-gfyid="tautwhoppingcougar"></amp-gfycat></p>' . PHP_EOL,
+				'<amp-gfycat data-gfyid="tautwhoppingcougar" layout="fill"></amp-gfycat>' . PHP_EOL,
 			],
 
 			'url_with_params' => [
 				'https://gfycat.com/gifs/detail/tautwhoppingcougar?foo=bar' . PHP_EOL,
-				'<p><amp-gfycat width="100" height="100" data-gfyid="tautwhoppingcougar"></amp-gfycat></p>' . PHP_EOL,
+				'<amp-gfycat data-gfyid="tautwhoppingcougar" layout="fill"></amp-gfycat>' . PHP_EOL,
 			],
 
 		];
@@ -81,10 +81,14 @@ class AMP_Gfycat_Embed_Handler_Test extends WP_UnitTestCase {
 	 */
 	public function test__conversion( $source, $expected ) {
 		$embed = new AMP_Gfycat_Embed_Handler();
-		$embed->register_embed();
-		$filtered_content = apply_filters( 'the_content', $source );
 
-		$this->assertEquals( $expected, $filtered_content );
+		$filtered_content = apply_filters( 'the_content', $source );
+		$dom              = AMP_DOM_Utils::get_dom_from_content( $filtered_content );
+		$embed->sanitize_raw_embeds( $dom );
+
+		$content = AMP_DOM_Utils::get_content_from_dom( $dom );
+
+		$this->assertEquals( $expected, $content );
 	}
 
 	/**
@@ -114,10 +118,12 @@ class AMP_Gfycat_Embed_Handler_Test extends WP_UnitTestCase {
 	 */
 	public function test__get_scripts( $source, $expected ) {
 		$embed = new AMP_Gfycat_Embed_Handler();
-		$embed->register_embed();
-		$source = apply_filters( 'the_content', $source );
 
-		$validating_sanitizer = new AMP_Tag_And_Attribute_Sanitizer( AMP_DOM_Utils::get_dom_from_content( $source ) );
+		$filtered_content = apply_filters( 'the_content', $source );
+		$dom              = AMP_DOM_Utils::get_dom_from_content( $filtered_content );
+		$embed->sanitize_raw_embeds( $dom );
+
+		$validating_sanitizer = new AMP_Tag_And_Attribute_Sanitizer( $dom );
 		$validating_sanitizer->sanitize();
 
 		$scripts = array_merge(

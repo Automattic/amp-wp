@@ -5,22 +5,14 @@
  * @package AMP
  */
 
+use AmpProject\Dom\Document;
+
 /**
  * Class AMP_YouTube_Embed_Handler
  *
  * Much of this class is borrowed from Jetpack embeds.
  */
 class AMP_YouTube_Embed_Handler extends AMP_Base_Embed_Handler {
-
-	/**
-	 * URL pattern to match YouTube videos.
-	 *
-	 * Only handling single videos. Playlists are handled elsewhere.
-	 *
-	 * @deprecated No longer used.
-	 * @var string
-	 */
-	const URL_PATTERN = '#https?://(?:www\.)?(?:youtube.com/(?:v/|e/|embed/|watch[/\#?])|youtu\.be/).*#i';
 
 	/**
 	 * Ratio for calculating the default height from the content width.
@@ -44,6 +36,20 @@ class AMP_YouTube_Embed_Handler extends AMP_Base_Embed_Handler {
 	protected $DEFAULT_HEIGHT = 338;
 
 	/**
+	 * Default AMP tag to be used when sanitizing embeds.
+	 *
+	 * @var string
+	 */
+	protected $amp_tag = 'amp-youtube';
+
+	/**
+	 * List of domains that are applicable for this embed.
+	 *
+	 * @var string[]
+	 */
+	protected $applicable_domains = [ 'youtu.be', 'youtube.com', 'youtube-nocookie.com' ];
+
+	/**
 	 * AMP_YouTube_Embed_Handler constructor.
 	 *
 	 * @param array $args Height, width and maximum width for embed.
@@ -60,119 +66,98 @@ class AMP_YouTube_Embed_Handler extends AMP_Base_Embed_Handler {
 	}
 
 	/**
-	 * Register embed.
-	 */
-	public function register_embed() {
-		add_filter( 'embed_oembed_html', [ $this, 'filter_embed_oembed_html' ], 10, 2 );
-		add_filter( 'wp_video_shortcode_override', [ $this, 'video_override' ], 10, 2 );
-	}
-
-	/**
-	 * Unregister embed.
-	 */
-	public function unregister_embed() {
-		remove_filter( 'embed_oembed_html', [ $this, 'filter_embed_oembed_html' ], 10 );
-	}
-
-	/**
-	 * Filter oEmbed HTML for YouTube to convert to AMP.
+	 * Get all raw embeds from the DOM.
 	 *
-	 * @param string $cache Cache for oEmbed.
-	 * @param string $url   Embed URL.
-	 * @return string Embed.
+	 * @param Document $dom Document.
+	 * @return DOMNodeList A list of DOMElement nodes.
 	 */
-	public function filter_embed_oembed_html( $cache, $url ) {
-		$id = $this->get_video_id_from_url( $url );
-		if ( ! $id ) {
-			return $cache;
-		}
-
-		$props = $this->parse_props( $cache, $url, $id );
-		if ( empty( $props ) ) {
-			return $cache;
-		}
-
-		$props['video_id'] = $id;
-		return $this->render( $props, $url );
+	protected function get_raw_embed_nodes( Document $dom ) {
+		$query_segments = array_map(
+			static function ( $domain ) {
+				return sprintf( 'contains( @src, "%s" )', $domain );
+			},
+			$this->applicable_domains
+		);
+		$query          = implode( ' or ', $query_segments );
+		return $dom->xpath->query( sprintf( '//iframe[ %s ]', $query ) );
 	}
 
 	/**
-	 * Parse AMP component from iframe.
+	 * Make embed AMP compatible.
 	 *
-	 * @param string $html     HTML.
-	 * @param string $url      Embed URL, for fallback purposes.
-	 * @param string $video_id YouTube video ID.
-	 * @return array|null Props for rendering the component, or null if unable to parse.
+	 * @param DOMElement $node DOM element.
 	 */
-	private function parse_props( $html, $url, $video_id ) {
-		$props = $this->match_element_attributes( $html, 'iframe', [ 'title', 'height', 'width' ] );
-		if ( ! isset( $props ) ) {
-			return null;
+	protected function sanitize_raw_embed( DOMElement $node ) {
+		$iframe_src = $node->getAttribute( 'src' );
+		$video_id   = $this->get_video_id_from_url( $iframe_src );
+
+		$attributes = [
+			'data-videoid' => $video_id,
+			'layout'       => 'responsive',
+			'width'        => $this->args['width'],
+			'height'       => $this->args['height'],
+		];
+
+		if ( ! empty( $node->getAttribute( 'title' ) ) ) {
+			$attributes['title'] = $node->getAttribute( 'title' );
 		}
 
+		if ( ! empty( $node->getAttribute( 'width' ) ) ) {
+			$attributes['width'] = $node->getAttribute( 'width' );
+		}
+
+		if ( ! empty( $node->getAttribute( 'height' ) ) ) {
+			$attributes['height'] = $node->getAttribute( 'height' );
+		}
+
+		$amp_node = AMP_DOM_Utils::create_node(
+			Document::fromNode( $node ),
+			$this->amp_tag,
+			$attributes
+		);
+
+		$this->append_placeholder( $amp_node, $video_id, isset( $attributes['title'] ) ? $attributes['title'] : null );
+
+		$this->unwrap_p_element( $node );
+
+		$node->parentNode->replaceChild( $amp_node, $node );
+	}
+
+	/**
+	 * Append placeholder as a child of the AMP component.
+	 *
+	 * @param DOMElement $node AMP component.
+	 * @param string     $video_id Video ID.
+	 * @param string     $video_title Video title.
+	 */
+	private function append_placeholder( DOMElement $node, $video_id, $video_title ) {
 		$img_attributes = [
 			'src'        => esc_url_raw( sprintf( 'https://i.ytimg.com/vi/%s/hqdefault.jpg', $video_id ) ),
 			'layout'     => 'fill',
 			'object-fit' => 'cover',
 		];
-		if ( ! empty( $props['title'] ) ) {
-			$img_attributes['alt'] = $props['title'];
+		if ( $video_title ) {
+			$img_attributes['alt'] = $video_title;
 		}
-		$img = AMP_HTML_Utils::build_tag( 'img', $img_attributes );
 
-		$props['placeholder'] = AMP_HTML_Utils::build_tag(
+		$img_node = AMP_DOM_Utils::create_node(
+			Document::fromNode( $node->ownerDocument ),
+			'img',
+			$img_attributes
+		);
+
+		$placeholder_node = AMP_DOM_Utils::create_node(
+			Document::fromNode( $node ),
 			'a',
 			[
 				'placeholder' => '',
-				'href'        => esc_url_raw( $url ),
-			],
-			$img
-		);
-
-		return $props;
-	}
-
-	/**
-	 * Render embed.
-	 *
-	 * @param array  $args Args.
-	 * @param string $url  URL.
-	 * @return string Rendered.
-	 */
-	public function render( $args, $url ) {
-		$args = wp_parse_args(
-			$args,
-			[
-				'video_id'    => false,
-				'layout'      => 'responsive',
-				'width'       => $this->args['width'],
-				'height'      => $this->args['height'],
-				'placeholder' => '',
+				'href'        => esc_url_raw( sprintf( 'https://www.youtube.com/watch?v=%s', $video_id ) ),
 			]
 		);
 
-		if ( empty( $args['video_id'] ) ) {
-			return AMP_HTML_Utils::build_tag(
-				'a',
-				[
-					'href'  => esc_url_raw( $url ),
-					'class' => 'amp-wp-embed-fallback',
-				],
-				esc_html( $url )
-			);
-		}
+		$placeholder_node->appendChild( $img_node );
 
-		$this->did_convert_elements = true;
-
-		$attributes = array_merge(
-			[ 'data-videoid' => $args['video_id'] ],
-			wp_array_slice_assoc( $args, [ 'layout', 'width', 'height' ] )
-		);
-		if ( ! empty( $args['title'] ) ) {
-			$attributes['title'] = $args['title'];
-		}
-
-		return AMP_HTML_Utils::build_tag( 'amp-youtube', $attributes, $args['placeholder'] );
+		$node->appendChild( $placeholder_node );
 	}
 
 	/**
@@ -189,7 +174,7 @@ class AMP_YouTube_Embed_Handler extends AMP_Base_Embed_Handler {
 		}
 
 		$domain = implode( '.', array_slice( explode( '.', $parsed_url['host'] ), -2 ) );
-		if ( ! in_array( $domain, [ 'youtu.be', 'youtube.com', 'youtube-nocookie.com' ], true ) ) {
+		if ( ! in_array( $domain, $this->applicable_domains, true ) ) {
 			return false;
 		}
 
@@ -207,7 +192,8 @@ class AMP_YouTube_Embed_Handler extends AMP_Base_Embed_Handler {
 			// Support is also included for other query params which don't appear to be supported by YouTube anymore.
 			if ( isset( $query_vars['v'] ) ) {
 				return $query_vars['v'];
-			} elseif ( isset( $query_vars['vi'] ) ) {
+			}
+			if ( isset( $query_vars['vi'] ) ) {
 				return $query_vars['vi'];
 			}
 		}
@@ -231,27 +217,5 @@ class AMP_YouTube_Embed_Handler extends AMP_Base_Embed_Handler {
 		}
 
 		return false;
-	}
-
-	/**
-	 * Override the output of YouTube videos.
-	 *
-	 * This overrides the value in wp_video_shortcode().
-	 * The pattern matching is copied from WP_Widget_Media_Video::render().
-	 *
-	 * @param string $html Empty variable to be replaced with shortcode markup.
-	 * @param array  $attr The shortcode attributes.
-	 * @return string|null $markup The markup to output.
-	 */
-	public function video_override( $html, $attr ) {
-		if ( ! isset( $attr['src'] ) ) {
-			return $html;
-		}
-		$video_id = $this->get_video_id_from_url( $attr['src'] );
-		if ( ! $video_id ) {
-			return $html;
-		}
-
-		return $this->render( compact( 'video_id' ), $attr['src'] );
 	}
 }

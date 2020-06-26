@@ -57,9 +57,6 @@ class AMP_Imgur_Embed_Handler_Test extends WP_UnitTestCase {
 	 * @return array
 	 */
 	public function get_conversion_data() {
-		$width  = 500;
-		$height = 750;
-
 		return [
 			'no_embed'        => [
 				'<p>Hello world.</p>',
@@ -68,17 +65,17 @@ class AMP_Imgur_Embed_Handler_Test extends WP_UnitTestCase {
 
 			'url_simple'      => [
 				'https://imgur.com/fmHGADZ' . PHP_EOL,
-				'<p><amp-imgur width="' . $width . '" height="' . $height . '" data-imgur-id="fmHGADZ"></amp-imgur></p>' . PHP_EOL,
+				'<amp-imgur data-imgur-id="fmHGADZ" layout="responsive" width="540" height="500"></amp-imgur>' . PHP_EOL . PHP_EOL,
 			],
 
 			'url_with_detail' => [
 				'https://imgur.com/gallery/1ApvcWB' . PHP_EOL,
-				'<p><amp-imgur width="' . $width . '" height="' . $height . '" data-imgur-id="1ApvcWB"></amp-imgur></p>' . PHP_EOL,
+				'<amp-imgur data-imgur-id="a/1ApvcWB" layout="responsive" width="540" height="500"></amp-imgur>' . PHP_EOL . PHP_EOL,
 			],
 
 			'url_with_params' => [
 				'https://imgur.com/gallery/1ApvcWB?foo=bar' . PHP_EOL,
-				'<p><amp-imgur width="' . $width . '" height="' . $height . '" data-imgur-id="1ApvcWB"></amp-imgur></p>' . PHP_EOL,
+				'<amp-imgur data-imgur-id="a/1ApvcWB" layout="responsive" width="540" height="500"></amp-imgur>' . PHP_EOL . PHP_EOL,
 			],
 
 		];
@@ -93,10 +90,14 @@ class AMP_Imgur_Embed_Handler_Test extends WP_UnitTestCase {
 	 */
 	public function test__conversion( $source, $expected ) {
 		$embed = new AMP_Imgur_Embed_Handler();
-		$embed->register_embed();
-		$filtered_content = apply_filters( 'the_content', $source );
 
-		$this->assertEquals( $expected, $filtered_content );
+		$filtered_content = apply_filters( 'the_content', $source );
+		$dom              = AMP_DOM_Utils::get_dom_from_content( $filtered_content );
+		$embed->sanitize_raw_embeds( $dom );
+
+		$content = AMP_DOM_Utils::get_content_from_dom( $dom );
+
+		$this->assertEquals( $expected, $content );
 	}
 
 	/**
@@ -126,10 +127,12 @@ class AMP_Imgur_Embed_Handler_Test extends WP_UnitTestCase {
 	 */
 	public function test__get_scripts( $source, $expected ) {
 		$embed = new AMP_Imgur_Embed_Handler();
-		$embed->register_embed();
-		$source = apply_filters( 'the_content', $source );
 
-		$validating_sanitizer = new AMP_Tag_And_Attribute_Sanitizer( AMP_DOM_Utils::get_dom_from_content( $source ) );
+		$filtered_content = apply_filters( 'the_content', $source );
+		$dom              = AMP_DOM_Utils::get_dom_from_content( $filtered_content );
+		$embed->sanitize_raw_embeds( $dom );
+
+		$validating_sanitizer = new AMP_Tag_And_Attribute_Sanitizer( $dom );
 		$validating_sanitizer->sanitize();
 
 		$scripts = array_merge(

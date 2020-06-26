@@ -5,10 +5,13 @@
  * @package AMP
  */
 
+use AmpProject\AmpWP\Embed\Registerable;
+use AmpProject\Dom\Document;
+
 /**
  * Class AMP_Pinterest_Embed_Handler
  */
-class AMP_Pinterest_Embed_Handler extends AMP_Base_Embed_Handler {
+class AMP_Pinterest_Embed_Handler extends AMP_Base_Embed_Handler implements Registerable {
 
 	const URL_PATTERN = '#https?://(www\.)?pinterest\.com/pin/.*#i';
 
@@ -27,11 +30,18 @@ class AMP_Pinterest_Embed_Handler extends AMP_Base_Embed_Handler {
 	protected $DEFAULT_HEIGHT = 750;
 
 	/**
+	 * Default AMP tag to be used when sanitizing embeds.
+	 *
+	 * @var string
+	 */
+	protected $amp_tag = 'amp-pinterest';
+
+	/**
 	 * Registers embed.
 	 */
 	public function register_embed() {
 		wp_embed_register_handler(
-			'amp-pinterest',
+			$this->amp_tag,
 			self::URL_PATTERN,
 			[ $this, 'oembed' ],
 			-1
@@ -42,7 +52,7 @@ class AMP_Pinterest_Embed_Handler extends AMP_Base_Embed_Handler {
 	 * Unregisters embed.
 	 */
 	public function unregister_embed() {
-		wp_embed_unregister_handler( 'amp-pinterest', -1 );
+		wp_embed_unregister_handler( $this->amp_tag, -1 );
 	}
 
 	/**
@@ -75,10 +85,8 @@ class AMP_Pinterest_Embed_Handler extends AMP_Base_Embed_Handler {
 			return '';
 		}
 
-		$this->did_convert_elements = true;
-
 		return AMP_HTML_Utils::build_tag(
-			'amp-pinterest',
+			$this->amp_tag,
 			[
 				'width'    => $this->args['width'],
 				'height'   => $this->args['height'],
@@ -86,5 +94,24 @@ class AMP_Pinterest_Embed_Handler extends AMP_Base_Embed_Handler {
 				'data-url' => $args['url'],
 			]
 		);
+	}
+
+	/**
+	 * Get all raw embeds from the DOM.
+	 *
+	 * @param Document $dom Document.
+	 * @return DOMNodeList A list of DOMElement nodes.
+	 */
+	protected function get_raw_embed_nodes( Document $dom ) {
+		return $dom->xpath->query( sprintf( '//%s', $this->amp_tag ) );
+	}
+
+	/**
+	 * Make embed AMP compatible.
+	 *
+	 * @param DOMElement $node DOM element.
+	 */
+	protected function sanitize_raw_embed( DOMElement $node ) {
+		$this->unwrap_p_element( $node );
 	}
 }

@@ -93,11 +93,10 @@ class Test_AMP_TikTok_Embed_Handler extends WP_UnitTestCase {
 	 */
 	public function test_conversion( $source, $expected ) {
 		if ( version_compare( '5.4-alpha', get_bloginfo( 'version' ), '>' ) ) {
-			$this->markTestSkipped( 'The TikTok embed is only available in 5.4-alpha (until 5.4 is stable)' );
+			$this->markTestSkipped( 'The TikTok embed is only available in 5.4-alpha and above.' );
 		}
 
 		$embed = new AMP_TikTok_Embed_Handler();
-		$embed->register_embed();
 
 		$filtered_content = apply_filters( 'the_content', $source );
 		$dom              = AMP_DOM_Utils::get_dom_from_content( $filtered_content );

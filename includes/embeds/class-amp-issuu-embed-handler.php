@@ -6,60 +6,60 @@
  * @since 0.7
  */
 
+use AmpProject\Dom\Document;
+
 /**
  * Class AMP_Issuu_Embed_Handler
  */
 class AMP_Issuu_Embed_Handler extends AMP_Base_Embed_Handler {
-	/**
-	 * Regex matched to produce output amp-iframe.
-	 *
-	 * @const string
-	 */
-	const URL_PATTERN = '#https?://(www\.)?issuu\.com/.+/docs/.+#i';
 
 	/**
-	 * Register embed.
+	 * Get all raw embeds from the DOM.
+	 *
+	 * @param Document $dom Document.
+	 * @return DOMNodeList A list of DOMElement nodes.
 	 */
-	public function register_embed() {
-		add_filter( 'embed_oembed_html', [ $this, 'filter_embed_oembed_html' ], 10, 3 );
+	protected function get_raw_embed_nodes( Document $dom ) {
+		return $dom->xpath->query( '//div[ @class="issuuembed" and @data-url ]' );
 	}
 
 	/**
-	 * Unregister embed.
-	 */
-	public function unregister_embed() {
-		remove_filter( 'embed_oembed_html', [ $this, 'filter_embed_oembed_html' ], 10 );
-	}
-
-	/**
-	 * Filter oEmbed HTML for Meetup to prepare it for AMP.
+	 * Make embed AMP compatible.
 	 *
-	 * @param mixed  $return The oEmbed HTML.
-	 * @param string $url    The attempted embed URL.
-	 * @param array  $attr   Attributes.
-	 * @return string Embed.
+	 * @param DOMElement $node DOM element.
 	 */
-	public function filter_embed_oembed_html( $return, $url, $attr ) {
-		$parsed_url = wp_parse_url( $url );
-		if ( false !== strpos( $parsed_url['host'], 'issuu.com' ) ) {
-			if ( preg_match( '/width\s*:\s*(\d+)px/', $return, $matches ) ) {
-				$attr['width'] = $matches[1];
-			}
-			if ( preg_match( '/height\s*:\s*(\d+)px/', $return, $matches ) ) {
-				$attr['height'] = $matches[1];
+	protected function sanitize_raw_embed( DOMElement $node ) {
+		$url = $node->getAttribute( 'data-url' );
+
+		$attributes = [
+			'width'   => $this->args['width'],
+			'height'  => $this->args['height'],
+			'src'     => $url,
+			'sandbox' => 'allow-scripts allow-same-origin',
+		];
+
+		if ( $node->hasAttribute( 'style' ) ) {
+			$style = $node->getAttribute( 'style' );
+
+			if ( preg_match( '/width\s*:\s*(\d+)px/', $style, $matches ) ) {
+				$attributes['width'] = $matches[1];
 			}
 
-			$return = AMP_HTML_Utils::build_tag(
-				'amp-iframe',
-				[
-					'width'   => $attr['width'],
-					'height'  => $attr['height'],
-					'src'     => $url,
-					'sandbox' => 'allow-scripts allow-same-origin',
-				]
-			);
+			if ( preg_match( '/height\s*:\s*(\d+)px/', $style, $matches ) ) {
+				$attributes['height'] = $matches[1];
+			}
 		}
-		return $return;
+
+		$amp_node = AMP_DOM_Utils::create_node(
+			Document::fromNode( $node ),
+			$this->amp_tag,
+			$attributes
+		);
+
+		$this->unwrap_p_element( $node );
+		$this->remove_script_sibling( $node, '//e.issuu.com/embed.js' );
+
+		$node->parentNode->replaceChild( $amp_node, $node );
 	}
 }
 

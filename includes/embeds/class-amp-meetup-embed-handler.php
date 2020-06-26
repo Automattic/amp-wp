@@ -6,40 +6,44 @@
  * @since 0.7
  */
 
+use AmpProject\Dom\Document;
+
 /**
  * Class AMP_Meetup_Embed_Handler
  */
 class AMP_Meetup_Embed_Handler extends AMP_Base_Embed_Handler {
 
 	/**
-	 * Register embed.
-	 */
-	public function register_embed() {
-		add_filter( 'embed_oembed_html', [ $this, 'filter_embed_oembed_html' ], 10, 2 );
-	}
-
-	/**
-	 * Unregister embed.
-	 */
-	public function unregister_embed() {
-		remove_filter( 'embed_oembed_html', [ $this, 'filter_embed_oembed_html' ], 10 );
-	}
-
-	/**
-	 * Filter oEmbed HTML for Meetup to prepare it for AMP.
+	 * Determine if the node is indeed a raw embed.
 	 *
-	 * @param string $cache Cache for oEmbed.
-	 * @param string $url   Embed URL.
-	 * @return string Embed.
+	 * @param DOMElement $node DOM element.
+	 * @return bool True if it is a raw embed, false otherwise.
 	 */
-	public function filter_embed_oembed_html( $cache, $url ) {
-		$parsed_url = wp_parse_url( $url );
-		if ( false !== strpos( $parsed_url['host'], 'meetup.com' ) ) {
+	protected function is_raw_embed( DOMElement $node ) {
+		$width  = filter_var( $node->getAttribute( 'width' ), FILTER_SANITIZE_NUMBER_INT );
+		$height = filter_var( $node->getAttribute( 'height' ), FILTER_SANITIZE_NUMBER_INT );
 
-			// Supply the width/height so that we don't have to make requests to look them up later.
-			$cache = str_replace( '<img ', '<img width="50" height="50" ', $cache );
-		}
-		return $cache;
+		return 50 !== $width && 50 !== $height;
+	}
+
+	/**
+	 * Get all raw embeds from the DOM.
+	 *
+	 * @param Document $dom Document.
+	 * @return DOMNodeList A list of DOMElement nodes.
+	 */
+	protected function get_raw_embed_nodes( Document $dom ) {
+		return $dom->xpath->query( '//div[ @id="meetup_oembed" ]//div[ @class="photo" ]/img' );
+	}
+
+	/**
+	 * Make embed AMP compatible.
+	 *
+	 * @param DOMElement $node DOM element.
+	 */
+	protected function sanitize_raw_embed( DOMElement $node ) {
+		// Supply the width/height so that we don't have to make requests to look them up later.
+		$node->setAttribute( 'width', 50 );
+		$node->setAttribute( 'height', 50 );
 	}
 }
-

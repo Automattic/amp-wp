@@ -2,10 +2,10 @@
 
 use AmpProject\AmpWP\Tests\WithoutBlockPreRendering;
 
-class AMP_DailyMotion_Embed_Handler_Test extends WP_UnitTestCase {
+class AMP_Tumblr_Embed_Handler_Test extends WP_UnitTestCase {
 
 	use WithoutBlockPreRendering {
-		setUp as public prevent_block_pre_render;
+		setUp as prevent_block_pre_render;
 	}
 
 	/**
@@ -39,11 +39,11 @@ class AMP_DailyMotion_Embed_Handler_Test extends WP_UnitTestCase {
 			return $pre;
 		}
 
-		if ( false === strpos( $url, 'dailymotion.com' ) ) {
+		if ( false === strpos( $url, 'tumblr.com' ) ) {
 			return $pre;
 		}
 
-		$body = '{"type":"video","version":"1.0","provider_name":"Dailymotion","provider_url":"https:\/\/www.dailymotion.com","title":"Snatched - Official Trailer 2 (HD)","description":"M\u00e1s info http:\/\/trailersyestrenos.es\/snatched-jonathan-levine\/ - TWITTER: https:\/\/twitter.com\/TrailersyEstren - FACEBOOK: https:\/\/www.facebook.com\/trailersyestrenos - GOOGLE+: https:\/\/www.google.com\/+TrailersyEstrenos  Sinopsis: Una madre y una hija se enfrentar\u00e1n a distintos problemas que surgen mientras est\u00e1n de vacaciones  Director: Jonathan Levine Reparto: Amy Schumer, Ike Barinholtz, Goldie Hawn, Christopher Meloni, Randall Park, Wanda Sykes, \u00d3scar Jaenada, Colin Quinn, Tom Bateman, Kevin Kane, Sharon M. Bell  (El trailer pertenece a la productora y distribuidora de la pel\u00edcula y ha sido subido sin \u00e1nimo de lucro)","author_name":"Trailers y Estrenos","author_url":"https:\/\/www.dailymotion.com\/TrailersyEstrenos","width":500,"height":212,"html":"<iframe frameborder=\"0\" width=\"500\" height=\"212\" src=\"https:\/\/www.dailymotion.com\/embed\/video\/x5awwth\" allowfullscreen allow=\"autoplay\"><\/iframe>","thumbnail_url":"https:\/\/s2.dmcdn.net\/v\/J7Emb1UwvEwLi4MKo\/x120","thumbnail_width":214,"thumbnail_height":120}';
+		$body = '{"cache_age":3600,"url":"https:\/\/ifpaintingscouldtext.tumblr.com\/post\/92003045635\/grant-wood-american-gothic-1930","provider_url":"https:\/\/www.tumblr.com","provider_name":"Tumblr","author_name":"If Paintings Could Text","version":"1.0","author_url":"https:\/\/ifpaintingscouldtext.tumblr.com\/","type":"rich","html":"\u003Cdiv class=\u0022tumblr-post\u0022 data-href=\u0022https:\/\/embed.tumblr.com\/embed\/post\/2JT2XTaiTxO08wh21dqQrw\/92003045635\u0022 data-did=\u00227ce4825965cbd8bfd208f6aae43de7a528859aee\u0022  \u003E\u003Ca href=\u0022https:\/\/ifpaintingscouldtext.tumblr.com\/post\/92003045635\/grant-wood-american-gothic-1930\u0022\u003Ehttps:\/\/ifpaintingscouldtext.tumblr.com\/post\/92003045635\/grant-wood-american-gothic-1930\u003C\/a\u003E\u003C\/div\u003E\u003Cscript async src=\u0022https:\/\/assets.tumblr.com\/post.js\u0022\u003E\u003C\/script\u003E","height":null,"width":540}';
 
 		return [
 			'body'     => $body,
@@ -56,19 +56,14 @@ class AMP_DailyMotion_Embed_Handler_Test extends WP_UnitTestCase {
 
 	public function get_conversion_data() {
 		return [
-			'no_embed'       => [
+			'no_embed'   => [
 				'<p>Hello world.</p>',
 				'<p>Hello world.</p>' . PHP_EOL,
 			],
 
-			'url_simple'     => [
-				'https://www.dailymotion.com/video/x5awwth' . PHP_EOL,
-				'<amp-dailymotion data-videoid="x5awwth" layout="responsive" width="500" height="212"></amp-dailymotion>' . PHP_EOL,
-			],
-
-			'url_with_title' => [
-				'http://www.dailymotion.com/video/x5awwth_snatched-official-trailer-2-hd_shortfilms' . PHP_EOL,
-				'<amp-dailymotion data-videoid="x5awwth" layout="responsive" width="500" height="212"></amp-dailymotion>' . PHP_EOL,
+			'url_simple' => [
+				'https://ifpaintingscouldtext.tumblr.com/post/92003045635/grant-wood-american-gothic-1930' . PHP_EOL,
+				'<amp-iframe src="https://embed.tumblr.com/embed/post/2JT2XTaiTxO08wh21dqQrw/92003045635" layout="responsive" width="540" height="480" resizable="" sandbox="allow-scripts allow-popups allow-same-origin"><div overflow="" tabindex="0" role="button" aria-label="See more">See more</div><a href="https://ifpaintingscouldtext.tumblr.com/post/92003045635/grant-wood-american-gothic-1930" placeholder="">https://ifpaintingscouldtext.tumblr.com/post/92003045635/grant-wood-american-gothic-1930</a></amp-iframe>' . PHP_EOL . PHP_EOL,
 			],
 		];
 	}
@@ -77,7 +72,7 @@ class AMP_DailyMotion_Embed_Handler_Test extends WP_UnitTestCase {
 	 * @dataProvider get_conversion_data
 	 */
 	public function test__conversion( $source, $expected ) {
-		$embed = new AMP_DailyMotion_Embed_Handler();
+		$embed = new AMP_Tumblr_Embed_Handler();
 
 		$filtered_content = apply_filters( 'the_content', $source );
 		$dom              = AMP_DOM_Utils::get_dom_from_content( $filtered_content );
@@ -95,8 +90,8 @@ class AMP_DailyMotion_Embed_Handler_Test extends WP_UnitTestCase {
 				[],
 			],
 			'converted'     => [
-				'https://www.dailymotion.com/video/x5awwth' . PHP_EOL,
-				[ 'amp-dailymotion' => true ],
+				'https://ifpaintingscouldtext.tumblr.com/post/92003045635/grant-wood-american-gothic-1930' . PHP_EOL,
+				[ 'amp-iframe' => true ],
 			],
 		];
 	}
@@ -105,7 +100,7 @@ class AMP_DailyMotion_Embed_Handler_Test extends WP_UnitTestCase {
 	 * @dataProvider get_scripts_data
 	 */
 	public function test__get_scripts( $source, $expected ) {
-		$embed = new AMP_DailyMotion_Embed_Handler();
+		$embed = new AMP_Tumblr_Embed_Handler();
 
 		$filtered_content = apply_filters( 'the_content', $source );
 		$dom              = AMP_DOM_Utils::get_dom_from_content( $filtered_content );
