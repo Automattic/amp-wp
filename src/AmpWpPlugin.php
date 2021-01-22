@@ -88,6 +88,7 @@ final class AmpWpPlugin extends ServiceBasedPlugin {
 		'url_validation_cron'               => URLValidationCron::class,
 		'save_post_validation_event'        => SavePostValidationEvent::class,
 		'background_task_deactivator'       => BackgroundTaskDeactivator::class,
+		'theme_entities_rest_controller'    => Validation\ThemeEntitiesRESTController::class,
 	];
 
 	/**
