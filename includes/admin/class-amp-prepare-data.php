@@ -1,10 +1,4 @@
 <?php
-/**
- * Diagnostic data commands and user interface.
- *
- * @package AMP
- */
-
 use AmpProject\AmpWP\QueryVar;
 use AmpProject\AmpWP\Admin\GoogleFonts;
 
@@ -19,15 +13,14 @@ add_action(
 		if ( 'amp_page_amp-support' !== $hook ) {
 			return;
 		}
-		// Google Fonts & AMP Settings.
 		$f = new GoogleFonts();
 		wp_enqueue_style(
 			'amp-settings',
 			amp_get_asset_url( 'css/amp-settings.css' ),
-			array(
+			[
 				$f->get_handle(),
 				'wp-components',
-			),
+			],
 			AMP__VERSION
 		);
 	}
@@ -68,16 +61,10 @@ add_action(
 					.amp-drawer__panel-body-inner {
 						padding-left: 2rem;
 					}
-					#code {
-						width: 95%;
+					.amp pre {
+						overflow:auto;
 						height: 50vh;
-						font-family: monospace;
-					}
-					#status a /* copy link */ {
-						margin-left: 1rem;
-					}
-					.disabled {
-						background-color: #ccc !important;
+						max-width: 90%;
 					}
 				</style>
 				<div class="amp">
@@ -92,59 +79,42 @@ add_action(
 						<div>
 							<h2>
 							<?php if ( ! empty( $post_id ) ) : ?>
-								<?php
-								echo esc_html__( 'Send diagnostic data for ', 'amp' );
-								echo esc_url( get_the_title( $post_id ) );
-								?>
+								<?php echo esc_html__( 'Send diagnostic data for ', 'amp' ); the_title( $post_id ); ?>
 							<?php else : ?>
-								<?php
-								echo sprintf(
-									// translators: %s contains singular or plural "Validated URL(s)".
+								<?php echo sprintf( 
 									esc_html__( 'Send diagnostic data for %s', 'amp' ),
-									' &nbsp;<a href="edit.php?post_type=amp_validated_url">' . count( $data['urls'] ) . ' ' . esc_html( _n( 'validated URL:', 'validated URLs:', count( $data['urls'] ), 'amp' ) ) . '</a>'
-								);
-								?>
+									' &nbsp;<a href="edit.php?post_type=amp_validated_url">' . count( $data['urls'] ) . ' ' . _n( count( $data['urls'] ), 'validated URLs:', 'validated URL.', 'amp' ) . '</a>'
+								); ?>
 							<?php endif; ?>
 								<svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg"><mask id="check-circle-mask" mask-type="alpha" maskUnits="userSpaceOnUse" x="2" y="2" width="21" height="21"><path fill-rule="evenodd" clip-rule="evenodd" d="M12.7537 2.60938C7.23366 2.60938 2.75366 7.08938 2.75366 12.6094C2.75366 18.1294 7.23366 22.6094 12.7537 22.6094C18.2737 22.6094 22.7537 18.1294 22.7537 12.6094C22.7537 7.08938 18.2737 2.60938 12.7537 2.60938ZM12.7537 20.6094C8.34366 20.6094 4.75366 17.0194 4.75366 12.6094C4.75366 8.19938 8.34366 4.60938 12.7537 4.60938C17.1637 4.60938 20.7537 8.19938 20.7537 12.6094C20.7537 17.0194 17.1637 20.6094 12.7537 20.6094ZM10.7537 14.7794L17.3437 8.18937L18.7537 9.60938L10.7537 17.6094L6.75366 13.6094L8.16366 12.1994L10.7537 14.7794Z" fill="white"></path></mask><g mask="url(#check-circle-mask)"><rect x="0.753662" y="0.609375" width="24" height="24" fill="#2459E7"></rect></g></svg>
 							</h2>
 
 							<?php if ( ! empty( $data['urls'] ) && empty( $post_id ) ) : ?>
 							<ul>
-								<?php foreach ( $data['urls'] as $url ) : ?>
-									<li><a href="<?php echo esc_html( $url['url'] ); ?>"><?php echo esc_html( $url['url'] ); ?></a></li>
+								<?php foreach( $data['urls'] as $url ) : ?>
+									<li><?php echo esc_html( $url['url'] ); ?></li>
 								<?php endforeach; ?>
 							</ul>
-							<?php endif; ?>
-							<?php
-							if ( 0 !== count( $data['urls'] ) && ! empty( $post_id ) ) :
-								?>
+							<?php else: ?>
 							<ul>
-								<li><a href="<?php echo esc_url( remove_query_arg( 'post_id' ) ); ?>">
-									<?php esc_html_e( 'Switch to all validated URLs.', 'amp' ); ?>
+								<li><a href="<?php echo esc_url( remove_query_arg( 'post_id') ); ?>">
+									<?php esc_html_e( 'Switch to all verified URLs.', 'amp' ); ?>
 								</a></li>
 							</ul>
-							<?php else : ?>
-							<ul>
-								<li>
-									<?php esc_html_e( 'Site Health and error info will be sent.', 'amp' ); ?>
-								</li>
-							</ul>
 							<?php endif; ?>
 
-							<p>
-								<a href="#" class="components-button is-primary"><?php echo esc_html__( 'Send Diagnostics', 'amp' ); ?></a>
-							</p>
-							<p id="status"></p>
+							<a href="#" class="components-button is-primary"><?php echo esc_html__( 'Send Diagnostics', 'amp' ); ?></a>
 
+							<p id="status"></p>
 							<detail>
-								<p>
-									<?php
-										esc_html_e( 'Clicking this button will return a unique ID suitable for sharing in a support forum for further guidance and information. Once the UUID appears, copy it and share in a new support forum post:', 'amp' );
-									?>
-								</p>
-								<ul>
-									<li><a href="https://wordpress.org/support/plugin/amp/" target="_blank"><?php esc_html_e( 'WordPress.org support forum', 'amp' ); ?></a></li>
-								</ul>
+							<p>
+								<?php
+									esc_html_e( 'Clicking this button will return a unique ID suitable for sharing in a support forum for further guidance and information.', 'amp' );
+								?>
+							</p>
+							<ul>
+								<li><a href="https://wordpress.org/support/plugin/amp/" target="_blank"><?php esc_html_e( 'WordPress.org support forum', 'amp' ); ?></a></li>
+								<li><a href="https://github.com/ampproject/amp-wp/issues" target="_blank"><?php esc_html_e( 'GitHub issues', 'amp' ); ?></a></li>
 							</detail>
 
 						</div>
@@ -196,95 +166,63 @@ add_action(
 									<a href="edit.php?post_type=amp_validated_url"><?php echo count( $data['urls'] ); ?> <?php echo esc_html( _n( 'validated URL', 'validated URLs', count( $data['urls'] ), 'amp' ) ); ?></a>
 								</li>
 								<?php endif; ?>
-
-								<?php if ( ! empty( $data['error_log']['contents'] ) ) : ?>
-								<li>
-									<?php esc_html_e( 'Last 200 lines of PHP error log', 'amp' ); ?>
-								</li>
-								<?php endif; ?>
 							</ul>
 						</summary>
-
-						<textarea id="code">
-						<?php
-							echo esc_textarea( wp_json_encode( $data, JSON_PRETTY_PRINT ) );
-						?>
-						</textarea>
+						<pre><?php
+							echo wp_json_encode( $data, JSON_PRETTY_PRINT ); ?>
+						</pre>
 
 					</div></div>
 				</div>
 
 				<script>
 					jQuery( document ).ready( function( $ ){
-
 						$( 'a.is-primary' ).click(function(){
 							$.ajax({
 								url: 'admin-ajax.php',
 								data: {
-									'action': 'amp_diagnostic',
-									'post_id': '<?php echo (int) $post_id; ?>',
-									'_ajax_nonce': '<?php echo esc_js( wp_create_nonce( 'amp-diagnostic' ) ); ?>',
+									'action': 'amp-diagnostic',
+									'post_id': '<?php echo $post_id ?>',
+									'_ajax_nonce': '<?php echo wp_create_nonce( 'amp-diagnostic' ) ?>',
 								},
 								dataType: 'json',
 								type: 'GET',
 								beforeSend: function(){
-									if ( ! $('a.is-primary').hasClass( 'disabled' ) ) {
-										$('#status').html(
-											'<?php echo esc_html__( 'Sending...', 'amp' ); ?>'
-										);
-										$('a.is-primary').addClass( 'disabled' );
-									}
+									$('#status').html(
+										'<?php echo esc_html__( 'Sending...', 'amp' ); ?>'
+									);
 								},
 								success: function( d ) {
-									if ( typeof d.data === 'object' ) {
-										$('#status').html(
-											'<?php echo esc_html__( 'Diagnostics sent. ', 'amp' ); ?><br/>' + '<?php echo esc_html__( 'Unique ID: ', 'amp' ); ?>' + '<strong>' + d.data.uuid + '</strong>'
+									console.log( d );
+									if ( 'ok' === d.status ) {
+										$('#status').text(
+											'<?php echo esc_html__( 'Diagnostics sent.', 'amp' ); ?>'
 										);
-										$('a.is-primary').removeClass('disabled');
-
-										// Copy link
-										var $a = $('<a href="#"><?php esc_html_e( 'Copy', 'amp' ); ?></a>')
-											.data( 'uuid', d.data.uuid )
-											.click(function(){
-												navigator.clipboard.writeText( $(this).data('uuid') )
-												return false;
-											});
-										$('#status').append( $a );
-
-									} else {
+									}
+									if ( 'fail' === d.status ) {
 										$('#status').text(
 											'<?php echo esc_html__( 'Sending failed. Please try again.', 'amp' ); ?>'
 										);
-										$('a.is-primary').removeClass('disabled');
 									}
-								},
-								error: function( d ) {
-									$('#status').text(
-										'<?php echo esc_html__( 'Sending failed. Please try again.', 'amp' ); ?>'
-									);
-									$('a.is-primary').removeClass('disabled');
 								}
 							} );
 							return false;
 						} );
 
 						$('.amp-drawer__panel-body-inner').hide();
-						$('.amp-drawer__panel-body')
-							.find('svg').css( 'transform', 'rotate(180deg)' );;
-						$('.components-panel__body-toggle').click( function(){
+						$('.amp-drawer--handle-type-full-width').click( function(){
 							$('.amp-drawer__panel-body-inner').slideToggle();
 							if ( $('.amp-drawer__panel-body').hasClass( 'is-opened' ) ) {
 								$('.amp-drawer__panel-body')
 									.toggleClass( 'is-opened' )
-									.find('svg').css( 'transform', 'rotate(0deg)' );
+									.find('svg').css( 'transform', 'rotate(180deg)' );
 							}else {
 								$('.amp-drawer__panel-body')
-									.toggleClass( 'is-opened' )
-									.find('svg').css( 'transform', 'rotate(180deg)' );;
+								.toggleClass( 'is-opened' )
+								.find('svg').css( 'transform', 'rotate(0deg)' );;
 
 							}
 						});
-
 					} );
 				</script>
 				<?php
@@ -299,16 +237,15 @@ add_action(
 add_action(
 	'admin_bar_menu',
 	function( $wp_admin_bar ) {
-		if ( ! array_key_exists( 'amp', $wp_admin_bar->get_nodes() ) ) {
+		if ( ! is_object( $wp_admin_bar->get_nodes()['amp'] ) ) {
 			return;
 		}
 
-		// Get the AMP Validated URL post ID.
-		$current_url = remove_query_arg(
-			array_merge( wp_removable_query_args(), array( QueryVar::NOAMP ) ),
+		// Get the AMP Validated URL post ID
+		$current_url    = remove_query_arg(
+			array_merge( wp_removable_query_args(), [ QueryVar::NOAMP ] ),
 			amp_get_current_url()
 		);
-
 		$post = AMP_Validated_URL_Post_Type::get_invalid_url_post( $current_url );
 
 		$wp_admin_bar->add_node(
@@ -320,7 +257,7 @@ add_action(
 					add_query_arg(
 						array(
 							'page'    => 'amp-support',
-							'post_id' => ! empty( $post ) ? $post->ID : 0,
+							'post_id' => $post->ID,
 						),
 						admin_url( 'admin.php' )
 					)
@@ -387,9 +324,6 @@ add_filter(
 	2
 );
 
-/**
- * Plugin row Support link.
- */
 add_filter(
 	'plugin_row_meta',
 	function( $plugin_meta, $plugin_file, $plugin_data, $status ) {
@@ -415,29 +349,15 @@ add_filter(
 );
 
 /**
- * `wp amp send-diagnostic` command for AJAX action 'wp_ajax_amp_diagnostic'.
- */
-if ( defined( 'WP_CLI' ) && WP_CLI ) {
-	\WP_CLI::add_command(
-		'amp send-diagnostic',
-		function() {
-			do_action( 'wp_ajax_amp_diagnostic' );
-		}
-	);
-}
-
-/**
  * AJAX responder.
  */
 add_action(
-	'wp_ajax_amp_diagnostic',
+	'wp_ajax_amp-diagnostic',
 	function() {
+
 		if (
-			(
-				! current_user_can( 'manage_options' )
-				|| ! check_ajax_referer( 'amp-diagnostic' )
-			)
-			&& ! defined( 'WP_CLI' )
+			! current_user_can( 'manage_options' )
+			|| ! check_ajax_referer( 'amp-diagnostic' )
 		) {
 			exit;
 		}
@@ -445,18 +365,11 @@ add_action(
 		$args       = array();
 		$assoc_args = array();
 
-		// Command Line arguments.
-		if ( function_exists( 'get_flag_value' ) ) {
-			$is_synthetic = filter_var( get_flag_value( $assoc_args, 'is-synthetic', false ), FILTER_SANITIZE_STRING );
-			$endpoint     = filter_var( get_flag_value( $assoc_args, 'endpoint', AMP_SEND_DATA_SERVER_ENDPOINT ), FILTER_SANITIZE_STRING );
-			$endpoint     = untrailingslashit( $endpoint );
-		}else {
-			$is_synthetic = false;
-			$endpoint = untrailingslashit( AMP_SEND_DATA_SERVER_ENDPOINT );
-		}
-
-		// Post ID: amp_validated_url ID or 0 for all.
-		$post_id      = filter_input( INPUT_GET, 'post_id', FILTER_SANITIZE_NUMBER_INT );
+		// $is_print     = filter_var( get_flag_value( $assoc_args, 'print', false ), FILTER_SANITIZE_STRING );
+		// $is_synthetic = filter_var( get_flag_value( $assoc_args, 'is-synthetic', false ), FILTER_SANITIZE_STRING );
+		// $endpoint     = filter_var( get_flag_value( $assoc_args, 'endpoint', AMP_SEND_DATA_SERVER_ENDPOINT ), FILTER_SANITIZE_STRING );
+		$endpoint = untrailingslashit( AMP_SEND_DATA_SERVER_ENDPOINT );
+		$post_id = filter_input( INPUT_GET, 'post_id', FILTER_SANITIZE_NUMBER_INT );
 
 		$data = AMP_Prepare_Data::get_data( $post_id );
 		$data = wp_parse_args(
@@ -480,38 +393,85 @@ add_action(
 			$data['site_info']['is_synthetic_data'] = true;
 		}
 
-		// Send data to server.
-		$response = wp_remote_post(
-			sprintf( '%s/api/v1/amp-wp/', $endpoint ),
-			array(
-				'method'   => 'POST',
-				'timeout'  => 3000,
-				'body'     => $data,
-				'compress' => true,
-			)
-		);
+		/**
+		 * Print or send AMP data.
+		 */
+		if ( $is_print ) {
 
-		if ( is_wp_error( $response ) ) {
-			$error_message = $response->get_error_message();
-			echo wp_json_encode(
-				array(
-					'status' => esc_html( "Something went wrong: $error_message" ),
-				)
-			);
-			exit;
+			// Print the data.
+			$print = strtolower( trim( $is_print ) );
+			if ( 'json' === $print ) {
+				print_r( wp_json_encode( $data ) . PHP_EOL );
+			} elseif ( 'json-pretty' === $print ) {
+				print_r( wp_json_encode( $data, JSON_PRETTY_PRINT ) . PHP_EOL );
+			} else {
+				print_r( $data );
+			}
 		} else {
 
-			$body = json_decode( wp_remote_retrieve_body( $response ) );
+			// Send data to server.
+			$response = wp_remote_post(
+				sprintf( '%s/api/v1/amp-wp/', $endpoint ),
+				[
+					'method'   => 'POST',
+					'timeout'  => 1000,
+					'body'     => $data,
+					'compress' => true,
+				]
+			);
+
+			if ( is_wp_error( $response ) ) {
+				$error_message = $response->get_error_message();
+				// WP_CLI::warning( "Something went wrong: $error_message" );
+				echo wp_json_encode(
+					array(
+						'status' => esc_html( "Something went wrong: $error_message" ),
+					)
+				);
+				exit;
+			} else {
+
+				$body = json_decode( wp_remote_retrieve_body( $response ) );
+			}
+
 		}
 
-		if ( null === $body ) {
-			echo wp_json_encode(
-				array(
-					'status' => esc_html( 'Something went wrong: ' . wp_remote_retrieve_body( $response ) ),
-				)
-			);
-			exit;
+		/**
+		 * Prepare summary of data.
+		 */
+		$url_error_relationship = [];
+
+		foreach ( $data['urls'] as $url ) {
+			foreach ( $url['errors'] as $error ) {
+				foreach ( $error['sources'] as $source ) {
+					$url_error_relationship[] = $url['url'] . '-' . $error['error_slug'] . '-' . $source;
+				}
+			}
 		}
+
+		$plugin_count = count( $data['plugins'] );
+
+		if ( $is_synthetic ) {
+			$plugin_count_text = ( $plugin_count - 5 ) . " - Excluding common plugins of synthetic sites. ( $plugin_count - 5 )";
+		} else {
+			$plugin_count_text = $plugin_count;
+		}
+
+		$summary = [
+			'Site URL'               => AMP_Prepare_Data::get_home_url(),
+			'Plugin count'           => $plugin_count_text,
+			'Themes'                 => count( $data['themes'] ),
+			'Errors'                 => count( array_values( $data['errors'] ) ),
+			'Error Sources'          => count( array_values( $data['error_sources'] ) ),
+			'Validated URL'          => count( array_values( $data['urls'] ) ),
+			'URL Error Relationship' => count( array_values( $url_error_relationship ) ),
+		];
+
+		if ( $is_synthetic ) {
+			$summary['Synthetic Data'] = 'Yes';
+		}
+
+		$body->summary = $summary;
 
 		echo wp_json_encode( $body );
 
@@ -527,14 +487,15 @@ class AMP_Prepare_Data {
 	/**
 	 * To get amp data to send it to compatibility server.
 	 *
-	 * @param int $post_id Post ID of an amp_validated_url or 0 for all.
 	 * @return array
 	 */
 	public static function get_data( $post_id = 0 ) {
 
+		// amp_send_data_check_amp_activate();
+
 		$amp_urls = static::get_amp_urls( $post_id );
 
-		$request_data = array(
+		$request_data = [
 			'site_url'                   => static::get_home_url(),
 			'site_info'                  => static::get_site_info(),
 			'plugins'                    => static::get_plugin_info(),
@@ -543,33 +504,9 @@ class AMP_Prepare_Data {
 			'error_sources'              => array_values( $amp_urls['error_sources'] ),
 			'amp_validated_environments' => array_values( $amp_urls['amp_validated_environments'] ),
 			'urls'                       => array_values( $amp_urls['urls'] ),
-			'error_log'                  => static::get_error_log(),
-		);
+		];
 
 		return $request_data;
-	}
-
-	/**
-	 * To get error log.
-	 *
-	 * @return array Error log contents and log_errors ini setting.
-	 */
-	protected static function get_error_log() {
-		$file        = file( ini_get( 'error_log' ) );
-		$max_lines   = max( 0, count( $file ) - 200 );
-		$file_length = count( $file );
-		$contents    = '';
-
-		for ( $i = $max_lines; $i < $file_length; $i++ ) {
-			if ( ! empty( $file[ $i ] ) ) {
-				$contents .= $file[ $i ] . '|';
-			}
-		}
-
-		return array(
-			'log_errors' => ini_get( 'log_errors' ),
-			'contents'   => sanitize_text_field( str_replace( "\r", '|', $contents ) ),
-		);
 	}
 
 	/**
@@ -591,7 +528,7 @@ class AMP_Prepare_Data {
 		$active_theme = static::normalize_theme_info( $active_theme );
 
 		$amp_settings = AMP_Options_Manager::get_options();
-		$amp_settings = ( ! empty( $amp_settings ) && is_array( $amp_settings ) ) ? $amp_settings : array();
+		$amp_settings = ( ! empty( $amp_settings ) && is_array( $amp_settings ) ) ? $amp_settings : [];
 
 		$loopback_status = '';
 
@@ -600,7 +537,7 @@ class AMP_Prepare_Data {
 			$loopback_status = ( ! empty( $loopback_status->status ) ) ? $loopback_status->status : '';
 		}
 
-		$site_info = array(
+		$site_info = [
 			'site_url'                     => static::get_home_url(),
 			'site_title'                   => get_bloginfo( 'site_title' ),
 			'php_version'                  => phpversion(),
@@ -619,11 +556,11 @@ class AMP_Prepare_Data {
 			'amp_version'                  => ( ! empty( $amp_settings['version'] ) ) ? $amp_settings['version'] : '',
 			'amp_plugin_configured'        => ( ! empty( $amp_settings['plugin_configured'] ) ) ? true : false,
 			'amp_all_templates_supported'  => ( ! empty( $amp_settings['all_templates_supported'] ) ) ? true : false,
-			'amp_supported_post_types'     => ( ! empty( $amp_settings['supported_post_types'] ) && is_array( $amp_settings['supported_post_types'] ) ) ? $amp_settings['supported_post_types'] : array(),
-			'amp_supported_templates'      => ( ! empty( $amp_settings['supported_templates'] ) && is_array( $amp_settings['supported_templates'] ) ) ? $amp_settings['supported_templates'] : array(),
+			'amp_supported_post_types'     => ( ! empty( $amp_settings['supported_post_types'] ) && is_array( $amp_settings['supported_post_types'] ) ) ? $amp_settings['supported_post_types'] : [],
+			'amp_supported_templates'      => ( ! empty( $amp_settings['supported_templates'] ) && is_array( $amp_settings['supported_templates'] ) ) ? $amp_settings['supported_templates'] : [],
 			'amp_mobile_redirect'          => ( ! empty( $amp_settings['mobile_redirect'] ) ) ? true : false,
 			'amp_reader_theme'             => ( ! empty( $amp_settings['reader_theme'] ) ) ? $amp_settings['reader_theme'] : '',
-		);
+		];
 
 		return $site_info;
 	}
@@ -664,11 +601,11 @@ class AMP_Prepare_Data {
 		$slug = $slug[0];
 
 		$amp_options        = get_option( 'amp-options' );
-		$suppressed_plugins = ( ! empty( $amp_options['suppressed_plugins'] ) && is_array( $amp_options['suppressed_plugins'] ) ) ? $amp_options['suppressed_plugins'] : array();
+		$suppressed_plugins = ( ! empty( $amp_options['suppressed_plugins'] ) && is_array( $amp_options['suppressed_plugins'] ) ) ? $amp_options['suppressed_plugins'] : [];
 
 		$suppressed_plugin_list = array_keys( $suppressed_plugins );
 
-		return array(
+		return [
 			'name'              => $plugin_data['Name'],
 			'slug'              => $slug,
 			'plugin_url'        => $plugin_data['PluginURI'],
@@ -680,7 +617,7 @@ class AMP_Prepare_Data {
 			'is_active'         => is_plugin_active( $plugin_file ),
 			'is_network_active' => is_plugin_active_for_network( $plugin_file ),
 			'is_suppressed'     => in_array( $slug, $suppressed_plugin_list, true ) ? $suppressed_plugins[ $slug ]['last_version'] : '',
-		);
+		];
 
 	}
 
@@ -691,8 +628,8 @@ class AMP_Prepare_Data {
 	 */
 	protected static function get_theme_info() {
 
-		$themes   = array( wp_get_theme() );
-		$response = array();
+		$themes   = [ wp_get_theme() ];
+		$response = [];
 
 		foreach ( $themes as $theme ) {
 			$response[] = static::normalize_theme_info( $theme );
@@ -711,7 +648,7 @@ class AMP_Prepare_Data {
 	protected static function normalize_theme_info( $theme_object ) {
 
 		if ( empty( $theme_object ) || ! is_a( $theme_object, 'WP_Theme' ) ) {
-			return array();
+			return [];
 		}
 
 		$active_theme      = wp_get_theme();
@@ -727,9 +664,9 @@ class AMP_Prepare_Data {
 		}
 
 		$tags = $theme_object->get( 'Tags' );
-		$tags = ( ! empty( $tags ) && is_array( $tags ) ) ? $tags : array();
+		$tags = ( ! empty( $tags ) && is_array( $tags ) ) ? $tags : [];
 
-		$theme_data = array(
+		$theme_data = [
 			'name'         => $theme_object->get( 'Name' ),
 			'slug'         => $theme_object->get_stylesheet(),
 			'version'      => $theme_object->get( 'Version' ),
@@ -743,7 +680,7 @@ class AMP_Prepare_Data {
 			'author_url'   => $theme_object->get( 'AuthorURI' ),
 			'is_active'    => ( $theme_object->get_stylesheet() === $active_theme_slug ),
 			'parent_theme' => $parent_theme,
-		);
+		];
 
 		return $theme_data;
 	}
@@ -755,17 +692,17 @@ class AMP_Prepare_Data {
 	 */
 	protected static function get_errors() {
 
-		$error_data      = array();
+		$error_data      = [];
 		$amp_error_terms = get_terms(
-			array(
+			[
 				'taxonomy'        => 'amp_validation_error',
 				'hide_empty'      => true,
 				'suppress_filter' => true,
-			)
+			]
 		);
 
 		if ( empty( $amp_error_terms ) || ! is_array( $amp_error_terms ) || is_wp_error( $amp_error_terms ) ) {
-			return array();
+			return [];
 		}
 
 		$amp_error_terms = array_values( $amp_error_terms );
@@ -809,7 +746,6 @@ class AMP_Prepare_Data {
 	/**
 	 * To get amp validated URLs.
 	 *
-	 * @param int $post_id Post ID of an amp_validated_url or 0 for all.
 	 * @return array List amp validated URLs.
 	 */
 	protected static function get_amp_urls( $post_id = 0 ) {
@@ -819,7 +755,7 @@ class AMP_Prepare_Data {
 		$scannable_url_provider = new \AmpProject\AmpWP\Validation\ScannableURLProvider(
 			new \AmpProject\AmpWP\Validation\URLScanningContext(
 				100,
-				array(),
+				[],
 				false
 			)
 		);
@@ -830,27 +766,26 @@ class AMP_Prepare_Data {
 
 		if ( ! empty( $post_id ) ) {
 			$query .= ' AND ID = "' . $post_id . '"';
-		} else {
+		}else {
 			$query .= " AND post_title IN( '" . implode( '\',\'', $urls ) . "' )";
 		}
 
-		// phpcs:ignore
 		$amp_error_posts = $wpdb->get_results( $query );
 
 		// To Store all error_sources data.
-		$all_sources = array();
+		$all_sources = [];
 
 		// To store all environment data.
-		$all_amp_validated_environments = array();
+		$all_amp_validated_environments = [];
 
-		// To store all AMP validated URLs.
-		$amp_invalid_urls = array();
+		// To store all AMP validated URls
+		$amp_invalid_urls = [];
 
 		$error_data      = static::get_errors();
 		$plugin_info     = static::get_plugin_info();
 		$theme_info      = static::get_theme_info();
-		$plugin_versions = array();
-		$theme_versions  = array();
+		$plugin_versions = [];
+		$theme_versions  = [];
 
 		foreach ( $plugin_info as $item ) {
 			$plugin_versions[ $item['slug'] ] = $item['version'];
@@ -879,7 +814,7 @@ class AMP_Prepare_Data {
 			}
 
 			$post_errors_raw = json_decode( $amp_error_post->post_content, true );
-			$post_errors     = array();
+			$post_errors     = [];
 
 			if ( empty( $post_errors_raw ) ) {
 				continue;
@@ -892,15 +827,15 @@ class AMP_Prepare_Data {
 
 				$error_slug = $error_data[ $error['term_slug'] ]['error_slug'];
 
-				$sources            = ( ! empty( $error['data']['sources'] ) ) ? $error['data']['sources'] : array();
-				$post_error_sources = array();
+				$sources            = ( ! empty( $error['data']['sources'] ) ) ? $error['data']['sources'] : [];
+				$post_error_sources = [];
 
 				/**
 				 * Process each error_source of errors
 				 */
-				foreach ( $sources as $index => $source ) { // Source of each errors of the post.
+				foreach ( $sources as $index => $source ) { // Source of each errors of the post
 
-					$allowed_types  = array( 'plugin', 'theme' );
+					$allowed_types  = [ 'plugin', 'theme' ];
 					$source['type'] = ( ! empty( $source['type'] ) ) ? strtolower( trim( $source['type'] ) ) : '';
 
 					/**
@@ -938,10 +873,10 @@ class AMP_Prepare_Data {
 
 				} // Process on individual source complete.
 
-				$post_errors[] = array(
+				$post_errors[] = [
 					'error_slug' => $error_slug,
 					'sources'    => array_values( $post_error_sources ),
-				);
+				];
 			} // Process on each post is completed.
 
 			// AMP Validated environment.
@@ -962,6 +897,7 @@ class AMP_Prepare_Data {
 				if ( false !== strpos( $amp_error_post->post_title, '?s=' ) ) {
 					$object_type = 'search';
 				}
+
 			}
 
 			switch ( $object_type ) {
@@ -978,7 +914,7 @@ class AMP_Prepare_Data {
 			// Stylesheet info.
 			$stylesheet_info = static::get_stylesheet_info( $amp_error_post->ID );
 
-			$amp_invalid_urls[] = array(
+			$amp_invalid_urls[] = [
 				'url'                   => $amp_error_post->post_title,
 				'object_type'           => $object_type,
 				'object_subtype'        => $object_subtype,
@@ -987,14 +923,14 @@ class AMP_Prepare_Data {
 				'css_size_excluded'     => ( ! empty( $stylesheet_info['css_size_excluded'] ) ) ? $stylesheet_info['css_size_excluded'] : '',
 				'css_budget_percentage' => ( ! empty( $stylesheet_info['css_budget_percentage'] ) ) ? $stylesheet_info['css_budget_percentage'] : '',
 				'errors'                => $post_errors,
-			);
+			];
 		}
 
-		return array(
+		return [
 			'error_sources'              => $all_sources,
 			'amp_validated_environments' => $all_amp_validated_environments,
 			'urls'                       => $amp_invalid_urls,
-		);
+		];
 	}
 
 	/**
@@ -1011,7 +947,7 @@ class AMP_Prepare_Data {
 		$stylesheets = get_post_meta( $post_id, AMP_Validated_URL_Post_Type::STYLESHEETS_POST_META_KEY, true );
 
 		if ( empty( $stylesheets ) ) {
-			return array();
+			return [];
 		}
 
 		$stylesheets             = json_decode( $stylesheets, true );
@@ -1067,12 +1003,12 @@ class AMP_Prepare_Data {
 		}
 
 		$percentage_budget_used = ( ( $included_final_size + $excluded_final_size ) / $style_custom_cdata_spec['max_bytes'] ) * 100;
-		$response               = array(
+		$response               = [
 			'css_size_before'       => intval( $included_original_size + $excluded_original_size ),
 			'css_size_after'        => intval( $included_final_size + $excluded_final_size ),
 			'css_size_excluded'     => intval( $excluded_stylesheets ),
 			'css_budget_percentage' => round( $percentage_budget_used, 1 ),
-		);
+		];
 
 		return $response;
 
@@ -1111,7 +1047,7 @@ class AMP_Prepare_Data {
 		}
 
 		$home_url = static::get_home_url();
-		$home_url = str_replace( array( '.', '/' ), array( '\.', '\\\\{1,5}\/' ), $home_url );
+		$home_url = str_replace( [ '.', '/' ], [ '\.', '\\\\{1,5}\/' ], $home_url );
 
 		/**
 		 * Reference: https://regex101.com/r/c25pNF/1
