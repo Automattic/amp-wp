@@ -213,7 +213,7 @@ add_action(
 						} );
 
 						$('.amp-drawer__panel-body-inner').hide();
-						$('.amp-drawer--handle-type-full-width').click( function(){
+						$('.components-panel__body-toggle').click( function(){
 							$('.amp-drawer__panel-body-inner').slideToggle();
 							if ( $('.amp-drawer__panel-body').hasClass( 'is-opened' ) ) {
 								$('.amp-drawer__panel-body')
