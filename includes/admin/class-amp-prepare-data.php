@@ -81,7 +81,7 @@ add_action(
 						<div>
 							<h2>
 							<?php if ( ! empty( $post_id ) ) : ?>
-								<?php echo esc_html__( 'Send diagnostic data for ', 'amp' ); the_title( $post_id ); ?>
+								<?php echo esc_html__( 'Send diagnostic data for ', 'amp' ); echo esc_url( get_the_title( $post_id ) ); ?>
 							<?php else : ?>
 								<?php echo sprintf( 
 									esc_html__( 'Send diagnostic data for %s', 'amp' ),
