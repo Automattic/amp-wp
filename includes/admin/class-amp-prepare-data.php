@@ -113,15 +113,17 @@ add_action(
 							<a href="#" class="components-button is-primary"><?php echo esc_html__( 'Send Diagnostics', 'amp' ); ?></a>
 
 							<p id="status"></p>
+							
 							<detail>
-							<p>
-								<?php
-									esc_html_e( 'Clicking this button will return a unique ID suitable for sharing in a support forum for further guidance and information.', 'amp' );
-								?>
-							</p>
-							<ul>
-								<li><a href="https://wordpress.org/support/plugin/amp/" target="_blank"><?php esc_html_e( 'WordPress.org support forum', 'amp' ); ?></a></li>
-								<li><a href="https://github.com/ampproject/amp-wp/issues" target="_blank"><?php esc_html_e( 'GitHub issues', 'amp' ); ?></a></li>
+								<p>
+									<?php
+										esc_html_e( 'Clicking this button will return a unique ID suitable for sharing in a support forum for further guidance and information.', 'amp' );
+									?>
+								</p>
+								<ul>
+									<li><a href="https://wordpress.org/support/plugin/amp/" target="_blank"><?php esc_html_e( 'WordPress.org support forum', 'amp' ); ?></a></li>
+									<li><a href="https://github.com/ampproject/amp-wp/issues" target="_blank"><?php esc_html_e( 'GitHub issues', 'amp' ); ?></a></li>
+								</ul>
 							</detail>
 
 						</div>
