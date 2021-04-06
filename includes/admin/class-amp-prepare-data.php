@@ -13,6 +13,7 @@ add_action(
 		if ( 'amp_page_amp-support' !== $hook ) {
 			return;
 		}
+		// Google Fonts & AMP Settings
 		$f = new GoogleFonts();
 		wp_enqueue_style(
 			'amp-settings',
@@ -23,6 +24,12 @@ add_action(
 			],
 			AMP__VERSION
 		);
+
+		// CodeMirror
+		$cm_settings['codeEditor'] = wp_enqueue_code_editor( array('type' => 'application/json') );
+		wp_localize_script( 'jquery', 'cm_settings', $cm_settings );
+		wp_enqueue_script( 'wp-theme-plugin-editor' );
+		wp_enqueue_style( 'wp-codemirror' );
 	}
 );
 
@@ -60,11 +67,6 @@ add_action(
 					}
 					.amp-drawer__panel-body-inner {
 						padding-left: 2rem;
-					}
-					.amp pre {
-						overflow:auto;
-						height: 50vh;
-						max-width: 90%;
 					}
 				</style>
 				<div class="amp">
@@ -168,9 +170,10 @@ add_action(
 								<?php endif; ?>
 							</ul>
 						</summary>
-						<pre><?php
-							echo wp_json_encode( $data, JSON_PRETTY_PRINT ); ?>
-						</pre>
+
+						<textarea id="code"><?php
+							echo esc_textarea( wp_json_encode( $data, JSON_PRETTY_PRINT ) ); ?>
+						</textarea>
 
 					</div></div>
 				</div>
@@ -218,11 +221,13 @@ add_action(
 									.find('svg').css( 'transform', 'rotate(180deg)' );
 							}else {
 								$('.amp-drawer__panel-body')
-								.toggleClass( 'is-opened' )
-								.find('svg').css( 'transform', 'rotate(0deg)' );;
+									.toggleClass( 'is-opened' )
+									.find('svg').css( 'transform', 'rotate(0deg)' );;
 
 							}
 						});
+
+						wp.codeEditor.initialize( $('#code') , cm_settings );
 					} );
 				</script>
 				<?php
