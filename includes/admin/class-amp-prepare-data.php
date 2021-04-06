@@ -26,10 +26,10 @@ add_action(
 		);
 
 		// CodeMirror
-		$cm_settings['codeEditor'] = wp_enqueue_code_editor( array('type' => 'application/json') );
-		wp_localize_script( 'jquery', 'cm_settings', $cm_settings );
-		wp_enqueue_script( 'wp-theme-plugin-editor' );
-		wp_enqueue_style( 'wp-codemirror' );
+		// $cm_settings['codeEditor'] = wp_enqueue_code_editor( array('type' => 'application/json') );
+		// wp_localize_script( 'jquery', 'cm_settings', $cm_settings );
+		// wp_enqueue_script( 'wp-theme-plugin-editor' );
+		// wp_enqueue_style( 'wp-codemirror' );
 	}
 );
 
@@ -67,6 +67,11 @@ add_action(
 					}
 					.amp-drawer__panel-body-inner {
 						padding-left: 2rem;
+					}
+					#code {
+						width: 95%;
+						height: 50vh;
+						font-family: monospace;
 					}
 				</style>
 				<div class="amp">
@@ -227,7 +232,7 @@ add_action(
 							}
 						});
 
-						wp.codeEditor.initialize( $('#code') , cm_settings );
+						// wp.codeEditor.initialize( $('#code') , cm_settings );
 					} );
 				</script>
 				<?php
