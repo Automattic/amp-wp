@@ -85,7 +85,7 @@ add_action(
 							<?php else : ?>
 								<?php echo sprintf( 
 									esc_html__( 'Send diagnostic data for %s', 'amp' ),
-									' &nbsp;<a href="edit.php?post_type=amp_validated_url">' . count( $data['urls'] ) . ' ' . _n( count( $data['urls'] ), 'validated URLs:', 'validated URL.', 'amp' ) . '</a>'
+									' &nbsp;<a href="edit.php?post_type=amp_validated_url">' . count( $data['urls'] ) . ' ' . _n( count( $data['urls'] ), 'validated URL:', 'validated URLs:', 'amp' ) . '</a>'
 								); ?>
 							<?php endif; ?>
 								<svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg"><mask id="check-circle-mask" mask-type="alpha" maskUnits="userSpaceOnUse" x="2" y="2" width="21" height="21"><path fill-rule="evenodd" clip-rule="evenodd" d="M12.7537 2.60938C7.23366 2.60938 2.75366 7.08938 2.75366 12.6094C2.75366 18.1294 7.23366 22.6094 12.7537 22.6094C18.2737 22.6094 22.7537 18.1294 22.7537 12.6094C22.7537 7.08938 18.2737 2.60938 12.7537 2.60938ZM12.7537 20.6094C8.34366 20.6094 4.75366 17.0194 4.75366 12.6094C4.75366 8.19938 8.34366 4.60938 12.7537 4.60938C17.1637 4.60938 20.7537 8.19938 20.7537 12.6094C20.7537 17.0194 17.1637 20.6094 12.7537 20.6094ZM10.7537 14.7794L17.3437 8.18937L18.7537 9.60938L10.7537 17.6094L6.75366 13.6094L8.16366 12.1994L10.7537 14.7794Z" fill="white"></path></mask><g mask="url(#check-circle-mask)"><rect x="0.753662" y="0.609375" width="24" height="24" fill="#2459E7"></rect></g></svg>
