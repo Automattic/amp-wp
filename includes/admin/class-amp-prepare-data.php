@@ -102,7 +102,7 @@ add_action(
 								<?php endforeach; ?>
 							</ul>
 							<?php endif; ?>
-							<?php if ( 0 !== count( $data['urls'] ) ) :
+							<?php if ( 0 !== count( $data['urls'] ) && ! empty( $post_id ) ) :
 								// @todo php error log
 							 ?>
 							<ul>
