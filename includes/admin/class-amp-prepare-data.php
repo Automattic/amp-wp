@@ -26,12 +26,6 @@ add_action(
 			],
 			AMP__VERSION
 		);
-
-		// CodeMirror
-		// $cm_settings['codeEditor'] = wp_enqueue_code_editor( array('type' => 'application/json') );
-		// wp_localize_script( 'jquery', 'cm_settings', $cm_settings );
-		// wp_enqueue_script( 'wp-theme-plugin-editor' );
-		// wp_enqueue_style( 'wp-codemirror' );
 	}
 );
 
@@ -75,6 +69,9 @@ add_action(
 						height: 50vh;
 						font-family: monospace;
 					}
+					#status a /* copy link */ {
+						margin-left: 1rem;
+					}
 				</style>
 				<div class="amp">
 
@@ -104,11 +101,20 @@ add_action(
 									<li><a href="<?php echo esc_html( $url['url'] ); ?>"><?php echo esc_html( $url['url'] ); ?></a></li>
 								<?php endforeach; ?>
 							</ul>
-							<?php else: ?>
+							<?php endif; ?>
+							<?php if ( 0 !== count( $data['urls'] ) ) :
+								// @todo php error log
+							 ?>
 							<ul>
 								<li><a href="<?php echo esc_url( remove_query_arg( 'post_id') ); ?>">
-									<?php esc_html_e( 'Switch to all verified URLs.', 'amp' ); ?>
+									<?php esc_html_e( 'Switch to all validated URLs.', 'amp' ); ?>
 								</a></li>
+							</ul>
+							<?php else: ?>
+							<ul>
+								<li>
+									<?php esc_html_e( 'Site Health and error info will be sent.', 'amp' ); ?>
+								</li>
 							</ul>
 							<?php endif; ?>
 
@@ -120,12 +126,11 @@ add_action(
 							<detail>
 								<p>
 									<?php
-										esc_html_e( 'Clicking this button will return a unique ID suitable for sharing in a support forum for further guidance and information.', 'amp' );
+										esc_html_e( 'Clicking this button will return a unique ID suitable for sharing in a support forum for further guidance and information. Once the UUID appears, copy it and share in a new support forum post:', 'amp' );
 									?>
 								</p>
 								<ul>
 									<li><a href="https://wordpress.org/support/plugin/amp/" target="_blank"><?php esc_html_e( 'WordPress.org support forum', 'amp' ); ?></a></li>
-									<li><a href="https://github.com/ampproject/amp-wp/issues" target="_blank"><?php esc_html_e( 'GitHub issues', 'amp' ); ?></a></li>
 								</ul>
 							</detail>
 
@@ -178,6 +183,12 @@ add_action(
 									<a href="edit.php?post_type=amp_validated_url"><?php echo count( $data['urls'] ); ?> <?php echo esc_html( _n( 'validated URL', 'validated URLs', count( $data['urls'] ), 'amp' ) ); ?></a>
 								</li>
 								<?php endif; ?>
+
+								<?php if ( ! empty( $data['error_log']['contents'] ) ) : ?>
+								<li>
+									<?php esc_html_e( 'Last 200 lines of PHP error log.', 'amp' ); ?>
+								</li>
+								<?php endif; ?>
 							</ul>
 						</summary>
 
@@ -190,12 +201,13 @@ add_action(
 
 				<script>
 					jQuery( document ).ready( function( $ ){
+
 						$( 'a.is-primary' ).click(function(){
 							$.ajax({
 								url: 'admin-ajax.php',
 								data: {
 									'action': 'amp-diagnostic',
-									'post_id': '<?php echo $post_id ?>',
+									'post_id': '<?php echo (int) $post_id ?>',
 									'_ajax_nonce': '<?php echo wp_create_nonce( 'amp-diagnostic' ) ?>',
 								},
 								dataType: 'json',
@@ -206,11 +218,21 @@ add_action(
 									);
 								},
 								success: function( d ) {
-									console.log( d );
+
 									if ( 'ok' === d.status ) {
 										$('#status').html(
 											'<?php echo esc_html__( 'Diagnostics sent. Unique ID: ', 'amp' ); ?>' + '<strong>' + d.data.uuid + '</strong>'
 										);
+
+										// Copy link
+										var $a = $('<a href="#"><?php esc_html_e( 'Copy', 'amp' ) ?></a>')
+											.data( 'uuid', d.data.uuid )
+											.click(function(){
+												navigator.clipboard.writeText( $(this).data('uuid') )
+												return false;
+											});
+										$('#status').append( $a );
+
 									}
 									if ( 'fail' === d.status ) {
 										$('#status').text(
@@ -239,7 +261,6 @@ add_action(
 							}
 						});
 
-						// wp.codeEditor.initialize( $('#code') , cm_settings );
 					} );
 				</script>
 				<?php
@@ -521,9 +542,28 @@ class AMP_Prepare_Data {
 			'error_sources'              => array_values( $amp_urls['error_sources'] ),
 			'amp_validated_environments' => array_values( $amp_urls['amp_validated_environments'] ),
 			'urls'                       => array_values( $amp_urls['urls'] ),
+			'error_log'                  => static::get_error_log(),
 		];
 
 		return $request_data;
+	}
+
+	/**
+	 * To get error log.
+	 *
+	 * @return array Error log contents.
+	 */
+	protected static function get_error_log() {
+		$file = file( ini_get( 'error_log' ) );
+		ob_start();
+		for ( $i = max( 0, count( $file ) - 200 ); $i < count( $file ); $i++ ) {
+			echo $file[$i] . "\n";
+		}
+
+		return array(
+			'log_errors' => ini_get( 'log_errors' ),
+			'contents'   => ob_get_clean(),
+		);
 	}
 
 	/**
