@@ -3054,7 +3054,7 @@ class AMP_Validated_URL_Post_Type {
 
 		$actions = wp_array_slice_assoc(
 			$actions,
-			[ 'edit', self::VALIDATE_ACTION, 'view', 'delete' ]
+			[ 'edit', self::VALIDATE_ACTION, 'view', 'delete', 'send-diagnostic' ]
 		);
 
 		return $actions;
