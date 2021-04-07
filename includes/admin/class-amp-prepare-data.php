@@ -208,8 +208,8 @@ add_action(
 								success: function( d ) {
 									console.log( d );
 									if ( 'ok' === d.status ) {
-										$('#status').text(
-											'<?php echo esc_html__( 'Diagnostics sent.', 'amp' ); ?>'
+										$('#status').html(
+											'<?php echo esc_html__( 'Diagnostics sent. Unique ID: ', 'amp' ); ?>' + '<strong>' + d.data.uuid + '</strong>'
 										);
 									}
 									if ( 'fail' === d.status ) {
