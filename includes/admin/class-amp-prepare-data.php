@@ -3,6 +3,8 @@ use AmpProject\AmpWP\QueryVar;
 use AmpProject\AmpWP\Admin\GoogleFonts;
 
 define( 'AMP_SEND_DATA_SERVER_ENDPOINT', 'https://rich-torus-221321.ue.r.appspot.com' );
+// staging only
+remove_action( 'admin_notices', '_amp_incorrect_plugin_slug_admin_notice' );
 
 /**
  * Admin page styles.
@@ -110,10 +112,11 @@ add_action(
 							</ul>
 							<?php endif; ?>
 
-							<a href="#" class="components-button is-primary"><?php echo esc_html__( 'Send Diagnostics', 'amp' ); ?></a>
+							<p>
+								<a href="#" class="components-button is-primary"><?php echo esc_html__( 'Send Diagnostics', 'amp' ); ?></a>
+								<span id="status"></span>
+							</p>
 
-							<p id="status"></p>
-							
 							<detail>
 								<p>
 									<?php
