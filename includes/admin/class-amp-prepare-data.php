@@ -101,7 +101,7 @@ add_action(
 							<?php if ( ! empty( $data['urls'] ) && empty( $post_id ) ) : ?>
 							<ul>
 								<?php foreach( $data['urls'] as $url ) : ?>
-									<li><?php echo esc_html( $url['url'] ); ?></li>
+									<li><a href="<?php echo esc_html( $url['url'] ); ?>"><?php echo esc_html( $url['url'] ); ?></a></li>
 								<?php endforeach; ?>
 							</ul>
 							<?php else: ?>
@@ -223,16 +223,18 @@ add_action(
 						} );
 
 						$('.amp-drawer__panel-body-inner').hide();
+						$('.amp-drawer__panel-body')
+							.find('svg').css( 'transform', 'rotate(180deg)' );;
 						$('.components-panel__body-toggle').click( function(){
 							$('.amp-drawer__panel-body-inner').slideToggle();
 							if ( $('.amp-drawer__panel-body').hasClass( 'is-opened' ) ) {
 								$('.amp-drawer__panel-body')
 									.toggleClass( 'is-opened' )
-									.find('svg').css( 'transform', 'rotate(180deg)' );
+									.find('svg').css( 'transform', 'rotate(0deg)' );
 							}else {
 								$('.amp-drawer__panel-body')
 									.toggleClass( 'is-opened' )
-									.find('svg').css( 'transform', 'rotate(0deg)' );;
+									.find('svg').css( 'transform', 'rotate(180deg)' );;
 
 							}
 						});
