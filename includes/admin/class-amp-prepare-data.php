@@ -72,6 +72,9 @@ add_action(
 					#status a /* copy link */ {
 						margin-left: 1rem;
 					}
+					.disabled {
+						background-color: #ccc !important;
+					}
 				</style>
 				<div class="amp">
 
@@ -192,7 +195,7 @@ add_action(
 							</ul>
 						</summary>
 
-						<textarea id="code"><?php
+						<textarea id="code"><?php 
 							echo esc_textarea( wp_json_encode( $data, JSON_PRETTY_PRINT ) ); ?>
 						</textarea>
 
@@ -213,16 +216,20 @@ add_action(
 								dataType: 'json',
 								type: 'GET',
 								beforeSend: function(){
-									$('#status').html(
-										'<?php echo esc_html__( 'Sending...', 'amp' ); ?>'
-									);
+									if ( ! $('a.is-primary').hasClass( 'disabled' ) ) {
+										$('#status').html(
+											'<br/><?php echo esc_html__( 'Sending...', 'amp' ); ?>'
+										);
+										$('a.is-primary').addClass( 'disabled' );
+									}
 								},
 								success: function( d ) {
 
 									if ( 'ok' === d.status ) {
 										$('#status').html(
-											'<?php echo esc_html__( 'Diagnostics sent. Unique ID: ', 'amp' ); ?>' + '<strong>' + d.data.uuid + '</strong>'
+											'<br/><?php echo esc_html__( 'Diagnostics sent. ', 'amp' ); ?><br/>' + '<?php echo esc_html__( 'Unique ID: ', 'amp' ); ?>' + '<strong>' + d.data.uuid + '</strong>'
 										);
+										$('a.is-primary').removeClass('disabled');
 
 										// Copy link
 										var $a = $('<a href="#"><?php esc_html_e( 'Copy', 'amp' ) ?></a>')
