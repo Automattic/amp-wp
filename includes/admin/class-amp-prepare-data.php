@@ -188,7 +188,7 @@ add_action(
 
 								<?php if ( ! empty( $data['error_log']['contents'] ) ) : ?>
 								<li>
-									<?php esc_html_e( 'Last 200 lines of PHP error log.', 'amp' ); ?>
+									<?php esc_html_e( 'Last 200 lines of PHP error log', 'amp' ); ?>
 								</li>
 								<?php endif; ?>
 							</ul>
