@@ -563,8 +563,8 @@ class AMP_Prepare_Data {
 	protected static function get_error_log() {
 		$file = file( ini_get( 'error_log' ) );
 		ob_start();
-		if ( ! empty( $file ) ) {
-			for ( $i = max( 0, count( $file ) - 200 ); $i < count( $file ); $i++ ) {
+		for ( $i = max( 0, count( $file ) - 200 ); $i < count( $file ); $i++ ) {
+			if ( ! empty( $file[$i] ) ) {
 				echo $file[$i] . "\n";
 			}
 		}
