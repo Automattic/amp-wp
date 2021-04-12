@@ -106,7 +106,6 @@ add_action(
 							</ul>
 							<?php endif; ?>
 							<?php if ( 0 !== count( $data['urls'] ) && ! empty( $post_id ) ) :
-								// @todo php error log
 							 ?>
 							<ul>
 								<li><a href="<?php echo esc_url( remove_query_arg( 'post_id') ); ?>">
@@ -123,8 +122,8 @@ add_action(
 
 							<p>
 								<a href="#" class="components-button is-primary"><?php echo esc_html__( 'Send Diagnostics', 'amp' ); ?></a>
-								<span id="status"></span>
 							</p>
+							<p id="status"></p>
 
 							<detail>
 								<p>
@@ -218,7 +217,7 @@ add_action(
 								beforeSend: function(){
 									if ( ! $('a.is-primary').hasClass( 'disabled' ) ) {
 										$('#status').html(
-											'<br/><?php echo esc_html__( 'Sending...', 'amp' ); ?>'
+											'<?php echo esc_html__( 'Sending...', 'amp' ); ?>'
 										);
 										$('a.is-primary').addClass( 'disabled' );
 									}
@@ -227,7 +226,7 @@ add_action(
 
 									if ( 'ok' === d.status ) {
 										$('#status').html(
-											'<br/><?php echo esc_html__( 'Diagnostics sent. ', 'amp' ); ?><br/>' + '<?php echo esc_html__( 'Unique ID: ', 'amp' ); ?>' + '<strong>' + d.data.uuid + '</strong>'
+											'<?php echo esc_html__( 'Diagnostics sent. ', 'amp' ); ?><br/>' + '<?php echo esc_html__( 'Unique ID: ', 'amp' ); ?>' + '<strong>' + d.data.uuid + '</strong>'
 										);
 										$('a.is-primary').removeClass('disabled');
 
