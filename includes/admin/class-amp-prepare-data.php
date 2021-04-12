@@ -244,6 +244,7 @@ add_action(
 										$('#status').text(
 											'<?php echo esc_html__( 'Sending failed. Please try again.', 'amp' ); ?>'
 										);
+										$('a.is-primary').removeClass('disabled');
 									}
 								}
 							} );
