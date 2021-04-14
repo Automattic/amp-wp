@@ -224,7 +224,7 @@ add_action(
 								},
 								success: function( d ) {
 
-									if ( 'ok' === d.status ) {
+									if ( typeof d.summary === 'object' && d.summary !== null && typeof d.data === 'object' ) {
 										$('#status').html(
 											'<?php echo esc_html__( 'Diagnostics sent. ', 'amp' ); ?><br/>' + '<?php echo esc_html__( 'Unique ID: ', 'amp' ); ?>' + '<strong>' + d.data.uuid + '</strong>'
 										);
@@ -239,13 +239,18 @@ add_action(
 											});
 										$('#status').append( $a );
 
-									}
-									if ( 'fail' === d.status ) {
+									} else {
 										$('#status').text(
 											'<?php echo esc_html__( 'Sending failed. Please try again.', 'amp' ); ?>'
 										);
 										$('a.is-primary').removeClass('disabled');
 									}
+								},
+								error: function( d ) {
+									$('#status').text(
+										'<?php echo esc_html__( 'Sending failed. Please try again.', 'amp' ); ?>'
+									);
+									$('a.is-primary').removeClass('disabled');
 								}
 							} );
 							return false;
@@ -282,7 +287,7 @@ add_action(
 add_action(
 	'admin_bar_menu',
 	function( $wp_admin_bar ) {
-		if ( ! is_object( $wp_admin_bar->get_nodes()['amp'] ) ) {
+		if ( ! @ is_object( $wp_admin_bar->get_nodes()['amp'] ) ) {
 			return;
 		}
 
@@ -393,16 +398,25 @@ add_filter(
 	4
 );
 
+if ( defined( 'WP_CLI' ) && WP_CLI ) {
+	\WP_CLI::add_command( 'amp-send-data', function(){
+		$_POST['_ajax_nonce'] = wp_create_nonce( 'amp-diagnostic' );
+		do_action( 'wp_ajax_amp-diagnostic' );
+	} );
+}
+
 /**
  * AJAX responder.
  */
 add_action(
 	'wp_ajax_amp-diagnostic',
 	function() {
-
 		if (
-			! current_user_can( 'manage_options' )
-			|| ! check_ajax_referer( 'amp-diagnostic' )
+			(
+				! current_user_can( 'manage_options' )
+				|| ! check_ajax_referer( 'amp-diagnostic' )
+			)
+			&& ! defined( 'WP_CLI' )
 		) {
 			exit;
 		}
@@ -413,6 +427,8 @@ add_action(
 		// $is_print     = filter_var( get_flag_value( $assoc_args, 'print', false ), FILTER_SANITIZE_STRING );
 		// $is_synthetic = filter_var( get_flag_value( $assoc_args, 'is-synthetic', false ), FILTER_SANITIZE_STRING );
 		// $endpoint     = filter_var( get_flag_value( $assoc_args, 'endpoint', AMP_SEND_DATA_SERVER_ENDPOINT ), FILTER_SANITIZE_STRING );
+		$is_print = ( defined( 'WP_CLI' ) && WP_CLI );
+		$is_synthetic = false;
 		$endpoint = untrailingslashit( AMP_SEND_DATA_SERVER_ENDPOINT );
 		$post_id = filter_input( INPUT_GET, 'post_id', FILTER_SANITIZE_NUMBER_INT );
 
