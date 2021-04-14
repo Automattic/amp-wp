@@ -223,8 +223,7 @@ add_action(
 									}
 								},
 								success: function( d ) {
-
-									if ( typeof d.summary === 'object' && d.summary !== null && typeof d.data === 'object' ) {
+									if ( typeof d.data === 'object' ) {
 										$('#status').html(
 											'<?php echo esc_html__( 'Diagnostics sent. ', 'amp' ); ?><br/>' + '<?php echo esc_html__( 'Unique ID: ', 'amp' ); ?>' + '<strong>' + d.data.uuid + '</strong>'
 										);
@@ -468,33 +467,40 @@ add_action(
 			} else {
 				print_r( $data );
 			}
+		}
+
+		// Send data to server.
+		$response = wp_remote_post(
+			sprintf( '%s/api/v1/amp-wp/', $endpoint ),
+			[
+				'method'   => 'POST',
+				'timeout'  => 3000,
+				'body'     => $data,
+				'compress' => true,
+			]
+		);
+
+		if ( is_wp_error( $response ) ) {
+			$error_message = $response->get_error_message();
+			// WP_CLI::warning( "Something went wrong: $error_message" );
+			echo wp_json_encode(
+				array(
+					'status' => esc_html( "Something went wrong: $error_message" ),
+				)
+			);
+			exit;
 		} else {
 
-			// Send data to server.
-			$response = wp_remote_post(
-				sprintf( '%s/api/v1/amp-wp/', $endpoint ),
-				[
-					'method'   => 'POST',
-					'timeout'  => 1000,
-					'body'     => $data,
-					'compress' => true,
-				]
+			$body = json_decode( wp_remote_retrieve_body( $response ) );
+		}
+
+		if ( null === $body ) {
+			echo wp_json_encode(
+				array(
+					'status' => esc_html( "Something went wrong: " . wp_remote_retrieve_body( $response ) ),
+				)
 			);
-
-			if ( is_wp_error( $response ) ) {
-				$error_message = $response->get_error_message();
-				// WP_CLI::warning( "Something went wrong: $error_message" );
-				echo wp_json_encode(
-					array(
-						'status' => esc_html( "Something went wrong: $error_message" ),
-					)
-				);
-				exit;
-			} else {
-
-				$body = json_decode( wp_remote_retrieve_body( $response ) );
-			}
-
+			exit;
 		}
 
 		/**
@@ -518,21 +524,21 @@ add_action(
 			$plugin_count_text = $plugin_count;
 		}
 
-		$summary = [
-			'Site URL'               => AMP_Prepare_Data::get_home_url(),
-			'Plugin count'           => $plugin_count_text,
-			'Themes'                 => count( $data['themes'] ),
-			'Errors'                 => count( array_values( $data['errors'] ) ),
-			'Error Sources'          => count( array_values( $data['error_sources'] ) ),
-			'Validated URL'          => count( array_values( $data['urls'] ) ),
-			'URL Error Relationship' => count( array_values( $url_error_relationship ) ),
-		];
+		// $summary = [
+		// 	'Site URL'               => AMP_Prepare_Data::get_home_url(),
+		// 	'Plugin count'           => $plugin_count_text,
+		// 	'Themes'                 => count( $data['themes'] ),
+		// 	'Errors'                 => count( array_values( $data['errors'] ) ),
+		// 	'Error Sources'          => count( array_values( $data['error_sources'] ) ),
+		// 	'Validated URL'          => count( array_values( $data['urls'] ) ),
+		// 	'URL Error Relationship' => count( array_values( $url_error_relationship ) ),
+		// ];
 
-		if ( $is_synthetic ) {
-			$summary['Synthetic Data'] = 'Yes';
-		}
+		// if ( $is_synthetic ) {
+		// 	$summary['Synthetic Data'] = 'Yes';
+		// }
 
-		$body->summary = $summary;
+		// $body->summary = $summary;
 
 		echo wp_json_encode( $body );
 
