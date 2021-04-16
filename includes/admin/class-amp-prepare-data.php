@@ -414,9 +414,12 @@ add_filter(
 	4
 );
 
+/**
+ * `wp amp send-diagnostic` command for AJAX action 'wp_ajax_amp_diagnostic'.
+ */
 if ( defined( 'WP_CLI' ) && WP_CLI ) {
 	\WP_CLI::add_command(
-		'amp-send-data',
+		'amp send-diagnostic',
 		function() {
 			do_action( 'wp_ajax_amp_diagnostic' );
 		}
@@ -443,9 +446,14 @@ add_action(
 		$assoc_args = array();
 
 		// Command Line arguments.
-		$is_synthetic = filter_var( get_flag_value( $assoc_args, 'is-synthetic', false ), FILTER_SANITIZE_STRING );
-		$endpoint     = filter_var( get_flag_value( $assoc_args, 'endpoint', AMP_SEND_DATA_SERVER_ENDPOINT ), FILTER_SANITIZE_STRING );
-		$endpoint     = untrailingslashit( $endpoint );
+		if ( function_exists( 'get_flag_value' ) ) {
+			$is_synthetic = filter_var( get_flag_value( $assoc_args, 'is-synthetic', false ), FILTER_SANITIZE_STRING );
+			$endpoint     = filter_var( get_flag_value( $assoc_args, 'endpoint', AMP_SEND_DATA_SERVER_ENDPOINT ), FILTER_SANITIZE_STRING );
+			$endpoint     = untrailingslashit( $endpoint );
+		}else {
+			$is_synthetic = false;
+			$endpoint = untrailingslashit( AMP_SEND_DATA_SERVER_ENDPOINT );
+		}
 
 		// Post ID: amp_validated_url ID or 0 for all.
 		$post_id      = filter_input( INPUT_GET, 'post_id', FILTER_SANITIZE_NUMBER_INT );
@@ -560,7 +568,7 @@ class AMP_Prepare_Data {
 
 		return array(
 			'log_errors' => ini_get( 'log_errors' ),
-			'contents'   => str_replace( "\r", '|', $contents ),
+			'contents'   => sanitize_text_field( str_replace( "\r", '|', $contents ) ),
 		);
 	}
 
