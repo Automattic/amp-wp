@@ -560,7 +560,7 @@ class AMP_Prepare_Data {
 
 		return array(
 			'log_errors' => ini_get( 'log_errors' ),
-			'contents'   => string_replace( "\r", '|', $contents ),
+			'contents'   => str_replace( "\r", '|', $contents ),
 		);
 	}
 
