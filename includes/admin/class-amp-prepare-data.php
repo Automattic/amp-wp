@@ -415,7 +415,6 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 	\WP_CLI::add_command(
 		'amp-send-data',
 		function() {
-			$_POST['_ajax_nonce'] = wp_create_nonce( 'amp-diagnostic' );
 			do_action( 'wp_ajax_amp_diagnostic' );
 		}
 	);
@@ -440,8 +439,12 @@ add_action(
 		$args       = array();
 		$assoc_args = array();
 
-		$is_synthetic = false;
-		$endpoint     = untrailingslashit( AMP_SEND_DATA_SERVER_ENDPOINT );
+		// Command Line arguments.
+		$is_synthetic = filter_var( get_flag_value( $assoc_args, 'is-synthetic', false ), FILTER_SANITIZE_STRING );
+		$endpoint     = filter_var( get_flag_value( $assoc_args, 'endpoint', AMP_SEND_DATA_SERVER_ENDPOINT ), FILTER_SANITIZE_STRING );
+		$endpoint     = untrailingslashit( $endpoint );
+
+		// Post ID: amp_validated_url ID or 0 for all.
 		$post_id      = filter_input( INPUT_GET, 'post_id', FILTER_SANITIZE_NUMBER_INT );
 
 		$data = AMP_Prepare_Data::get_data( $post_id );
@@ -497,27 +500,6 @@ add_action(
 				)
 			);
 			exit;
-		}
-
-		/**
-		 * Prepare summary of data.
-		 */
-		$url_error_relationship = array();
-
-		foreach ( $data['urls'] as $url ) {
-			foreach ( $url['errors'] as $error ) {
-				foreach ( $error['sources'] as $source ) {
-					$url_error_relationship[] = $url['url'] . '-' . $error['error_slug'] . '-' . $source;
-				}
-			}
-		}
-
-		$plugin_count = count( $data['plugins'] );
-
-		if ( $is_synthetic ) {
-			$plugin_count_text = ( $plugin_count - 5 ) . " - Excluding common plugins of synthetic sites. ( $plugin_count - 5 )";
-		} else {
-			$plugin_count_text = $plugin_count;
 		}
 
 		echo wp_json_encode( $body );
