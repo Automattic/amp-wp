@@ -569,13 +569,13 @@ class AMP_Prepare_Data {
 
 		for ( $i = $max_lines; $i < $file_length; $i++ ) {
 			if ( ! empty( $file[ $i ] ) ) {
-				$contents .= $file[ $i ] . "\n";
+				$contents .= $file[ $i ] . "|";
 			}
 		}
 
 		return array(
 			'log_errors' => ini_get( 'log_errors' ),
-			'contents'   => $contents,
+			'contents'   => string_replace( "\r", '|', $contents ),
 		);
 	}
 
