@@ -387,6 +387,9 @@ add_filter(
 	2
 );
 
+/**
+ * Plugin row Support link.
+ */
 add_filter(
 	'plugin_row_meta',
 	function( $plugin_meta, $plugin_file, $plugin_data, $status ) {
@@ -551,7 +554,7 @@ class AMP_Prepare_Data {
 
 		for ( $i = $max_lines; $i < $file_length; $i++ ) {
 			if ( ! empty( $file[ $i ] ) ) {
-				$contents .= $file[ $i ] . "|";
+				$contents .= $file[ $i ] . '|';
 			}
 		}
 
