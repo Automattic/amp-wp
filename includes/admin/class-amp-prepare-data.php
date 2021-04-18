@@ -393,6 +393,7 @@ add_filter(
 add_filter(
 	'plugin_row_meta',
 	function( $plugin_meta, $plugin_file, $plugin_data, $status ) {
+		global $post;
 		if ( 'amp/amp.php' === $plugin_file ) {
 			$plugin_meta[] = sprintf(
 				'<a href="%s">%s</a>',
@@ -442,9 +443,9 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		$term_ids = filter_var( \WP_CLI\Utils\get_flag_value( $assoc_args, 'term_ids', false ), FILTER_SANITIZE_STRING );
 
 		$args = [
-			'urls'     => ( ! empty( $urls ) ) ? explode( ',', $urls ) : '',
-			'post_ids' => ( ! empty( $post_ids ) ) ? explode( ',', $post_ids ) : '',
-			'term_ids' => ( ! empty( $term_ids ) ) ? explode( ',', $term_ids ) : '',
+			'urls'     => ( ! empty( $urls ) ) ? explode( ',', $urls ) : [],
+			'post_ids' => ( ! empty( $post_ids ) ) ? explode( ',', $post_ids ) : [],
+			'term_ids' => ( ! empty( $term_ids ) ) ? explode( ',', $term_ids ) : [],
 		];
 
 		$amp_data_object = new AMP_Prepare_Data( $args );
@@ -557,7 +558,8 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
  */
 add_action(
 	'wp_ajax_amp_diagnostic',
-	function() {
+	function () {
+
 		if (
 			(
 				! current_user_can( 'manage_options' )
@@ -568,34 +570,30 @@ add_action(
 			exit;
 		}
 
-		$args       = array();
-		$assoc_args = array();
-
-		// Command Line arguments.
-		if ( function_exists( 'get_flag_value' ) ) {
-			$is_synthetic = filter_var( get_flag_value( $assoc_args, 'is-synthetic', false ), FILTER_SANITIZE_STRING );
-			$endpoint     = filter_var( get_flag_value( $assoc_args, 'endpoint', AMP_SEND_DATA_SERVER_ENDPOINT ), FILTER_SANITIZE_STRING );
-			$endpoint     = untrailingslashit( $endpoint );
-		}else {
-			$is_synthetic = false;
-			$endpoint = untrailingslashit( AMP_SEND_DATA_SERVER_ENDPOINT );
-		}
-
+		$endpoint     = untrailingslashit( AMP_SEND_DATA_SERVER_ENDPOINT );
+		$is_synthetic = false;
 		// Post ID: amp_validated_url ID or 0 for all.
-		$post_id      = filter_input( INPUT_GET, 'post_id', FILTER_SANITIZE_NUMBER_INT );
+		$post_id = filter_input( INPUT_GET, 'post_id', FILTER_SANITIZE_NUMBER_INT );
 
-		$data = AMP_Prepare_Data::get_data( $post_id );
+		$args = [
+			'urls'     => [],
+			'post_ids' => ( ! empty( $post_id ) ) ? [ $post_id ] : [],
+			'term_ids' => [],
+		];
+
+		$amp_data_object = new AMP_Prepare_Data( $args );
+		$data            = $amp_data_object->get_data();
+
 		$data = wp_parse_args(
 			$data,
 			array(
-				'site_url'                   => array(),
-				'site_info'                  => array(),
-				'plugins'                    => array(),
-				'themes'                     => array(),
-				'errors'                     => array(),
-				'error_sources'              => array(),
-				'amp_validated_environments' => array(),
-				'urls'                       => array(),
+				'site_url'      => array(),
+				'site_info'     => array(),
+				'plugins'       => array(),
+				'themes'        => array(),
+				'errors'        => array(),
+				'error_sources' => array(),
+				'urls'          => array(),
 			)
 		);
 
