@@ -48,7 +48,10 @@ add_action(
 			'amp-support',
 			function() {
 				$post_id = filter_input( INPUT_GET, 'post_id', FILTER_SANITIZE_NUMBER_INT );
-				$data    = AMP_Prepare_Data::get_data( $post_id );
+
+				$args            = [ 'post_ids' => $post_id ];
+				$amp_data_object = new AMP_Prepare_Data( $args );
+				$data            = $amp_data_object->get_data();
 
 				?>
 				<style>
