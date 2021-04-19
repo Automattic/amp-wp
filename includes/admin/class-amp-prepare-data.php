@@ -455,13 +455,13 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		$data            = $amp_data_object->get_data();
 
 		$data = wp_parse_args( $data, [
-			'site_url'                   => [],
-			'site_info'                  => [],
-			'plugins'                    => [],
-			'themes'                     => [],
-			'errors'                     => [],
-			'error_sources'              => [],
-			'urls'                       => [],
+			'site_url'      => [],
+			'site_info'     => [],
+			'plugins'       => [],
+			'themes'        => [],
+			'errors'        => [],
+			'error_sources' => [],
+			'urls'          => [],
 		] );
 
 		/**
@@ -717,7 +717,56 @@ class AMP_Prepare_Data {
 		}
 
 		$this->urls = array_values( array_unique( $this->urls ) );
+		$this->urls = array_map( __CLASS__ . '::normalize_url_for_storage', $this->urls );
 
+	}
+
+	/**
+	 * Normalize a URL for storage.
+	 *
+	 * The AMP query param is removed to facilitate switching between standard and transitional.
+	 * The URL scheme is also normalized to HTTPS to help with transition from HTTP to HTTPS.
+	 *
+	 *
+	 * @reference AMP_Validated_URL_Post_Type::normalize_url_for_storage
+	 *
+	 * @param string $url URL.
+	 *
+	 * @return string Normalized URL.
+	 */
+	public static function normalize_url_for_storage( $url ) {
+
+		// Only ever store the canonical version.
+		if ( ! amp_is_canonical() ) {
+			$url = amp_remove_paired_endpoint( $url );
+		}
+
+		// Remove fragment identifier in the rare case it could be provided. It is irrelevant for validation.
+		$url = strtok( $url, '#' );
+
+		// Query args to be removed from validated URLs.
+		$removable_query_vars = array_merge(
+			wp_removable_query_args(),
+			[ 'preview_id', 'preview_nonce', 'preview', QueryVar::NOAMP ]
+		);
+
+		// Normalize query args, removing all that are not recognized or which are removable.
+		$url_parts = explode( '?', $url, 2 );
+		if ( 2 === count( $url_parts ) ) {
+			$args = wp_parse_args( $url_parts[1] );
+			foreach ( $removable_query_vars as $removable_query_arg ) {
+				unset( $args[ $removable_query_arg ] );
+			}
+			$url = $url_parts[0];
+			if ( ! empty( $args ) ) {
+				$url = $url_parts[0] . '?' . build_query( $args );
+			}
+		}
+
+		// Normalize the scheme as HTTPS.
+		$url = set_url_scheme( $url, 'https' );
+
+		return $url;
 	}
 
 	/**
@@ -813,6 +862,7 @@ class AMP_Prepare_Data {
 
 		$active_plugins = array_values( array_unique( $active_plugins ) );
 		$plugin_info    = array_map( __CLASS__ . '::normalize_plugin_info', $active_plugins );
+		$plugin_info    = array_filter( $plugin_info );
 
 		return $plugin_info;
 	}
@@ -825,11 +875,8 @@ class AMP_Prepare_Data {
 	protected function get_theme_info() {
 
 		$themes   = [ wp_get_theme() ];
-		$response = [];
-
-		foreach ( $themes as $theme ) {
-			$response[] = static::normalize_theme_info( $theme );
-		}
+		$response = array_map( __CLASS__ . '::normalize_theme_info', $themes );
+		$response = array_filter( $response );
 
 		return $response;
 	}
@@ -877,6 +924,10 @@ class AMP_Prepare_Data {
 		$suppressed_plugins = ( ! empty( $amp_options['suppressed_plugins'] ) && is_array( $amp_options['suppressed_plugins'] ) ) ? $amp_options['suppressed_plugins'] : [];
 
 		$suppressed_plugin_list = array_keys( $suppressed_plugins );
+
+		if ( empty( $plugin_data['Name'] ) ) {
+			return [];
+		}
 
 		return [
 			'name'              => $plugin_data['Name'],
@@ -1205,10 +1256,12 @@ class AMP_Prepare_Data {
 				$error_source_slugs = wp_list_pluck( $error_sources, 'error_source_slug' );
 				$error_source_slugs = array_values( array_unique( $error_source_slugs ) );
 
-				$post_errors[] = [
-					'error_slug' => $error_data['error_slug'],
-					'sources'    => $error_source_slugs,
-				];
+				if ( ! empty( $error_source_slugs ) && is_array( $error_source_slugs ) ) {
+					$post_errors[] = [
+						'error_slug' => $error_data['error_slug'],
+						'sources'    => $error_source_slugs,
+					];
+				}
 
 			}
 
