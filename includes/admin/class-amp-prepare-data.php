@@ -561,11 +561,8 @@ add_action(
 	function () {
 
 		if (
-			(
-				! current_user_can( 'manage_options' )
-				|| ! check_ajax_referer( 'amp-diagnostic' )
-			)
-			&& ! defined( 'WP_CLI' )
+			! current_user_can( 'manage_options' )
+			|| ! check_ajax_referer( 'amp-diagnostic' )
 		) {
 			exit;
 		}
