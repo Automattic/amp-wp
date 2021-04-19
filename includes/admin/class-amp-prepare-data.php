@@ -429,129 +429,128 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 	 *
 	 * @return void
 	 */
-	function amp_send_diagnostic( $args = array(), $assoc_args = array() ) {
+	\WP_CLI::add_command(
+		'amp send-diagnostic',
+		function( $args = array(), $assoc_args = array() ) {
 
-		$is_print     = filter_var( \WP_CLI\Utils\get_flag_value( $assoc_args, 'print', false ), FILTER_SANITIZE_STRING );
-		$is_synthetic = filter_var( \WP_CLI\Utils\get_flag_value( $assoc_args, 'is-synthetic', false ), FILTER_SANITIZE_STRING );
-		$endpoint     = filter_var( \WP_CLI\Utils\get_flag_value( $assoc_args, 'endpoint', AMP_SEND_DATA_SERVER_ENDPOINT ), FILTER_SANITIZE_STRING );
-		$endpoint     = untrailingslashit( $endpoint );
+			$is_print     = filter_var( \WP_CLI\Utils\get_flag_value( $assoc_args, 'print', false ), FILTER_SANITIZE_STRING );
+			$is_synthetic = filter_var( \WP_CLI\Utils\get_flag_value( $assoc_args, 'is-synthetic', false ), FILTER_SANITIZE_STRING );
+			$endpoint     = filter_var( \WP_CLI\Utils\get_flag_value( $assoc_args, 'endpoint', AMP_SEND_DATA_SERVER_ENDPOINT ), FILTER_SANITIZE_STRING );
+			$endpoint     = untrailingslashit( $endpoint );
 
-		$urls     = filter_var( \WP_CLI\Utils\get_flag_value( $assoc_args, 'urls', false ), FILTER_SANITIZE_STRING );
-		$post_ids = filter_var( \WP_CLI\Utils\get_flag_value( $assoc_args, 'post_ids', false ), FILTER_SANITIZE_STRING );
-		$term_ids = filter_var( \WP_CLI\Utils\get_flag_value( $assoc_args, 'term_ids', false ), FILTER_SANITIZE_STRING );
+			$urls     = filter_var( \WP_CLI\Utils\get_flag_value( $assoc_args, 'urls', false ), FILTER_SANITIZE_STRING );
+			$post_ids = filter_var( \WP_CLI\Utils\get_flag_value( $assoc_args, 'post_ids', false ), FILTER_SANITIZE_STRING );
+			$term_ids = filter_var( \WP_CLI\Utils\get_flag_value( $assoc_args, 'term_ids', false ), FILTER_SANITIZE_STRING );
 
-		$args = array(
-			'urls'     => ( ! empty( $urls ) ) ? explode( ',', $urls ) : array(),
-			'post_ids' => ( ! empty( $post_ids ) ) ? explode( ',', $post_ids ) : array(),
-			'term_ids' => ( ! empty( $term_ids ) ) ? explode( ',', $term_ids ) : array(),
-		);
+			$args = array(
+				'urls'     => ( ! empty( $urls ) ) ? explode( ',', $urls ) : array(),
+				'post_ids' => ( ! empty( $post_ids ) ) ? explode( ',', $post_ids ) : array(),
+				'term_ids' => ( ! empty( $term_ids ) ) ? explode( ',', $term_ids ) : array(),
+			);
 
-		$amp_data_object = new AMP_Prepare_Data( $args );
-		$data            = $amp_data_object->get_data();
+			$amp_data_object = new AMP_Prepare_Data( $args );
+			$data            = $amp_data_object->get_data();
 
-		$data = wp_parse_args(
-			$data,
-			array(
-				'site_url'      => array(),
-				'site_info'     => array(),
-				'plugins'       => array(),
-				'themes'        => array(),
-				'errors'        => array(),
-				'error_sources' => array(),
-				'urls'          => array(),
-			)
-		);
-
-		/**
-		 * Modify data for synthetic sites.
-		 */
-		if ( $is_synthetic ) {
-			$data['site_info']['is_synthetic_data'] = true;
-		}
-
-		/**
-		 * Print or send AMP data.
-		 */
-		if ( $is_print ) {
-
-			// Print the data.
-			$print = strtolower( trim( $is_print ) );
-			if ( 'json' === $print ) {
-				echo wp_json_encode( $data ) . PHP_EOL;
-			} elseif ( 'json-pretty' === $print ) {
-				echo wp_json_encode( $data, JSON_PRETTY_PRINT ) . PHP_EOL;
-			} else {
-				// phpcs:ignore
-				print_r( $data );
-			}
-		} else {
-
-			// Send data to server.
-
-			$response = wp_remote_post(
-				sprintf( '%s/api/v1/amp-wp/', $endpoint ),
+			$data = wp_parse_args(
+				$data,
 				array(
-					'body'     => $data,
-					'compress' => true,
+					'site_url'      => array(),
+					'site_info'     => array(),
+					'plugins'       => array(),
+					'themes'        => array(),
+					'errors'        => array(),
+					'error_sources' => array(),
+					'urls'          => array(),
 				)
 			);
 
-			if ( is_wp_error( $response ) ) {
-				$error_message = $response->get_error_message();
-				\WP_CLI::warning( "Something went wrong: $error_message" );
-			} else {
-				$body = wp_remote_retrieve_body( $response );
-				\WP_CLI::success( $body );
+			/**
+			 * Modify data for synthetic sites.
+			 */
+			if ( $is_synthetic ) {
+				$data['site_info']['is_synthetic_data'] = true;
 			}
-		}
 
-		/**
-		 * Prepare summary of data.
-		 */
-		$url_error_relationship = array();
+			/**
+			 * Print or send AMP data.
+			 */
+			if ( $is_print ) {
 
-		foreach ( $data['urls'] as $url ) {
-			foreach ( $url['errors'] as $error ) {
-				foreach ( $error['sources'] as $source ) {
-					$url_error_relationship[] = $url['url'] . '-' . $error['error_slug'] . '-' . $source;
+				// Print the data.
+				$print = strtolower( trim( $is_print ) );
+				if ( 'json' === $print ) {
+					echo wp_json_encode( $data ) . PHP_EOL;
+				} elseif ( 'json-pretty' === $print ) {
+					echo wp_json_encode( $data, JSON_PRETTY_PRINT ) . PHP_EOL;
+				} else {
+					// phpcs:ignore
+					print_r( $data );
+				}
+			} else {
+
+				// Send data to server.
+
+				$response = wp_remote_post(
+					sprintf( '%s/api/v1/amp-wp/', $endpoint ),
+					array(
+						'body'     => $data,
+						'compress' => true,
+					)
+				);
+
+				if ( is_wp_error( $response ) ) {
+					$error_message = $response->get_error_message();
+					\WP_CLI::warning( "Something went wrong: $error_message" );
+				} else {
+					$body = wp_remote_retrieve_body( $response );
+					\WP_CLI::success( $body );
 				}
 			}
+
+			/**
+			 * Prepare summary of data.
+			 */
+			$url_error_relationship = array();
+
+			foreach ( $data['urls'] as $url ) {
+				foreach ( $url['errors'] as $error ) {
+					foreach ( $error['sources'] as $source ) {
+						$url_error_relationship[] = $url['url'] . '-' . $error['error_slug'] . '-' . $source;
+					}
+				}
+			}
+
+			$plugin_count = count( $data['plugins'] );
+
+			if ( $is_synthetic ) {
+				$plugin_count_text = ( $plugin_count - 5 ) . " - Excluding common plugins of synthetic sites. ( $plugin_count - 5 )";
+			} else {
+				$plugin_count_text = $plugin_count;
+			}
+
+			$summary = array(
+				'Site URL'               => AMP_Prepare_Data::get_home_url(),
+				'Plugin count'           => $plugin_count_text,
+				'Themes'                 => count( $data['themes'] ),
+				'Errors'                 => count( array_values( $data['errors'] ) ),
+				'Error Sources'          => count( array_values( $data['error_sources'] ) ),
+				'Validated URL'          => count( array_values( $data['urls'] ) ),
+				'URL Error Relationship' => count( array_values( $url_error_relationship ) ),
+			);
+
+			if ( $is_synthetic ) {
+				$summary['Synthetic Data'] = 'Yes';
+			}
+
+			\WP_CLI::log( sprintf( PHP_EOL . "%'=100s", '' ) );
+			\WP_CLI::log( 'Summary of AMP data' );
+			\WP_CLI::log( sprintf( "%'=100s", '' ) );
+			foreach ( $summary as $key => $value ) {
+				\WP_CLI::log( sprintf( '%-25s : %s', $key, $value ) );
+			}
+			\WP_CLI::log( sprintf( "%'=100s" . PHP_EOL, '' ) );
 		}
-
-		$plugin_count = count( $data['plugins'] );
-
-		if ( $is_synthetic ) {
-			$plugin_count_text = ( $plugin_count - 5 ) . " - Excluding common plugins of synthetic sites. ( $plugin_count - 5 )";
-		} else {
-			$plugin_count_text = $plugin_count;
-		}
-
-		$summary = array(
-			'Site URL'               => AMP_Prepare_Data::get_home_url(),
-			'Plugin count'           => $plugin_count_text,
-			'Themes'                 => count( $data['themes'] ),
-			'Errors'                 => count( array_values( $data['errors'] ) ),
-			'Error Sources'          => count( array_values( $data['error_sources'] ) ),
-			'Validated URL'          => count( array_values( $data['urls'] ) ),
-			'URL Error Relationship' => count( array_values( $url_error_relationship ) ),
-		);
-
-		if ( $is_synthetic ) {
-			$summary['Synthetic Data'] = 'Yes';
-		}
-
-		\WP_CLI::log( sprintf( PHP_EOL . "%'=100s", '' ) );
-		\WP_CLI::log( 'Summary of AMP data' );
-		\WP_CLI::log( sprintf( "%'=100s", '' ) );
-		foreach ( $summary as $key => $value ) {
-			\WP_CLI::log( sprintf( '%-25s : %s', $key, $value ) );
-		}
-		\WP_CLI::log( sprintf( "%'=100s" . PHP_EOL, '' ) );
-
-	}
-
-
-	\WP_CLI::add_command( 'amp send-diagnostic', 'amp_send_diagnostic' );
+	);
 }
 
 /**
