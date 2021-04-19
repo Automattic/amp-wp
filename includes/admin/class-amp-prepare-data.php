@@ -47,9 +47,8 @@ add_action(
 			'manage_options',
 			'amp-support',
 			function() {
-				$post_id = filter_input( INPUT_GET, 'post_id', FILTER_SANITIZE_NUMBER_INT );
-
-				$args            = [ 'post_ids' => $post_id ];
+				$post_id         = filter_input( INPUT_GET, 'post_id', FILTER_SANITIZE_NUMBER_INT );
+				$args            = array( 'post_ids' => $post_id );
 				$amp_data_object = new AMP_Prepare_Data( $args );
 				$data            = $amp_data_object->get_data();
 
@@ -418,9 +417,6 @@ add_filter(
 	4
 );
 
-/**
- * `wp amp send-diagnostic` command for AJAX action 'wp_ajax_amp_diagnostic'.
- */
 if ( defined( 'WP_CLI' ) && WP_CLI ) {
 
 	/**
@@ -431,10 +427,9 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 	 *
 	 * @throws \Exception When the AMP plugin is not active.
 	 *
-	 * @return null
-	 *
+	 * @return void
 	 */
-	function amp_send_diagnostic( $args = [], $assoc_args = [] ) {
+	function amp_send_diagnostic( $args = array(), $assoc_args = array() ) {
 
 		$is_print     = filter_var( \WP_CLI\Utils\get_flag_value( $assoc_args, 'print', false ), FILTER_SANITIZE_STRING );
 		$is_synthetic = filter_var( \WP_CLI\Utils\get_flag_value( $assoc_args, 'is-synthetic', false ), FILTER_SANITIZE_STRING );
@@ -445,24 +440,27 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		$post_ids = filter_var( \WP_CLI\Utils\get_flag_value( $assoc_args, 'post_ids', false ), FILTER_SANITIZE_STRING );
 		$term_ids = filter_var( \WP_CLI\Utils\get_flag_value( $assoc_args, 'term_ids', false ), FILTER_SANITIZE_STRING );
 
-		$args = [
-			'urls'     => ( ! empty( $urls ) ) ? explode( ',', $urls ) : [],
-			'post_ids' => ( ! empty( $post_ids ) ) ? explode( ',', $post_ids ) : [],
-			'term_ids' => ( ! empty( $term_ids ) ) ? explode( ',', $term_ids ) : [],
-		];
+		$args = array(
+			'urls'     => ( ! empty( $urls ) ) ? explode( ',', $urls ) : array(),
+			'post_ids' => ( ! empty( $post_ids ) ) ? explode( ',', $post_ids ) : array(),
+			'term_ids' => ( ! empty( $term_ids ) ) ? explode( ',', $term_ids ) : array(),
+		);
 
 		$amp_data_object = new AMP_Prepare_Data( $args );
 		$data            = $amp_data_object->get_data();
 
-		$data = wp_parse_args( $data, [
-			'site_url'      => [],
-			'site_info'     => [],
-			'plugins'       => [],
-			'themes'        => [],
-			'errors'        => [],
-			'error_sources' => [],
-			'urls'          => [],
-		] );
+		$data = wp_parse_args(
+			$data,
+			array(
+				'site_url'      => array(),
+				'site_info'     => array(),
+				'plugins'       => array(),
+				'themes'        => array(),
+				'errors'        => array(),
+				'error_sources' => array(),
+				'urls'          => array(),
+			)
+		);
 
 		/**
 		 * Modify data for synthetic sites.
@@ -483,6 +481,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			} elseif ( 'json-pretty' === $print ) {
 				echo wp_json_encode( $data, JSON_PRETTY_PRINT ) . PHP_EOL;
 			} else {
+				// phpcs:ignore
 				print_r( $data );
 			}
 		} else {
@@ -491,10 +490,10 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 
 			$response = wp_remote_post(
 				sprintf( '%s/api/v1/amp-wp/', $endpoint ),
-				[
+				array(
 					'body'     => $data,
 					'compress' => true,
-				]
+				)
 			);
 
 			if ( is_wp_error( $response ) ) {
@@ -509,7 +508,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		/**
 		 * Prepare summary of data.
 		 */
-		$url_error_relationship = [];
+		$url_error_relationship = array();
 
 		foreach ( $data['urls'] as $url ) {
 			foreach ( $url['errors'] as $error ) {
@@ -527,7 +526,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			$plugin_count_text = $plugin_count;
 		}
 
-		$summary = [
+		$summary = array(
 			'Site URL'               => AMP_Prepare_Data::get_home_url(),
 			'Plugin count'           => $plugin_count_text,
 			'Themes'                 => count( $data['themes'] ),
@@ -535,7 +534,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			'Error Sources'          => count( array_values( $data['error_sources'] ) ),
 			'Validated URL'          => count( array_values( $data['urls'] ) ),
 			'URL Error Relationship' => count( array_values( $url_error_relationship ) ),
-		];
+		);
 
 		if ( $is_synthetic ) {
 			$summary['Synthetic Data'] = 'Yes';
@@ -548,7 +547,6 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			\WP_CLI::log( sprintf( '%-25s : %s', $key, $value ) );
 		}
 		\WP_CLI::log( sprintf( "%'=100s" . PHP_EOL, '' ) );
-
 
 	}
 
@@ -578,11 +576,11 @@ add_action(
 		// Post ID: amp_validated_url ID or 0 for all.
 		$post_id = filter_input( INPUT_GET, 'post_id', FILTER_SANITIZE_NUMBER_INT );
 
-		$args = [
-			'urls'     => [],
-			'post_ids' => ( ! empty( $post_id ) ) ? [ $post_id ] : [],
-			'term_ids' => [],
-		];
+		$args = array(
+			'urls'     => array(),
+			'post_ids' => ( ! empty( $post_id ) ) ? array( $post_id ) : array(),
+			'term_ids' => array(),
+		);
 
 		$amp_data_object = new AMP_Prepare_Data( $args );
 		$data            = $amp_data_object->get_data();
@@ -657,23 +655,23 @@ class AMP_Prepare_Data {
 	 *
 	 * @var array
 	 */
-	protected $args = [];
+	protected $args = array();
 
 	/**
 	 * List of URL to send data.
 	 *
 	 * @var array
 	 */
-	protected $urls = [];
+	protected $urls = array();
 
 	/**
 	 * Constructor method.
 	 *
-	 * @param array $args
+	 * @param array $args Array of arguments. See parse_args().
 	 */
-	public function __construct( $args = [] ) {
+	public function __construct( $args = array() ) {
 
-		$this->args = ( ! empty( $args ) && is_array( $args ) ) ? $args : [];
+		$this->args = ( ! empty( $args ) && is_array( $args ) ) ? $args : array();
 
 		$this->parse_args();
 	}
@@ -727,7 +725,6 @@ class AMP_Prepare_Data {
 	 * The AMP query param is removed to facilitate switching between standard and transitional.
 	 * The URL scheme is also normalized to HTTPS to help with transition from HTTP to HTTPS.
 	 *
-	 *
 	 * @reference AMP_Validated_URL_Post_Type::normalize_url_for_storage
 	 *
 	 * @param string $url URL.
@@ -747,7 +744,7 @@ class AMP_Prepare_Data {
 		// Query args to be removed from validated URLs.
 		$removable_query_vars = array_merge(
 			wp_removable_query_args(),
-			[ 'preview_id', 'preview_nonce', 'preview', QueryVar::NOAMP ]
+			array( 'preview_id', 'preview_nonce', 'preview', QueryVar::NOAMP )
 		);
 
 		// Normalize query args, removing all that are not recognized or which are removable.
@@ -778,7 +775,7 @@ class AMP_Prepare_Data {
 
 		$amp_urls = $this->get_amp_urls();
 
-		$request_data = [
+		$request_data = array(
 			'site_url'      => static::get_home_url(),
 			'site_info'     => $this->get_site_info(),
 			'plugins'       => $this->get_plugin_info(),
@@ -787,7 +784,7 @@ class AMP_Prepare_Data {
 			'error_sources' => array_values( $amp_urls['error_sources'] ),
 			'urls'          => array_values( $amp_urls['urls'] ),
 			'error_log'     => $this->get_error_log(),
-		];
+		);
 
 		return $request_data;
 	}
@@ -809,7 +806,7 @@ class AMP_Prepare_Data {
 		$active_theme = static::normalize_theme_info( $active_theme );
 
 		$amp_settings = \AMP_Options_Manager::get_options();
-		$amp_settings = ( ! empty( $amp_settings ) && is_array( $amp_settings ) ) ? $amp_settings : [];
+		$amp_settings = ( ! empty( $amp_settings ) && is_array( $amp_settings ) ) ? $amp_settings : array();
 
 		$loopback_status = '';
 
@@ -818,7 +815,7 @@ class AMP_Prepare_Data {
 			$loopback_status = ( ! empty( $loopback_status->status ) ) ? $loopback_status->status : '';
 		}
 
-		$site_info = [
+		$site_info = array(
 			'site_url'                     => static::get_home_url(),
 			'site_title'                   => get_bloginfo( 'site_title' ),
 			'php_version'                  => phpversion(),
@@ -837,11 +834,11 @@ class AMP_Prepare_Data {
 			'amp_version'                  => ( ! empty( $amp_settings['version'] ) ) ? $amp_settings['version'] : '',
 			'amp_plugin_configured'        => ( ! empty( $amp_settings['plugin_configured'] ) ) ? true : false,
 			'amp_all_templates_supported'  => ( ! empty( $amp_settings['all_templates_supported'] ) ) ? true : false,
-			'amp_supported_post_types'     => ( ! empty( $amp_settings['supported_post_types'] ) && is_array( $amp_settings['supported_post_types'] ) ) ? $amp_settings['supported_post_types'] : [],
-			'amp_supported_templates'      => ( ! empty( $amp_settings['supported_templates'] ) && is_array( $amp_settings['supported_templates'] ) ) ? $amp_settings['supported_templates'] : [],
+			'amp_supported_post_types'     => ( ! empty( $amp_settings['supported_post_types'] ) && is_array( $amp_settings['supported_post_types'] ) ) ? $amp_settings['supported_post_types'] : array(),
+			'amp_supported_templates'      => ( ! empty( $amp_settings['supported_templates'] ) && is_array( $amp_settings['supported_templates'] ) ) ? $amp_settings['supported_templates'] : array(),
 			'amp_mobile_redirect'          => ( ! empty( $amp_settings['mobile_redirect'] ) ) ? true : false,
 			'amp_reader_theme'             => ( ! empty( $amp_settings['reader_theme'] ) ) ? $amp_settings['reader_theme'] : '',
-		];
+		);
 
 		return $site_info;
 	}
@@ -874,7 +871,7 @@ class AMP_Prepare_Data {
 	 */
 	protected function get_theme_info() {
 
-		$themes   = [ wp_get_theme() ];
+		$themes   = array( wp_get_theme() );
 		$response = array_map( __CLASS__ . '::normalize_theme_info', $themes );
 		$response = array_filter( $response );
 
@@ -891,7 +888,7 @@ class AMP_Prepare_Data {
 		$file        = file( ini_get( 'error_log' ) );
 		$max_lines   = max( 0, count( $file ) - 200 );
 		$file_length = count( $file );
-		$contents    = [];
+		$contents    = array();
 
 		for ( $i = $max_lines; $i < $file_length; $i ++ ) {
 			if ( ! empty( $file[ $i ] ) ) {
@@ -899,10 +896,10 @@ class AMP_Prepare_Data {
 			}
 		}
 
-		return [
+		return array(
 			'log_errors' => ini_get( 'log_errors' ),
 			'contents'   => implode( "\n", $contents ),
-		];
+		);
 	}
 
 	/**
@@ -921,15 +918,15 @@ class AMP_Prepare_Data {
 		$slug = $slug[0];
 
 		$amp_options        = get_option( 'amp-options' );
-		$suppressed_plugins = ( ! empty( $amp_options['suppressed_plugins'] ) && is_array( $amp_options['suppressed_plugins'] ) ) ? $amp_options['suppressed_plugins'] : [];
+		$suppressed_plugins = ( ! empty( $amp_options['suppressed_plugins'] ) && is_array( $amp_options['suppressed_plugins'] ) ) ? $amp_options['suppressed_plugins'] : array();
 
 		$suppressed_plugin_list = array_keys( $suppressed_plugins );
 
 		if ( empty( $plugin_data['Name'] ) ) {
-			return [];
+			return array();
 		}
 
-		return [
+		return array(
 			'name'              => $plugin_data['Name'],
 			'slug'              => $slug,
 			'plugin_url'        => $plugin_data['PluginURI'],
@@ -941,7 +938,7 @@ class AMP_Prepare_Data {
 			'is_active'         => is_plugin_active( $plugin_file ),
 			'is_network_active' => is_plugin_active_for_network( $plugin_file ),
 			'is_suppressed'     => in_array( $slug, $suppressed_plugin_list, true ) ? $suppressed_plugins[ $slug ]['last_version'] : '',
-		];
+		);
 
 	}
 
@@ -955,7 +952,7 @@ class AMP_Prepare_Data {
 	protected static function normalize_theme_info( $theme_object ) {
 
 		if ( empty( $theme_object ) || ! is_a( $theme_object, 'WP_Theme' ) ) {
-			return [];
+			return array();
 		}
 
 		$active_theme      = wp_get_theme();
@@ -971,9 +968,9 @@ class AMP_Prepare_Data {
 		}
 
 		$tags = $theme_object->get( 'Tags' );
-		$tags = ( ! empty( $tags ) && is_array( $tags ) ) ? $tags : [];
+		$tags = ( ! empty( $tags ) && is_array( $tags ) ) ? $tags : array();
 
-		$theme_data = [
+		$theme_data = array(
 			'name'         => $theme_object->get( 'Name' ),
 			'slug'         => $theme_object->get_stylesheet(),
 			'version'      => $theme_object->get( 'Version' ),
@@ -987,7 +984,7 @@ class AMP_Prepare_Data {
 			'author_url'   => $theme_object->get( 'AuthorURI' ),
 			'is_active'    => ( $theme_object->get_stylesheet() === $active_theme_slug ),
 			'parent_theme' => $parent_theme,
-		];
+		);
 
 		return $theme_data;
 	}
@@ -999,17 +996,17 @@ class AMP_Prepare_Data {
 	 */
 	protected static function get_errors() {
 
-		$error_data      = [];
+		$error_data      = array();
 		$amp_error_terms = get_terms(
-			[
+			array(
 				'taxonomy'        => 'amp_validation_error',
 				'hide_empty'      => true,
 				'suppress_filter' => true,
-			]
+			)
 		);
 
 		if ( empty( $amp_error_terms ) || ! is_array( $amp_error_terms ) || is_wp_error( $amp_error_terms ) ) {
-			return [];
+			return array();
 		}
 
 		$amp_error_terms = array_values( $amp_error_terms );
@@ -1046,14 +1043,15 @@ class AMP_Prepare_Data {
 	}
 
 	/**
-	 * @param $error_data
+	 * Normalize and sort errors.
 	 *
+	 * @param array $error_data Array of errors.
 	 * @return array|mixed|null
 	 */
 	protected static function normalize_error( $error_data ) {
 
 		if ( empty( $error_data ) || ! is_array( $error_data ) ) {
-			return [];
+			return array();
 		}
 
 		unset( $error_data['sources'] );
@@ -1084,11 +1082,11 @@ class AMP_Prepare_Data {
 	protected static function normalize_error_source( $source ) {
 
 		if ( empty( $source ) || ! is_array( $source ) ) {
-			return [];
+			return array();
 		}
 
-		static $plugin_versions = [];
-		static $theme_versions = [];
+		static $plugin_versions = array();
+		static $theme_versions  = array();
 
 		/**
 		 * All plugin info
@@ -1103,7 +1101,6 @@ class AMP_Prepare_Data {
 			foreach ( $plugin_list as $plugin ) {
 				$plugin_versions[ $plugin['slug'] ] = $plugin['version'];
 			}
-
 		}
 
 		/**
@@ -1118,21 +1115,20 @@ class AMP_Prepare_Data {
 					$theme_versions[ $theme->get_stylesheet() ] = $theme->get( 'Version' );
 				}
 			}
-
 		}
 
 		/**
 		 * Normalize error source.
 		 */
 
-		$allowed_types  = [ 'plugin', 'theme' ];
+		$allowed_types  = array( 'plugin', 'theme' );
 		$source['type'] = ( ! empty( $source['type'] ) ) ? strtolower( trim( $source['type'] ) ) : '';
 
 		/**
 		 * Do not include wp-core sources.
 		 */
 		if ( empty( $source['type'] ) || ! in_array( $source['type'], $allowed_types, true ) ) {
-			return [];
+			return array();
 		}
 
 		if ( 'plugin' === $source['type'] ) {
@@ -1170,10 +1166,13 @@ class AMP_Prepare_Data {
 
 		if ( ! empty( $this->urls ) && is_array( $this->urls ) ) {
 
-			$urls = array_map( function ( $url ) {
+			$urls = array_map(
+				function ( $url ) {
 
-				return "'" . esc_url_raw( $url ) . "'";
-			}, $this->urls );
+					return "'" . esc_url_raw( $url ) . "'";
+				},
+				$this->urls
+			);
 
 			$query .= ' AND post_title IN ( ' . implode( ', ', $urls ) . ' ) ';
 
@@ -1181,18 +1180,19 @@ class AMP_Prepare_Data {
 			$query .= ' LIMIT 0, 100';
 		}
 
+		// phpcs:ignore
 		$amp_error_posts  = $wpdb->get_results( $query );
-		$amp_invalid_urls = [];
+		$amp_invalid_urls = array();
 
 		/**
 		 * Error Information
 		 */
-		$error_list = [];
+		$error_list = array();
 
 		/**
 		 * Error Source information.
 		 */
-		$error_source_list = [];
+		$error_source_list = array();
 
 		/**
 		 * Post loop.
@@ -1209,7 +1209,7 @@ class AMP_Prepare_Data {
 			}
 
 			$post_errors_raw = json_decode( $amp_error_post->post_content, true );
-			$post_errors     = [];
+			$post_errors     = array();
 
 			if ( empty( $post_errors_raw ) ) {
 				continue;
@@ -1220,8 +1220,8 @@ class AMP_Prepare_Data {
 			 */
 			foreach ( $post_errors_raw as $post_error ) {
 
-				$error_data    = ( ! empty( $post_error['data'] ) && is_array( $post_error['data'] ) ) ? $post_error['data'] : [];
-				$error_sources = ( ! empty( $error_data['sources'] ) && is_array( $error_data['sources'] ) ) ? $error_data['sources'] : [];
+				$error_data    = ( ! empty( $post_error['data'] ) && is_array( $post_error['data'] ) ) ? $post_error['data'] : array();
+				$error_sources = ( ! empty( $error_data['sources'] ) && is_array( $error_data['sources'] ) ) ? $error_data['sources'] : array();
 
 				if ( empty( $error_data ) || empty( $error_sources ) ) {
 					continue;
@@ -1257,12 +1257,11 @@ class AMP_Prepare_Data {
 				$error_source_slugs = array_values( array_unique( $error_source_slugs ) );
 
 				if ( ! empty( $error_source_slugs ) && is_array( $error_source_slugs ) ) {
-					$post_errors[] = [
+					$post_errors[] = array(
 						'error_slug' => $error_data['error_slug'],
 						'sources'    => $error_source_slugs,
-					];
+					);
 				}
-
 			}
 
 			// Object information.
@@ -1291,7 +1290,7 @@ class AMP_Prepare_Data {
 			// Stylesheet info.
 			$stylesheet_info = static::get_stylesheet_info( $amp_error_post->ID );
 
-			$amp_invalid_urls[] = [
+			$amp_invalid_urls[] = array(
 				'url'                   => $amp_error_post->post_title,
 				'object_type'           => $object_type,
 				'object_subtype'        => $object_subtype,
@@ -1300,14 +1299,14 @@ class AMP_Prepare_Data {
 				'css_size_excluded'     => ( ! empty( $stylesheet_info['css_size_excluded'] ) ) ? $stylesheet_info['css_size_excluded'] : '',
 				'css_budget_percentage' => ( ! empty( $stylesheet_info['css_budget_percentage'] ) ) ? $stylesheet_info['css_budget_percentage'] : '',
 				'errors'                => $post_errors,
-			];
+			);
 		}
 
-		return [
+		return array(
 			'errors'        => $error_list,
 			'error_sources' => $error_source_list,
 			'urls'          => $amp_invalid_urls,
-		];
+		);
 
 	}
 
@@ -1325,7 +1324,7 @@ class AMP_Prepare_Data {
 		$stylesheets = get_post_meta( $post_id, \AMP_Validated_URL_Post_Type::STYLESHEETS_POST_META_KEY, true );
 
 		if ( empty( $stylesheets ) ) {
-			return [];
+			return array();
 		}
 
 		$stylesheets             = json_decode( $stylesheets, true );
@@ -1383,12 +1382,12 @@ class AMP_Prepare_Data {
 		}
 
 		$percentage_budget_used = ( ( $included_final_size + $excluded_final_size ) / $style_custom_cdata_spec['max_bytes'] ) * 100;
-		$response               = [
+		$response               = array(
 			'css_size_before'       => intval( $included_original_size + $excluded_original_size ),
 			'css_size_after'        => intval( $included_final_size + $excluded_final_size ),
 			'css_size_excluded'     => intval( $excluded_stylesheets ),
 			'css_budget_percentage' => round( $percentage_budget_used, 1 ),
-		];
+		);
 
 		return $response;
 
@@ -1427,7 +1426,7 @@ class AMP_Prepare_Data {
 		}
 
 		$home_url = static::get_home_url();
-		$home_url = str_replace( [ '.', '/' ], [ '\.', '\\\\{1,5}\/' ], $home_url );
+		$home_url = str_replace( array( '.', '/' ), array( '\.', '\\\\{1,5}\/' ), $home_url );
 
 		/**
 		 * Reference: https://regex101.com/r/c25pNF/1
