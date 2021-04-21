@@ -431,7 +431,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 	 *
 	 * @throws \Exception When the AMP plugin is not active.
 	 *
-	 * @return null
+	 * @return void
 	 */
 	function amp_send_diagnostic( $args = [], $assoc_args = [] ) {
 
