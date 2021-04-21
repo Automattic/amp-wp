@@ -8,7 +8,7 @@
 use AmpProject\AmpWP\QueryVar;
 use AmpProject\AmpWP\Admin\GoogleFonts;
 
-define( 'AMP_SEND_DATA_SERVER_ENDPOINT', 'https://rich-torus-221321.ue.r.appspot.com' );
+define( 'AMP_SEND_DATA_SERVER_ENDPOINT', 'https://insights.amp-wp.org' );
 
 /**
  * Admin page styles.
