@@ -24,10 +24,10 @@ add_action(
 		wp_enqueue_style(
 			'amp-settings',
 			amp_get_asset_url( 'css/amp-settings.css' ),
-			array(
+			[
 				$f->get_handle(),
 				'wp-components',
-			),
+			],
 			AMP__VERSION
 		);
 	}
@@ -308,27 +308,27 @@ add_action(
 
 		// Get the AMP Validated URL post ID.
 		$current_url = remove_query_arg(
-			array_merge( wp_removable_query_args(), array( QueryVar::NOAMP ) ),
+			array_merge( wp_removable_query_args(), [ QueryVar::NOAMP ] ),
 			amp_get_current_url()
 		);
 
 		$post = AMP_Validated_URL_Post_Type::get_invalid_url_post( $current_url );
 
 		$wp_admin_bar->add_node(
-			array(
+			[
 				'parent' => 'amp',
 				'title'  => __( 'Support', 'amp' ),
 				'id'     => 'amp-diagnostic',
 				'href'   => esc_url(
 					add_query_arg(
-						array(
+						[
 							'page'    => 'amp-support',
 							'post_id' => ! empty( $post ) ? $post->ID : 0,
-						),
+						],
 						admin_url( 'admin.php' )
 					)
 				),
-			)
+			]
 		);
 	},
 	102
@@ -344,10 +344,10 @@ add_filter(
 			'<a href="%s">%s</a>',
 			esc_url(
 				add_query_arg(
-					array(
+					[
 						'page'    => 'amp-support',
 						'post_id' => $post->ID,
-					),
+					],
 					admin_url( 'admin.php' )
 				)
 			),
@@ -374,10 +374,10 @@ add_filter(
 			'<a href="%s">%s</a>',
 			esc_url(
 				add_query_arg(
-					array(
+					[
 						'page'    => 'amp-support',
 						'post_id' => $post->ID,
-					),
+					],
 					admin_url( 'admin.php' )
 				)
 			),
@@ -402,10 +402,10 @@ add_filter(
 				'<a href="%s">%s</a>',
 				esc_url(
 					add_query_arg(
-						array(
+						[
 							'page'    => 'amp-support',
 							'post_id' => $post->ID,
-						),
+						],
 						admin_url( 'admin.php' )
 					)
 				),
@@ -432,7 +432,6 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 	 * @throws \Exception When the AMP plugin is not active.
 	 *
 	 * @return null
-	 *
 	 */
 	function amp_send_diagnostic( $args = [], $assoc_args = [] ) {
 
@@ -454,15 +453,18 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		$amp_data_object = new AMP_Prepare_Data( $args );
 		$data            = $amp_data_object->get_data();
 
-		$data = wp_parse_args( $data, [
-			'site_url'      => [],
-			'site_info'     => [],
-			'plugins'       => [],
-			'themes'        => [],
-			'errors'        => [],
-			'error_sources' => [],
-			'urls'          => [],
-		] );
+		$data = wp_parse_args(
+			$data,
+			[
+				'site_url'      => [],
+				'site_info'     => [],
+				'plugins'       => [],
+				'themes'        => [],
+				'errors'        => [],
+				'error_sources' => [],
+				'urls'          => [],
+			]
+		);
 
 		/**
 		 * Modify data for synthetic sites.
@@ -552,7 +554,6 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 
 	}
 
-
 	\WP_CLI::add_command( 'amp send-diagnostic', 'amp_send_diagnostic' );
 }
 
@@ -589,15 +590,15 @@ add_action(
 
 		$data = wp_parse_args(
 			$data,
-			array(
-				'site_url'      => array(),
-				'site_info'     => array(),
-				'plugins'       => array(),
-				'themes'        => array(),
-				'errors'        => array(),
-				'error_sources' => array(),
-				'urls'          => array(),
-			)
+			[
+				'site_url'      => [],
+				'site_info'     => [],
+				'plugins'       => [],
+				'themes'        => [],
+				'errors'        => [],
+				'error_sources' => [],
+				'urls'          => [],
+			]
 		);
 
 		/**
@@ -610,20 +611,20 @@ add_action(
 		// Send data to server.
 		$response = wp_remote_post(
 			sprintf( '%s/api/v1/amp-wp/', $endpoint ),
-			array(
+			[
 				'method'   => 'POST',
 				'timeout'  => 3000,
 				'body'     => $data,
 				'compress' => true,
-			)
+			]
 		);
 
 		if ( is_wp_error( $response ) ) {
 			$error_message = $response->get_error_message();
 			echo wp_json_encode(
-				array(
+				[
 					'status' => esc_html( "Something went wrong: $error_message" ),
-				)
+				]
 			);
 			exit;
 		} else {
@@ -633,9 +634,9 @@ add_action(
 
 		if ( null === $body ) {
 			echo wp_json_encode(
-				array(
+				[
 					'status' => esc_html( 'Something went wrong: ' . wp_remote_retrieve_body( $response ) ),
-				)
+				]
 			);
 			exit;
 		}
@@ -662,7 +663,7 @@ class AMP_Prepare_Data {
 	/**
 	 * List of URL to send data.
 	 *
-	 * @var array
+	 * @var string[]
 	 */
 	protected $urls = [];
 
@@ -726,7 +727,6 @@ class AMP_Prepare_Data {
 	 *
 	 * The AMP query param is removed to facilitate switching between standard and transitional.
 	 * The URL scheme is also normalized to HTTPS to help with transition from HTTP to HTTPS.
-	 *
 	 *
 	 * @reference AMP_Validated_URL_Post_Type::normalize_url_for_storage
 	 *
@@ -1088,7 +1088,7 @@ class AMP_Prepare_Data {
 		}
 
 		static $plugin_versions = [];
-		static $theme_versions = [];
+		static $theme_versions  = [];
 
 		/**
 		 * All plugin info
@@ -1103,7 +1103,6 @@ class AMP_Prepare_Data {
 			foreach ( $plugin_list as $plugin ) {
 				$plugin_versions[ $plugin['slug'] ] = $plugin['version'];
 			}
-
 		}
 
 		/**
@@ -1118,7 +1117,6 @@ class AMP_Prepare_Data {
 					$theme_versions[ $theme->get_stylesheet() ] = $theme->get( 'Version' );
 				}
 			}
-
 		}
 
 		/**
@@ -1170,10 +1168,13 @@ class AMP_Prepare_Data {
 
 		if ( ! empty( $this->urls ) && is_array( $this->urls ) ) {
 
-			$urls = array_map( function ( $url ) {
+			$urls = array_map(
+				function ( $url ) {
 
-				return "'" . esc_url_raw( $url ) . "'";
-			}, $this->urls );
+					return "'" . esc_url_raw( $url ) . "'";
+				},
+				$this->urls
+			);
 
 			$query .= ' AND post_title IN ( ' . implode( ', ', $urls ) . ' ) ';
 
@@ -1262,7 +1263,6 @@ class AMP_Prepare_Data {
 						'sources'    => $error_source_slugs,
 					];
 				}
-
 			}
 
 			// Object information.
@@ -1466,5 +1466,4 @@ class AMP_Prepare_Data {
 
 		return $hash;
 	}
-
 }
