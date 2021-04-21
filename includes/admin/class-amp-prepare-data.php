@@ -114,7 +114,7 @@ add_action(
 							<?php if ( ! empty( $data['urls'] ) && empty( $post_id ) ) : ?>
 							<ul>
 								<?php foreach ( $data['urls'] as $url ) : ?>
-									<li><a href="<?php echo esc_html( $url['url'] ); ?>"><?php echo esc_html( $url['url'] ); ?></a></li>
+									<li><a href="<?php echo esc_url( $url['url'] ); ?>"><?php echo esc_html( $url['url'] ); ?></a></li>
 								<?php endforeach; ?>
 							</ul>
 							<?php endif; ?>
