@@ -126,6 +126,7 @@ function amp_init() {
 	add_action( 'admin_init', 'AMP_Options_Manager::register_settings' );
 	add_action( 'rest_api_init', 'AMP_Options_Manager::register_settings' );
 	add_action( 'wp_loaded', 'amp_bootstrap_admin' );
+	add_action( 'wp_loaded', 'amp_bootstrap_support' );
 
 	add_action( 'admin_bar_menu', 'amp_add_admin_bar_view_link', 100 );
 
