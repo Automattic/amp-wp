@@ -251,7 +251,6 @@ if ( 'amp' !== basename( AMP__DIR__ ) ) {
 }
 
 require_once AMP__DIR__ . '/vendor/autoload.php';
-require_once AMP__DIR__ . '/includes/admin/class-amp-prepare-data.php';
 
 register_activation_hook( __FILE__, 'amp_activate' );
 
