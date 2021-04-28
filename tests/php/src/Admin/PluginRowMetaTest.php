@@ -86,5 +86,36 @@ class PluginRowMetaTest extends WP_UnitTestCase {
 		);
 
 		$this->assertEquals( $expected_meta, $this->instance->get_plugin_row_meta( $initial_meta, 'amp/amp.php' ) );
+
+		$admin_support = new AMP_Admin_Support();
+		$admin_support->init();
+
+		$expected_meta = array_merge(
+			$initial_meta,
+			sprintf(
+				'<a href="%s">%s</a>',
+				esc_url(
+					add_query_arg(
+						[
+							'page'    => 'amp-support',
+							'post_id' => 0,
+						],
+						admin_url( 'admin.php' )
+					)
+				),
+				esc_html__( 'Contact support', 'amp' )
+			)
+		);
+
+		$this->assertEquals(
+			$expected_meta,
+			$admin_support->plugin_row_meta(
+				$initial_meta,
+				'amp/amp.php',
+				array(),
+				''
+			)
+		);
+
 	}
 }
