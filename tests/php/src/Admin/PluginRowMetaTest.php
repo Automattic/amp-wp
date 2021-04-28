@@ -92,19 +92,21 @@ class PluginRowMetaTest extends WP_UnitTestCase {
 
 		$expected_meta = array_merge(
 			$initial_meta,
-			sprintf(
-				'<a href="%s">%s</a>',
-				esc_url(
-					add_query_arg(
-						[
-							'page'    => 'amp-support',
-							'post_id' => 0,
-						],
-						admin_url( 'admin.php' )
-					)
-				),
-				esc_html__( 'Contact support', 'amp' )
-			)
+			[
+				sprintf(
+					'<a href="%s">%s</a>',
+					esc_url(
+						add_query_arg(
+							[
+								'page'    => 'amp-support',
+								'post_id' => 0,
+							],
+							admin_url( 'admin.php' )
+						)
+					),
+					esc_html__( 'Contact support', 'amp' )
+				)
+			]
 		);
 
 		$this->assertEquals(
