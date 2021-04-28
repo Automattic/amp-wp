@@ -585,7 +585,7 @@ class AMP_Admin_Support {
 						admin_url( 'admin.php' )
 					)
 				),
-				esc_html__( 'Support', 'amp' )
+				esc_html__( 'Contact support', 'amp' )
 			);
 		}
 		return $plugin_meta;
