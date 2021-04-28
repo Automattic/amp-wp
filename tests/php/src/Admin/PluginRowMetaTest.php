@@ -87,7 +87,7 @@ class PluginRowMetaTest extends WP_UnitTestCase {
 
 		$this->assertEquals( $expected_meta, $this->instance->get_plugin_row_meta( $initial_meta, 'amp/amp.php' ) );
 
-		$admin_support = new AMP_Admin_Support();
+		$admin_support = new \AMP_Admin_Support();
 		$admin_support->init();
 
 		$expected_meta = array_merge(
@@ -112,7 +112,7 @@ class PluginRowMetaTest extends WP_UnitTestCase {
 			$admin_support->plugin_row_meta(
 				$initial_meta,
 				'amp/amp.php',
-				array(),
+				[],
 				''
 			)
 		);
