@@ -80,11 +80,9 @@ class AMP_Admin_Support {
 	public function amp_diagnostic() {
 
 		if (
-			(
-				! current_user_can( 'manage_options' )
-				|| ! check_ajax_referer( 'amp-diagnostic' )
-			)
-			&& ! defined( 'WP_CLI' )
+			! current_user_can( 'manage_options' )
+			|| ! check_ajax_referer( 'amp-diagnostic' )
+
 		) {
 			exit;
 		}
@@ -577,7 +575,7 @@ class AMP_Admin_Support {
 					add_query_arg(
 						[
 							'page'    => 'amp-support',
-							'post_id' => $post->ID,
+							'post_id' => 0,
 						],
 						admin_url( 'admin.php' )
 					)
