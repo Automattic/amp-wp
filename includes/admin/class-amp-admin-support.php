@@ -223,6 +223,11 @@ class AMP_Admin_Support {
 				list-style-type: disc;
 				margin-left: 20px;
 			}
+			.amp h2 a {
+				display:inline-block;
+				width: auto;
+				white-space: nowrap;
+			}
 			.amp a.is-primary {
 				margin-top:0 !important;
 			}
