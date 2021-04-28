@@ -105,7 +105,7 @@ class PluginRowMetaTest extends WP_UnitTestCase {
 						)
 					),
 					esc_html__( 'Contact support', 'amp' )
-				)
+				),
 			]
 		);
 
