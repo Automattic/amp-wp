@@ -42,6 +42,7 @@ class AMP_Admin_Support {
 	public function init() {
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_assets' ] );
 		add_action( 'admin_menu', [ $this, 'admin_menu' ] );
+
 		/**
 		 * AJAX responder.
 		 */
@@ -65,7 +66,7 @@ class AMP_Admin_Support {
 		/**
 		 * Plugin row Support link.
 		 */
-		add_filter( 'plugin_row_meta', [ $this, 'plugin_row_meta' ], 10, 4 );
+		add_filter( 'plugin_row_meta', [ $this, 'plugin_row_meta' ], 10, 2 );
 	}
 
 	/**
@@ -234,7 +235,10 @@ class AMP_Admin_Support {
 			.amp .settings-welcome h3 {
 				margin-top: 2rem !important;
 			}
-			.amp .settings-welcome detail p {
+			.amp .settings-welcome .selectable {
+				align-items: start;
+			}
+			.amp .settings-welcome .detail p {
 				margin-top: 1rem !important;
 			}
 			.amp-drawer__panel-body-inner {
@@ -245,7 +249,9 @@ class AMP_Admin_Support {
 				height: 50vh;
 				font-family: monospace;
 			}
-			#status a /* copy link */ {
+
+			/* copy link */
+			#status a {
 				margin-left: 1rem;
 			}
 			.disabled {
@@ -254,7 +260,7 @@ class AMP_Admin_Support {
 		</style>
 		<div class="amp">
 
-		<h2><?php echo esc_html__( 'AMP Support', 'amp' ); ?></h2>
+		<h2><?php esc_html_e( 'AMP Support', 'amp' ); ?></h2>
 
 		<div class="settings-welcome">
 			<div class="selectable selectable--left">
@@ -265,7 +271,7 @@ class AMP_Admin_Support {
 					<h2>
 						<?php if ( ! empty( $post_id ) ) : ?>
 							<?php
-							echo esc_html__( 'Send diagnostic data for ', 'amp' );
+							esc_html_e( 'Send diagnostic data for ', 'amp' );
 							echo esc_url( get_the_title( $post_id ) );
 							?>
 						<?php else : ?>
@@ -304,7 +310,7 @@ class AMP_Admin_Support {
 					<?php endif; ?>
 
 					<p>
-						<a href="#" class="components-button is-primary"><?php echo esc_html__( 'Send Diagnostics', 'amp' ); ?></a>
+						<a href="#" class="components-button is-primary"><?php esc_html_e( 'Send Diagnostics', 'amp' ); ?></a>
 					</p>
 					<p id="status"></p>
 
@@ -338,7 +344,6 @@ class AMP_Admin_Support {
 						<h4><?php echo esc_html__( 'The following data will be sent:', 'amp' ); ?></h4>
 
 						<ul id="data">
-
 							<?php if ( isset( $data['site_info'] ) ) : ?>
 								<li>
 									<a href="site-health.php"><?php esc_html_e( 'Site Health info', 'amp' ); ?></a>
@@ -441,8 +446,7 @@ class AMP_Admin_Support {
 				} );
 
 				$('.amp-drawer__panel-body-inner').hide();
-				$('.amp-drawer__panel-body')
-					.find('svg').css( 'transform', 'rotate(180deg)' );;
+				$('.amp-drawer__panel-body').find('svg').css( 'transform', 'rotate(180deg)' );
 				$('.components-panel__body-toggle').click( function(){
 					$('.amp-drawer__panel-body-inner').slideToggle();
 					if ( $('.amp-drawer__panel-body').hasClass( 'is-opened' ) ) {
@@ -452,7 +456,7 @@ class AMP_Admin_Support {
 					}else {
 						$('.amp-drawer__panel-body')
 							.toggleClass( 'is-opened' )
-							.find('svg').css( 'transform', 'rotate(180deg)' );;
+							.find('svg').css( 'transform', 'rotate(180deg)' );
 
 					}
 				});
@@ -565,14 +569,11 @@ class AMP_Admin_Support {
 	 *
 	 * @param string[] $plugin_meta An array of the plugin's metadata, including the version, author, author URI, and plugin URI.
 	 * @param string   $plugin_file Path to the plugin file relative to the plugins directory.
-	 * @param array    $plugin_data An array of plugin data.
-	 * @param string   $status Status filter currently applied to the plugin list.
-	 *                         Possible values are: 'all', 'active', 'inactive', 'recently_activated', 'upgrade', 'mustuse',
-	 *                         'dropins', 'search', 'paused', 'auto-update-enabled', 'auto-update-disabled'.
+	 *
 	 * @return string[] Filtered array of plugin's metadata.
 	 */
-	public function plugin_row_meta( $plugin_meta, $plugin_file, $plugin_data, $status ) {
-		global $post;
+	public function plugin_row_meta( $plugin_meta, $plugin_file ) {
+
 		if ( 'amp/amp.php' === $plugin_file ) {
 			$plugin_meta[] = sprintf(
 				'<a href="%s">%s</a>',
