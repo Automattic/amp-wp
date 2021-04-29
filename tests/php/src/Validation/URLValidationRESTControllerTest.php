@@ -206,6 +206,7 @@ class URLValidationRESTControllerTest extends WP_UnitTestCase {
 				[
 					'results',
 					'review_link',
+					'support_link',
 				],
 				array_keys( $data )
 			);
@@ -248,6 +249,7 @@ class URLValidationRESTControllerTest extends WP_UnitTestCase {
 			[
 				'results',
 				'review_link',
+				'support_link',
 			],
 			array_keys( $schema['properties'] )
 		);
