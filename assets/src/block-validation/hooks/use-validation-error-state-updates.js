@@ -75,6 +75,7 @@ export function useValidationErrorStateUpdates() {
 		setIsFetchingErrors,
 		setFetchingErrorsRequestErrorMessage,
 		setReviewLink,
+		setSupportLink,
 		setValidationErrors,
 	} = useDispatch( BLOCK_VALIDATION_STORE_KEY );
 
@@ -181,6 +182,7 @@ export function useValidationErrorStateUpdates() {
 			.then( ( newValidation ) => {
 				setValidationErrors( newValidation.results );
 				setReviewLink( newValidation.review_link );
+				setSupportLink( newValidation.support_link );
 			} )
 			.catch( ( error ) => {
 				setFetchingErrorsRequestErrorMessage( error?.message || __( 'Whoops! Something went wrong.', 'amp' ) );
