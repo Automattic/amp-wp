@@ -265,7 +265,7 @@ final class URLValidationRESTController extends WP_REST_Controller implements De
 			'title'      => 'amp-wp-url-validation',
 			'type'       => 'object',
 			'properties' => [
-				'results'     => [
+				'results'      => [
 					'description' => __( 'Validation errors for the post.', 'amp' ),
 					'readonly'    => true,
 					'type'        => 'array',
@@ -313,7 +313,7 @@ final class URLValidationRESTController extends WP_REST_Controller implements De
 						],
 					],
 				],
-				'review_link' => [
+				'review_link'  => [
 					'description' => __( 'The URL where validation errors can be reviewed.', 'amp' ),
 					'readonly'    => true,
 					'type'        => 'string',
