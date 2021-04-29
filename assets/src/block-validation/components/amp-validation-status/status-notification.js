@@ -95,7 +95,8 @@ export default function AMPValidationStatusNotification() {
 						<ExternalLink href={ reviewLink }>
 							{ __( 'View technical details', 'amp' ) }
 						</ExternalLink>
-						<br/><br/>
+						<br />
+						<br />
 						<ExternalLink href={ supportLink }>
 							{ __( 'Get Support', 'amp' ) }
 						</ExternalLink>
@@ -127,7 +128,8 @@ export default function AMPValidationStatusNotification() {
 						<ExternalLink href={ reviewLink }>
 							{ __( 'View technical details', 'amp' ) }
 						</ExternalLink>
-						<br/><br/>
+						<br />
+						<br />
 						<ExternalLink href={ supportLink }>
 							{ __( 'Get Support', 'amp' ) }
 						</ExternalLink>
@@ -158,7 +160,8 @@ export default function AMPValidationStatusNotification() {
 					<ExternalLink href={ reviewLink }>
 						{ __( 'View technical details', 'amp' ) }
 					</ExternalLink>
-					<br/><br/>
+					<br />
+					<br />
 					<ExternalLink href={ supportLink }>
 						{ __( 'Get Support', 'amp' ) }
 					</ExternalLink>

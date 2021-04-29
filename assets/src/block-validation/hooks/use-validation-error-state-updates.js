@@ -190,7 +190,7 @@ export function useValidationErrorStateUpdates() {
 			.finally( () => {
 				setIsFetchingErrors( false );
 			} );
-	}, [ currentPostId, getClientIdsWithDescendants, hasRequestedPreview, isSavingPost, previewLink, setFetchingErrorsRequestErrorMessage, setIsFetchingErrors, setReviewLink, setValidationErrors, shouldValidate ] );
+	}, [ currentPostId, getClientIdsWithDescendants, hasRequestedPreview, isSavingPost, previewLink, setFetchingErrorsRequestErrorMessage, setIsFetchingErrors, setReviewLink, setSupportLink, setValidationErrors, shouldValidate ] );
 
 	/**
 	 * Runs an equality check when validation errors are received before running
