@@ -23,7 +23,7 @@ class AMP_Prepare_Data {
 	 *
 	 * @var array
 	 */
-	protected $args = [];
+	public $args = [];
 
 	/**
 	 * List of URL to send data.
@@ -32,7 +32,7 @@ class AMP_Prepare_Data {
 	 *
 	 * @var string[]
 	 */
-	protected $urls = [];
+	public $urls = [];
 
 	/**
 	 * Constructor method.
@@ -55,7 +55,7 @@ class AMP_Prepare_Data {
 	 *
 	 * @return void
 	 */
-	protected function parse_args() {
+	public function parse_args() {
 
 		if ( ! empty( $this->args['urls'] ) && is_array( $this->args['urls'] ) ) {
 			$this->urls = array_merge( $this->urls, $this->args['urls'] );
