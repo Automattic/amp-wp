@@ -5,6 +5,8 @@
  * @package AMP
  */
 
+use AmpProject\AmpWP\QueryVar;
+
 /**
  * Test AMP_Prepare_Data.
  *
@@ -58,7 +60,7 @@ class AMP_Prepare_Data_Test extends WP_UnitTestCase {
 		$term = wp_insert_term( 'test', 'category' );
 
 		$expected = [
-			'urls' => [
+			'urls'     => [
 				\AMP_Prepare_Data::normalize_url_for_storage(
 					get_term_link( $term['term_id'] )
 				),
@@ -76,7 +78,7 @@ class AMP_Prepare_Data_Test extends WP_UnitTestCase {
 		);
 
 		// If valid post IDs, permalinks should be added to URLs.
-		$p = wp_insert_post(
+		$post_id = wp_insert_post(
 			[
 				'post_title'  => 'test',
 				'post_status' => 'publish',
@@ -84,13 +86,13 @@ class AMP_Prepare_Data_Test extends WP_UnitTestCase {
 		);
 
 		$expected = [
-			'urls' => [
+			'urls'     => [
 				\AMP_Prepare_Data::normalize_url_for_storage(
-					get_permalink( $p->ID )
+					get_permalink( $post_id )
 				),
 			],
 			'post_ids' => [
-				$p->ID,
+				$post_id,
 			],
 		];
 
@@ -99,6 +101,28 @@ class AMP_Prepare_Data_Test extends WP_UnitTestCase {
 		$this->assertSame(
 			$expected['urls'],
 			$prepare_data->urls
+		);
+	}
+
+	/**
+	 * Test normalize_url_for_storage method.
+	 *
+	 * @covers \AMP_Prepare_Data::normalize_url_for_storage()
+	 */
+	public function test_normalize_url_for_storage() {
+		$url_not_normalized = add_query_arg(
+			[
+				QueryVar::NOAMP => '',
+				'preview_id'    => 123,
+			],
+			'http://google.com/#anchor'
+		);
+
+		$this->assertSame(
+			'https://google.com/',
+			\AMP_Prepare_Data::normalize_url_for_storage(
+				$url_not_normalized
+			)
 		);
 	}
 }

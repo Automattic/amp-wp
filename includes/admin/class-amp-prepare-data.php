@@ -88,8 +88,8 @@ class AMP_Prepare_Data {
 			}
 		}
 
-		$this->urls = array_values( array_unique( $this->urls ) );
 		$this->urls = array_map( __CLASS__ . '::normalize_url_for_storage', $this->urls );
+		$this->urls = array_values( array_unique( $this->urls ) );
 
 	}
 
