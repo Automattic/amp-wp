@@ -174,7 +174,7 @@ class AMP_Prepare_Data {
 	 *
 	 * @return array Site information.
 	 */
-	protected function get_site_info() {
+	public function get_site_info() {
 
 		$wp_type = 'single';
 
@@ -230,7 +230,7 @@ class AMP_Prepare_Data {
 	 *
 	 * @return array List of plugin detail.
 	 */
-	protected function get_plugin_info() {
+	public function get_plugin_info() {
 
 		$active_plugins = get_option( 'active_plugins' );
 
@@ -253,7 +253,7 @@ class AMP_Prepare_Data {
 	 *
 	 * @return array List of theme information.
 	 */
-	protected function get_theme_info() {
+	public function get_theme_info() {
 
 		$themes   = [ wp_get_theme() ];
 		$response = array_map( __CLASS__ . '::normalize_theme_info', $themes );
@@ -269,9 +269,18 @@ class AMP_Prepare_Data {
 	 *
 	 * @return array Error log contents and log_errors ini setting.
 	 */
-	protected function get_error_log() {
+	public function get_error_log() {
 
-		$file        = file( ini_get( 'error_log' ) );
+		$error_log_path = ini_get( 'error_log' );
+
+		if ( empty( $error_log_path ) || ! file_exists( $error_log_path ) ) {
+			return [
+				'log_errors' => ini_get( 'log_errors' ),
+				'contents'   => '',
+			];
+		}
+
+		$file        = file( $error_log_path );
 		$max_lines   = max( 0, count( $file ) - 200 );
 		$file_length = count( $file );
 		$contents    = [];

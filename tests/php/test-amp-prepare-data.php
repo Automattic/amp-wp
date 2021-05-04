@@ -125,4 +125,106 @@ class AMP_Prepare_Data_Test extends WP_UnitTestCase {
 			)
 		);
 	}
+
+	/**
+	 * Test get_data method.
+	 *
+	 * @covers \AMP_Prepare_Data::get_data()
+	 */
+	public function test_get_data() {
+		$this->populate_validation_errors(
+			home_url( '/' ),
+			[ 'amp' ]
+		);
+
+		$pd = new \AMP_Prepare_Data();
+
+		$data = $pd->get_data();
+
+		$this->assertSame(
+			\AMP_Prepare_Data::get_home_url(),
+			$data['site_url']
+		);
+		$this->assertSame(
+			$pd->get_site_info(),
+			$data['site_info']
+		);
+		$this->assertSame(
+			$pd->get_plugin_info(),
+			$data['plugins']
+		);
+		$this->assertSame(
+			$pd->get_theme_info(),
+			$data['themes']
+		);
+		$this->assertSame(
+			'bad',
+			$data['errors'][0]['code']
+		);
+		$this->assertTrue(
+			! empty( $data['errors'][0]['error_slug'] )
+		);
+		$this->assertSame(
+			$data['error_sources'][0]['error_slug'],
+			$data['errors'][0]['error_slug']
+		);
+		$this->assertSame(
+			'amp',
+			$data['error_sources'][0]['name']
+		);
+		$this->assertSame(
+			'plugin',
+			$data['error_sources'][0]['type']
+		);
+		$this->assertSame(
+			\AMP_Prepare_Data::normalize_url_for_storage(
+				home_url( '/' )
+			),
+			$data['urls'][0]['url']
+		);
+		$this->assertSame(
+			1,
+			count( $data['urls'][0]['errors'] )
+		);
+		$this->assertTrue(
+			is_array( $data['error_log'] )
+		);
+		$this->assertTrue(
+			empty( $data['error_log']['contents'] )
+		);
+	}
+
+	/**
+	 * Populate sample validation errors.
+	 *
+	 * @param string   $url               URL to populate errors for. Defaults to the home URL.
+	 * @param string[] $plugin_file_slugs Plugin file slugs.
+	 * @return int ID for amp_validated_url post.
+	 */
+	private function populate_validation_errors( $url, $plugin_file_slugs ) {
+		if ( ! $url ) {
+			$url = home_url( '/' );
+		}
+
+		$errors = array_map(
+			static function ( $plugin_file_slug ) {
+				return [
+					'code'    => 'bad',
+					'sources' => [
+						[
+							'type' => 'plugin',
+							'name' => $plugin_file_slug,
+						],
+					],
+				];
+			},
+			$plugin_file_slugs
+		);
+
+		$r = AMP_Validated_URL_Post_Type::store_validation_errors( $errors, $url );
+		if ( is_wp_error( $r ) ) {
+			throw new Exception( $r->get_error_message() );
+		}
+		return $r;
+	}
 }
