@@ -309,6 +309,9 @@ class AMP_Prepare_Data {
 	protected static function normalize_plugin_info( $plugin_file ) {
 
 		$absolute_plugin_file = WP_PLUGIN_DIR . DIRECTORY_SEPARATOR . $plugin_file;
+		if ( ! file_exists( $absolute_plugin_file ) ) {
+			return [];
+		}
 		$plugin_data          = get_plugin_data( $absolute_plugin_file );
 
 		$slug = explode( '/', $plugin_file );
