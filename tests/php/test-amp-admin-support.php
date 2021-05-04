@@ -52,7 +52,7 @@ class AMP_Admin_Support_Test extends WP_UnitTestCase {
 		);
 		$this->assertEquals(
 			10,
-			has_action( 'wp_ajax_amp_diagnostic', [ $this->instance, 'amp_diagnostic' ] )
+			has_action( 'wp_ajax_amp_diagnostic', [ $this->instance, 'wp_ajax_amp_diagnostic' ] )
 		);
 		$this->assertEquals(
 			102,
@@ -78,8 +78,6 @@ class AMP_Admin_Support_Test extends WP_UnitTestCase {
 	 * @covers ::wp_ajax_amp_diagnostic()
 	 */
 	public function test_wp_ajax_amp_diagnostic() {
-		$_POST['_ajax_nonce'] = wp_create_nonce( 'amp-diagnostic' );
-
 		$sending = $this->instance->wp_ajax_amp_diagnostic();
 
 		$args = [

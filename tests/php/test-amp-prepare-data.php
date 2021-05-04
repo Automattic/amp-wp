@@ -354,12 +354,11 @@ class AMP_Prepare_Data_Test extends WP_UnitTestCase {
 	 * @covers ::get_error_log()
 	 */
 	public function test_get_error_log() {
-		error_log( 'Test error.' ); // phpcs:ignore
-
 		$pd             = new \AMP_Prepare_Data();
 		$log            = $pd->get_error_log();
 		$error_log_path = ini_get( 'error_log' );
 
+		// Cannot test error_log() contents within phpunit, as error log is output to console.
 		if ( empty( $error_log_path ) || ! file_exists( $error_log_path ) ) {
 			$this->assertSame(
 				$log,
@@ -367,10 +366,6 @@ class AMP_Prepare_Data_Test extends WP_UnitTestCase {
 					'log_errors' => ini_get( 'log_errors' ),
 					'contents'   => '',
 				]
-			);
-		} else {
-			$this->assertTrue(
-				false !== strpos( $log['contents'], 'Test error.' )
 			);
 		}
 	}
@@ -388,7 +383,8 @@ class AMP_Prepare_Data_Test extends WP_UnitTestCase {
 			$pd->normalize_plugin_info( 'not-a-plugin/plugin.php' )
 		);
 
-		$amp = $pd->normalize_plugin_info( 'amp/amp.php' );
+		$plugin_file = 'amp/amp.php';
+		$amp         = $pd->normalize_plugin_info( $plugin_file );
 
 		$this->assertNotEmpty( $amp['name'] );
 		$this->assertNotEmpty( $amp['slug'] );
@@ -399,8 +395,14 @@ class AMP_Prepare_Data_Test extends WP_UnitTestCase {
 		$this->assertNotEmpty( $amp['author_url'] );
 		$this->assertNotEmpty( $amp['requires_wp'] );
 		$this->assertNotEmpty( $amp['requires_php'] );
-		$this->assertNotEmpty( $amp['is_active'] );
-		$this->assertNotEmpty( $amp['is_network_active'] );
+		$this->assertSame(
+			$amp['is_active'],
+			is_plugin_active( $plugin_file )
+		);
+		$this->assertSame(
+			$amp['is_network_active'],
+			is_plugin_active_for_network( $plugin_file )
+		);
 		$this->assertEmpty( $amp['is_suppressed'] );
 
 	}

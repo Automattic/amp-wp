@@ -81,8 +81,11 @@ class AMP_Admin_Support {
 	public function wp_ajax_amp_diagnostic() {
 
 		if (
-			! current_user_can( 'manage_options' )
-			|| ! check_ajax_referer( 'amp-diagnostic' )
+			(
+				! current_user_can( 'manage_options' )
+				|| ! check_ajax_referer( 'amp-diagnostic' )
+			)
+			&& ! defined( 'TESTS_PLUGIN_DIR' ) // @see tests/php/bootstrap.php
 		) {
 			exit;
 		}
