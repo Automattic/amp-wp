@@ -376,6 +376,36 @@ class AMP_Prepare_Data_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test normalize_plugin_info method.
+	 *
+	 * @covers ::normalize_plugin_info()
+	 */
+	public function test_normalize_plugin_info() {
+		$pd = new \AMP_Prepare_Data();
+
+		$this->assertSame(
+			[],
+			$pd->normalize_plugin_info( 'not-a-plugin/plugin.php' )
+		);
+
+		$amp = $pd->normalize_plugin_info( 'amp/amp.php' );
+
+		$this->assertNotEmpty( $amp['name'] );
+		$this->assertNotEmpty( $amp['slug'] );
+		$this->assertSame( 'amp', $amp['slug'] );
+		$this->assertNotEmpty( $amp['plugin_url'] );
+		$this->assertNotEmpty( $amp['version'] );
+		$this->assertNotEmpty( $amp['author'] );
+		$this->assertNotEmpty( $amp['author_url'] );
+		$this->assertNotEmpty( $amp['requires_wp'] );
+		$this->assertNotEmpty( $amp['requires_php'] );
+		$this->assertNotEmpty( $amp['is_active'] );
+		$this->assertNotEmpty( $amp['is_network_active'] );
+		$this->assertEmpty( $amp['is_suppressed'] );
+
+	}
+
+	/**
 	 * Populate sample validation errors.
 	 *
 	 * @param string   $url               URL to populate errors for. Defaults to the home URL.
