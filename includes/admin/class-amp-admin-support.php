@@ -232,7 +232,21 @@ class AMP_Admin_Support {
 	public function support_page() {
 		$post_id = filter_input( INPUT_GET, 'post_id', FILTER_SANITIZE_NUMBER_INT );
 
-		$args            = [ 'post_ids' => $post_id ];
+		if ( empty( $post_id ) ) {
+			$scannable_url_provider = new \AmpProject\AmpWP\Validation\ScannableURLProvider(
+				new \AmpProject\AmpWP\Validation\URLScanningContext(
+					100,  // limit per type.
+					[],   // include conditionals.
+					false // include_unsupported.
+				)
+			);
+
+			$urls = wp_list_pluck( $scannable_url_provider->get_urls(), 'url' );
+			$args = [ 'urls' => $urls ];
+		}else {
+			$args = [ 'post_ids' => $post_id ];
+		}
+
 		$amp_data_object = new AMP_Prepare_Data( $args );
 		$data            = $amp_data_object->get_data();
 
