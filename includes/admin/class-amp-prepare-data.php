@@ -450,7 +450,7 @@ class AMP_Prepare_Data {
 	}
 
 	/**
-	 * Normalises the error data.
+	 * Normalize error data.
 	 *
 	 * @since 2.1
 	 *

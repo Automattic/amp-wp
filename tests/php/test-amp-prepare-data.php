@@ -15,6 +15,20 @@ use AmpProject\AmpWP\QueryVar;
 class AMP_Prepare_Data_Test extends WP_UnitTestCase {
 
 	/**
+	 * Set up. Populate an error.
+	 *
+	 * @inheritdoc
+	 */
+	public function setUp() {
+		parent::setUp();
+
+		$this->populate_validation_errors(
+			home_url( '/' ),
+			[ 'amp' ]
+		);
+	}
+
+	/**
 	 * Test __construct method.
 	 *
 	 * @covers ::__construct()
@@ -130,11 +144,6 @@ class AMP_Prepare_Data_Test extends WP_UnitTestCase {
 	 * @covers ::get_data()
 	 */
 	public function test_get_data() {
-		$this->populate_validation_errors(
-			home_url( '/' ),
-			[ 'amp' ]
-		);
-
 		$pd = new \AMP_Prepare_Data();
 
 		$data = $pd->get_data();
@@ -155,6 +164,7 @@ class AMP_Prepare_Data_Test extends WP_UnitTestCase {
 			$pd->get_theme_info(),
 			$data['themes']
 		);
+		// @see setUp.
 		$this->assertSame(
 			'bad',
 			$data['errors'][0]['code']
@@ -448,6 +458,32 @@ class AMP_Prepare_Data_Test extends WP_UnitTestCase {
 		$this->assertTrue( $i['is_active'] ); // testing the current active theme.
 		$this->assertSame( $i['parent_theme'], $parent_theme );
 
+	}
+
+	/**
+	 * Test get_errors method.
+	 *
+	 * @covers ::get_errors()
+	 */
+	public function test_get_errors() {
+		$error_data = \AMP_Prepare_Data::get_errors();
+
+		// @see setUp
+		$this->assertSame(
+			[ 'c8b31ce3370595c52a3528d1df9e25f8' ],
+			array_keys( $error_data )
+		);
+		$this->assertSame(
+			'bad',
+			$error_data['c8b31ce3370595c52a3528d1df9e25f8']['code']
+		);
+		$this->assertSame(
+			'30ce7183f572beb50ceab11285265c54a1dd03fb68b5203fa25dfe322ed332b5',
+			$error_data['c8b31ce3370595c52a3528d1df9e25f8']['error_slug']
+		);
+		$this->assertEmpty(
+			$error_data['c8b31ce3370595c52a3528d1df9e25f8']['text']
+		);
 	}
 
 	/**

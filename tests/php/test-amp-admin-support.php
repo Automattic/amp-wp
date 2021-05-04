@@ -44,7 +44,7 @@ class AMP_Admin_Support_Test extends WP_UnitTestCase {
 
 		$this->assertEquals(
 			10,
-			has_action( 'admin_enqueue_scripts', [ $this->instance, 'enqueue_assets' ] )
+			has_action( 'admin_enqueue_scripts', [ $this->instance, 'admin_enqueue_scripts' ] )
 		);
 		$this->assertEquals(
 			10,
