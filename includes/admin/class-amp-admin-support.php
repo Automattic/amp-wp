@@ -40,6 +40,13 @@ class AMP_Admin_Support {
 	 * @since 2.1
 	 */
 	public function init() {
+		if (
+			! current_user_can( 'manage_options' )
+			&& ! defined( 'TESTS_PLUGIN_DIR' ) // @see tests/php/bootstrap.php
+		) {
+			return;
+		}
+
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_assets' ] );
 		add_action( 'admin_menu', [ $this, 'admin_menu' ] );
 
