@@ -408,9 +408,15 @@ class AMP_Prepare_Data_Test extends WP_UnitTestCase {
 		if ( array_key_exists( 'RequiresWP', $plugin_data ) ) {
 			$this->assertNotEmpty( $amp['requires_wp'] );
 		} else {
+			// WP ≤ 5.1.
 			$this->assertEmpty( $amp['requires_wp'] );
 		}
-		$this->assertNotEmpty( $amp['requires_php'] );
+		if ( array_key_exists( 'RequiresPHP', $plugin_data ) ) {
+			$this->assertNotEmpty( $amp['requires_php'] );
+		} else {
+			// WP ≤ 5.1.
+			$this->assertEmpty( $amp['requires_php'] );
+		}
 		$this->assertSame(
 			$amp['is_active'],
 			is_plugin_active( $plugin_file )
