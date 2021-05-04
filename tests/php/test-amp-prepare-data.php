@@ -10,14 +10,14 @@ use AmpProject\AmpWP\QueryVar;
 /**
  * Test AMP_Prepare_Data.
  *
- * @covers AMP_Prepare_Data
+ * @coversDefaultClass \AMP_Prepare_Data
  */
 class AMP_Prepare_Data_Test extends WP_UnitTestCase {
 
 	/**
 	 * Test __construct method.
 	 *
-	 * @covers \AMP_Prepare_Data::__construct()
+	 * @covers ::__construct()
 	 */
 	public function test_construct() {
 		$prepare_data = new \AMP_Prepare_Data( [] );
@@ -32,7 +32,7 @@ class AMP_Prepare_Data_Test extends WP_UnitTestCase {
 	/**
 	 * Test parse_args method.
 	 *
-	 * @covers \AMP_Prepare_Data::parse_args()
+	 * @covers ::parse_args()
 	 */
 	public function test_parse_args() {
 		$args = [
@@ -107,7 +107,7 @@ class AMP_Prepare_Data_Test extends WP_UnitTestCase {
 	/**
 	 * Test normalize_url_for_storage method.
 	 *
-	 * @covers \AMP_Prepare_Data::normalize_url_for_storage()
+	 * @covers ::normalize_url_for_storage()
 	 */
 	public function test_normalize_url_for_storage() {
 		$url_not_normalized = add_query_arg(
@@ -129,7 +129,7 @@ class AMP_Prepare_Data_Test extends WP_UnitTestCase {
 	/**
 	 * Test get_data method.
 	 *
-	 * @covers \AMP_Prepare_Data::get_data()
+	 * @covers ::get_data()
 	 */
 	public function test_get_data() {
 		$this->populate_validation_errors(
@@ -197,9 +197,11 @@ class AMP_Prepare_Data_Test extends WP_UnitTestCase {
 	/**
 	 * Test get_site_info method.
 	 *
-	 * @covers \AMP_Prepare_Data::get_site_info()
+	 * @covers ::get_site_info()
 	 */
 	public function test_get_site_info() {
+		global $wpdb;
+
 		$pd        = new \AMP_Prepare_Data();
 		$site_info = $pd->get_site_info();
 
@@ -230,6 +232,10 @@ class AMP_Prepare_Data_Test extends WP_UnitTestCase {
 		$this->assertSame(
 			$site_info['php_version'],
 			phpversion()
+		);
+		$this->assertSame(
+			$site_info['mysql_version'],
+			$wpdb->get_var( 'SELECT VERSION();' ) // phpcs:ignore
 		);
 		$this->assertSame(
 			$site_info['wp_version'],

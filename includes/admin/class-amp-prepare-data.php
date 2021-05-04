@@ -201,7 +201,7 @@ class AMP_Prepare_Data {
 			'site_url'                     => static::get_home_url(),
 			'site_title'                   => get_bloginfo( 'site_title' ),
 			'php_version'                  => phpversion(),
-			'mysql_version'                => $wpdb->get_var( 'SELECT VERSION();' ),
+			'mysql_version'                => $wpdb->get_var( 'SELECT VERSION();' ), // phpcs:ignore
 			'wp_version'                   => get_bloginfo( 'version' ),
 			'wp_language'                  => get_bloginfo( 'language' ),
 			'wp_https_status'              => is_ssl() ? true : false,
@@ -314,7 +314,7 @@ class AMP_Prepare_Data {
 		if ( ! file_exists( $absolute_plugin_file ) ) {
 			return [];
 		}
-		$plugin_data          = get_plugin_data( $absolute_plugin_file );
+		$plugin_data = get_plugin_data( $absolute_plugin_file );
 
 		$slug = explode( '/', $plugin_file );
 		$slug = $slug[0];
