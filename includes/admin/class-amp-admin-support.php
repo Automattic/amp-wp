@@ -571,9 +571,9 @@ class AMP_Admin_Support {
 	 *
 	 * @return string[] Filtered array of plugin's metadata.
 	 */
-	public function plugin_row_meta( $plugin_meta, $plugin_file ) {
-
-		if ( 'amp/amp.php' === $plugin_file ) {
+	public function plugin_row_meta( $plugin_meta, $plugin_file, $plugin_data, $status ) {
+		global $post;
+		if ( 'amp/amp.php' === $plugin_file || 'amp-wp/amp.php' === $plugin_file ) {
 			$plugin_meta[] = sprintf(
 				'<a href="%s">%s</a>',
 				esc_url(

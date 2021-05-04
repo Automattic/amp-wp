@@ -19,13 +19,11 @@ class AMP_Prepare_Data_Test extends WP_UnitTestCase {
 	 *
 	 * @covers ::__construct()
 	 */
-	public function test_construct() {
+	public function test__construct() {
 		$prepare_data = new \AMP_Prepare_Data( [] );
-		$this->assertTrue(
-			is_a(
-				$prepare_data,
-				'AMP_Prepare_Data'
-			)
+		$this->assertInstanceOf(
+			'AMP_Prepare_Data',
+			$prepare_data
 		);
 	}
 
