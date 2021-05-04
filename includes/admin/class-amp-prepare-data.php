@@ -274,6 +274,8 @@ class AMP_Prepare_Data {
 
 		$error_log_path = ini_get( 'error_log' );
 
+		// $error_log_path might be a relative path/filename.
+		// In this case, we would have to iterate many directories to find them.
 		if ( empty( $error_log_path ) || ! file_exists( $error_log_path ) ) {
 			return [
 				'log_errors' => ini_get( 'log_errors' ),

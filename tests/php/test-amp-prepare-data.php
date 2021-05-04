@@ -349,6 +349,33 @@ class AMP_Prepare_Data_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test get_error_log method.
+	 *
+	 * @covers ::get_error_log()
+	 */
+	public function test_get_error_log() {
+		error_log( 'Test error.' ); // phpcs:ignore
+
+		$pd             = new \AMP_Prepare_Data();
+		$log            = $pd->get_error_log();
+		$error_log_path = ini_get( 'error_log' );
+
+		if ( empty( $error_log_path ) || ! file_exists( $error_log_path ) ) {
+			$this->assertSame(
+				$log,
+				[
+					'log_errors' => ini_get( 'log_errors' ),
+					'contents'   => '',
+				]
+			);
+		} else {
+			$this->assertTrue(
+				false !== strpos( $log['contents'], 'Test error.' )
+			);
+		}
+	}
+
+	/**
 	 * Populate sample validation errors.
 	 *
 	 * @param string   $url               URL to populate errors for. Defaults to the home URL.
