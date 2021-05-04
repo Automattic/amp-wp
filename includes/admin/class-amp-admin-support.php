@@ -48,8 +48,7 @@ class AMP_Admin_Support {
 		}
 
 		add_action( 'admin_enqueue_scripts', [ $this, 'admin_enqueue_scripts' ] );
-		add_action( 'admin_menu', [ $this, 'admin_menu' ] );
-
+		add_action( 'admin_menu', [ $this, 'admin_menu' ], 20 );
 		/**
 		 * AJAX responder.
 		 */
@@ -211,7 +210,6 @@ class AMP_Admin_Support {
 	 * @return void
 	 */
 	public function admin_menu() {
-
 		add_submenu_page(
 			AMP_Options_Manager::OPTION_NAME,
 			esc_html__( 'Support', 'amp' ),

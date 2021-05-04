@@ -7,6 +7,10 @@
  */
 
 use AmpProject\AmpWP\Admin\GoogleFonts;
+use AmpProject\AmpWP\Admin\OptionsMenu;
+use AmpProject\AmpWP\Admin\ReaderThemes;
+use AmpProject\AmpWP\Admin\RESTPreloader;
+use AmpProject\AmpWP\Tests\Helpers\AssertContainsCompatibility;
 use AmpProject\AmpWP\QueryVar;
 
 /**
@@ -31,6 +35,11 @@ class AMP_Admin_Support_Test extends WP_UnitTestCase {
 	public function setUp() {
 		parent::setUp();
 
+		$this->options_menu_instance = new OptionsMenu(
+			new GoogleFonts(),
+			new ReaderThemes(),
+			new RESTPreloader()
+		);
 		$this->instance = new \AMP_Admin_Support();
 	}
 
@@ -47,7 +56,7 @@ class AMP_Admin_Support_Test extends WP_UnitTestCase {
 			has_action( 'admin_enqueue_scripts', [ $this->instance, 'admin_enqueue_scripts' ] )
 		);
 		$this->assertEquals(
-			10,
+			20,
 			has_action( 'admin_menu', [ $this->instance, 'admin_menu' ] )
 		);
 		$this->assertEquals(
@@ -121,14 +130,40 @@ class AMP_Admin_Support_Test extends WP_UnitTestCase {
 		$this->instance->admin_enqueue_scripts( '' );
 
 		$this->assertFalse(
-			wp_style_is( $this->instance->ASSET_HANDLE, 'enqueued' )
+			wp_style_is( \AMP_Admin_Support::ASSET_HANDLE, 'enqueued' )
 		);
 
 		$this->instance->admin_enqueue_scripts( 'amp_page_amp-support' );
 
 		$this->assertTrue(
-			wp_style_is( $this->instance->ASSET_HANDLE, 'enqueued' )
+			wp_style_is( \AMP_Admin_Support::ASSET_HANDLE, 'enqueued' )
 		);
+	}
+
+	/**
+	 * Test admin_menu method.
+	 *
+	 * @covers ::admin_menu()
+	 */
+	public function test_admin_menu() {
+		global $submenu;
+
+		$original_submenu = $submenu;
+
+		$test_user = self::factory()->user->create(
+			[
+				'role' => 'administrator',
+			]
+		);
+		wp_set_current_user( $test_user );
+
+		$this->options_menu_instance->add_menu_items();
+		$this->instance->admin_menu();
+
+		$this->assertContains( 'Support', wp_list_pluck( $submenu[ $this->options_menu_instance->get_menu_slug() ], 0 ) );
+
+		$submenu = $original_submenu;
+
 	}
 
 	/**
