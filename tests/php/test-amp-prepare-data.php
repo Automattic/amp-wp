@@ -386,7 +386,7 @@ class AMP_Prepare_Data_Test extends WP_UnitTestCase {
 		$plugin_file          = 'amp/amp.php';
 		$amp                  = $pd->normalize_plugin_info( $plugin_file );
 		$absolute_plugin_file = WP_PLUGIN_DIR . DIRECTORY_SEPARATOR . $plugin_file;
-		$plugin_data = get_plugin_data( $absolute_plugin_file );
+		$plugin_data          = get_plugin_data( $absolute_plugin_file );
 
 		$this->assertNotEmpty( $amp['name'] );
 		$this->assertNotEmpty( $amp['slug'] );
@@ -410,6 +410,43 @@ class AMP_Prepare_Data_Test extends WP_UnitTestCase {
 			is_plugin_active_for_network( $plugin_file )
 		);
 		$this->assertEmpty( $amp['is_suppressed'] );
+
+	}
+
+	/**
+	 * Test normalize_theme_info method.
+	 *
+	 * @covers ::normalize_theme_info()
+	 */
+	public function test_normalize_theme_info() {
+
+		$this->assertSame(
+			[],
+			\AMP_Prepare_Data::normalize_theme_info( '' )
+		);
+
+		$t = wp_get_theme();
+		$i = \AMP_Prepare_Data::normalize_theme_info( $t );
+
+		$parent_theme = '';
+
+		if ( ! empty( $t->parent() ) && ! is_a( $t->parent(), 'WP_Theme' ) ) {
+			$parent_theme = $t->parent()->get_stylesheet();
+		}
+
+		$this->assertSame( $i['name'], $t->get( 'Name' ) );
+		$this->assertSame( $i['slug'], $t->get_stylesheet() );
+		$this->assertSame( $i['version'], $t->get( 'Version' ) );
+		$this->assertSame( $i['status'], $t->get( 'Status' ) );
+		$this->assertSame( $i['tags'], ( ! empty( $t->get( 'Tags' ) ) && is_array( $t->get( 'Tags' ) ) ) ? $t->get( 'Tags' ) : [] );
+		$this->assertSame( $i['text_domain'], $t->get( 'TextDomain' ) );
+		$this->assertSame( $i['requires_wp'], $t->get( 'RequiresWP' ) );
+		$this->assertSame( $i['requires_php'], $t->get( 'RequiresPHP' ) );
+		$this->assertSame( $i['theme_url'], $t->get( 'ThemeURI' ) );
+		$this->assertSame( $i['author'], $t->get( 'Author' ) );
+		$this->assertSame( $i['author_url'], $t->get( 'AuthorURI' ) );
+		$this->assertTrue( $i['is_active'] ); // testing the current active theme.
+		$this->assertSame( $i['parent_theme'], $parent_theme );
 
 	}
 

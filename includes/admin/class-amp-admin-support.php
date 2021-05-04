@@ -243,7 +243,7 @@ class AMP_Admin_Support {
 
 			$urls = wp_list_pluck( $scannable_url_provider->get_urls(), 'url' );
 			$args = [ 'urls' => $urls ];
-		}else {
+		} else {
 			$args = [ 'post_ids' => $post_id ];
 		}
 
@@ -753,7 +753,5 @@ class AMP_Admin_Support {
 			\WP_CLI::log( sprintf( '%-25s : %s', $key, $value ) );
 		}
 		\WP_CLI::log( sprintf( "%'=100s" . PHP_EOL, '' ) );
-
-
 	}
 }
