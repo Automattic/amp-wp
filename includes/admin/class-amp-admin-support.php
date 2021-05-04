@@ -46,7 +46,7 @@ class AMP_Admin_Support {
 		/**
 		 * AJAX responder.
 		 */
-		add_action( 'wp_ajax_amp_diagnostic', [ $this, 'amp_diagnostic' ] );
+		add_action( 'wp_ajax_amp_diagnostic', [ $this, 'wp_ajax_amp_diagnostic' ] );
 
 		/**
 		 * Add Diagnostic link to Admin Bar.
@@ -78,12 +78,11 @@ class AMP_Admin_Support {
 	 *
 	 * @return void
 	 */
-	public function amp_diagnostic() {
+	public function wp_ajax_amp_diagnostic() {
 
 		if (
 			! current_user_can( 'manage_options' )
 			|| ! check_ajax_referer( 'amp-diagnostic' )
-
 		) {
 			exit;
 		}
@@ -120,6 +119,16 @@ class AMP_Admin_Support {
 		 */
 		if ( $is_synthetic ) {
 			$data['site_info']['is_synthetic_data'] = true;
+		}
+
+		/**
+		 * @see tests/php/bootstrap.php
+		 */
+		if ( defined( 'TESTS_PLUGIN_DIR' ) ) {
+			return [
+				'endpoint' => sprintf( '%s/api/v1/amp-wp/', $endpoint ),
+				'data' => $data,
+			];
 		}
 
 		// Send data to server.

@@ -73,6 +73,48 @@ class AMP_Admin_Support_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test wp_ajax_amp_diagnostic method.
+	 *
+	 * @covers ::wp_ajax_amp_diagnostic()
+	 */
+	public function test_wp_ajax_amp_diagnostic() {
+		$_POST['_ajax_nonce'] = wp_create_nonce( 'amp-diagnostic' );
+
+		$sending = $this->instance->wp_ajax_amp_diagnostic();
+
+		$args = [
+			'urls'     => [],
+			'post_ids' => [],
+			'term_ids' => [],
+		];
+
+		$amp_data_object = new AMP_Prepare_Data( $args );
+		$data            = $amp_data_object->get_data();
+
+		$data = wp_parse_args(
+			$data,
+			[
+				'site_url'      => [],
+				'site_info'     => [],
+				'plugins'       => [],
+				'themes'        => [],
+				'errors'        => [],
+				'error_sources' => [],
+				'urls'          => [],
+			]
+		);
+
+		$this->assertSame(
+			$sending['endpoint'],
+			'https://insights.amp-wp.org/api/v1/amp-wp/'
+		);
+		$this->assertSame(
+			$sending['data'],
+			$data
+		);
+	}
+
+	/**
 	 * Test plugin_row_meta method.
 	 *
 	 * @covers ::plugin_row_meta()
