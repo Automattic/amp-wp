@@ -47,7 +47,7 @@ class AMP_Admin_Support {
 			return;
 		}
 
-		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_assets' ] );
+		add_action( 'admin_enqueue_scripts', [ $this, 'admin_enqueue_scripts' ] );
 		add_action( 'admin_menu', [ $this, 'admin_menu' ] );
 
 		/**
@@ -186,7 +186,7 @@ class AMP_Admin_Support {
 	 *
 	 * @param string $hook The current admin page.
 	 */
-	public function enqueue_assets( $hook ) {
+	public function admin_enqueue_scripts( $hook ) {
 		if ( 'amp_page_amp-support' !== $hook ) {
 			return;
 		}
