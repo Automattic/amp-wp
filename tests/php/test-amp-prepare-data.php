@@ -268,10 +268,6 @@ class AMP_Prepare_Data_Test extends WP_UnitTestCase {
 			function_exists( 'curl_multi_init' )
 		);
 		$this->assertSame(
-			$site_info['stylesheet_transient_caching'],
-			''
-		);
-		$this->assertSame(
 			$site_info['loopback_requests'],
 			$loopback_status
 		);
@@ -306,6 +302,49 @@ class AMP_Prepare_Data_Test extends WP_UnitTestCase {
 		$this->assertSame(
 			$site_info['amp_reader_theme'],
 			( ! empty( $amp_settings['reader_theme'] ) ) ? $amp_settings['reader_theme'] : ''
+		);
+	}
+
+	/**
+	 * Test get_plugin_info method.
+	 *
+	 * @covers ::get_plugin_info()
+	 */
+	public function test_get_plugin_info() {
+		$pd = new \AMP_Prepare_Data();
+
+		$active_plugins = get_option( 'active_plugins' );
+
+		if ( is_multisite() ) {
+			$network_wide_activate_plugins = get_site_option( 'active_sitewide_plugins' );
+			$active_plugins                = array_merge( $active_plugins, $network_wide_activate_plugins );
+		}
+
+		$active_plugins = array_values( array_unique( $active_plugins ) );
+		$plugin_info    = array_map( '\AMP_Prepare_Data::normalize_plugin_info', $active_plugins );
+		$plugin_info    = array_filter( $plugin_info );
+
+		$this->assertSame(
+			$plugin_info,
+			$pd->get_plugin_info()
+		);
+	}
+
+	/**
+	 * Test get_theme_info method.
+	 *
+	 * @covers ::get_theme_info()
+	 */
+	public function test_get_theme_info() {
+		$pd = new \AMP_Prepare_Data();
+
+		$themes     = [ wp_get_theme() ];
+		$theme_info = array_map( '\AMP_Prepare_Data::normalize_theme_info', $themes );
+		$theme_info = array_filter( $theme_info );
+
+		$this->assertSame(
+			$theme_info,
+			$pd->get_theme_info()
 		);
 	}
 
