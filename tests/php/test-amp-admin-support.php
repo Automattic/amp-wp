@@ -113,6 +113,25 @@ class AMP_Admin_Support_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test admin_enqueue_scripts method.
+	 *
+	 * @covers ::admin_enqueue_scripts()
+	 */
+	public function test_admin_enqueue_scripts() {
+		$this->instance->admin_enqueue_scripts( '' );
+
+		$this->assertFalse(
+			wp_style_is( $this->instance->ASSET_HANDLE, 'enqueued' )
+		);
+
+		$this->instance->admin_enqueue_scripts( 'amp_page_amp-support' );
+
+		$this->assertTrue(
+			wp_style_is( $this->instance->ASSET_HANDLE, 'enqueued' )
+		);
+	}
+
+	/**
 	 * Test plugin_row_meta method.
 	 *
 	 * @covers ::plugin_row_meta()
