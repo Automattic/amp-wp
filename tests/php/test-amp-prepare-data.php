@@ -383,8 +383,10 @@ class AMP_Prepare_Data_Test extends WP_UnitTestCase {
 			$pd->normalize_plugin_info( 'not-a-plugin/plugin.php' )
 		);
 
-		$plugin_file = 'amp/amp.php';
-		$amp         = $pd->normalize_plugin_info( $plugin_file );
+		$plugin_file          = 'amp/amp.php';
+		$amp                  = $pd->normalize_plugin_info( $plugin_file );
+		$absolute_plugin_file = WP_PLUGIN_DIR . DIRECTORY_SEPARATOR . $plugin_file;
+		$plugin_data = get_plugin_data( $absolute_plugin_file );
 
 		$this->assertNotEmpty( $amp['name'] );
 		$this->assertNotEmpty( $amp['slug'] );
@@ -393,7 +395,11 @@ class AMP_Prepare_Data_Test extends WP_UnitTestCase {
 		$this->assertNotEmpty( $amp['version'] );
 		$this->assertNotEmpty( $amp['author'] );
 		$this->assertNotEmpty( $amp['author_url'] );
-		$this->assertNotEmpty( $amp['requires_wp'] );
+		if ( array_key_exists( 'RequiresWP', $plugin_data ) ) {
+			$this->assertNotEmpty( $amp['requires_wp'] );
+		} else {
+			$this->assertEmpty( $amp['requires_wp'] );
+		}
 		$this->assertNotEmpty( $amp['requires_php'] );
 		$this->assertSame(
 			$amp['is_active'],
