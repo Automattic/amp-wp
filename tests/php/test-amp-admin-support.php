@@ -20,6 +20,8 @@ use AmpProject\AmpWP\QueryVar;
  */
 class AMP_Admin_Support_Test extends WP_UnitTestCase {
 
+	use AssertContainsCompatibility;
+
 	/**
 	 * Test instance.
 	 *
@@ -163,7 +165,43 @@ class AMP_Admin_Support_Test extends WP_UnitTestCase {
 		$this->assertContains( 'Support', wp_list_pluck( $submenu[ $this->options_menu_instance->get_menu_slug() ], 0 ) );
 
 		$submenu = $original_submenu;
+	}
 
+	/**
+	 * Test support_page method.
+	 *
+	 * @covers ::support_page()
+	 */
+	public function test_support_page() {
+		ob_start();
+		$this->instance->support_page();
+		$html = ob_get_clean();
+
+		// There's a send button with class is-primary.
+		$this->assertStringContains(
+			'<a href="#" class="components-button is-primary">' . esc_html__( 'Send Diagnostics', 'amp' ) . '</a>',
+			$html
+		);
+		// There's an element with ID "status".
+		$this->assertStringContains(
+			'<p id="status"></p>',
+			$html
+		);
+		// There's a click action on the primary link.
+		$this->assertStringContains(
+			"$( 'a.is-primary' ).click(function(){",
+			$html
+		);
+		// There's the correct AJAX action.
+		$this->assertStringContains(
+			"'action': 'amp_diagnostic'",
+			$html
+		);
+		// There's the correct AJAX nonce.
+		$this->assertStringContains(
+			"'_ajax_nonce': '" . esc_js( wp_create_nonce( 'amp-diagnostic' ) ) . "'",
+			$html
+		);
 	}
 
 	/**

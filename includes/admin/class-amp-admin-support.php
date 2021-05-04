@@ -107,6 +107,19 @@ class AMP_Admin_Support {
 			'term_ids' => [],
 		];
 
+		if ( empty( $post_id ) ) {
+			$scannable_url_provider = new \AmpProject\AmpWP\Validation\ScannableURLProvider(
+				new \AmpProject\AmpWP\Validation\URLScanningContext(
+					100,  // limit per type.
+					[],   // include conditionals.
+					false // include_unsupported.
+				)
+			);
+
+			$urls = wp_list_pluck( $scannable_url_provider->get_urls(), 'url' );
+			$args['urls'] = $urls;
+		}
+
 		$amp_data_object = new AMP_Prepare_Data( $args );
 		$data            = $amp_data_object->get_data();
 
