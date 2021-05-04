@@ -195,6 +195,117 @@ class AMP_Prepare_Data_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test get_site_info method.
+	 *
+	 * @covers \AMP_Prepare_Data::get_site_info()
+	 */
+	public function test_get_site_info() {
+		$pd        = new \AMP_Prepare_Data();
+		$site_info = $pd->get_site_info();
+
+		$wp_type = 'single';
+
+		if ( is_multisite() ) {
+			$wp_type = ( defined( 'SUBDOMAIN_INSTALL' ) && SUBDOMAIN_INSTALL ) ? 'subdomain' : 'subdir';
+		}
+
+		$loopback_status = '';
+
+		if ( class_exists( 'Health_Check_Loopback' ) ) {
+			$loopback_status = \Health_Check_Loopback::can_perform_loopback();
+			$loopback_status = ( ! empty( $loopback_status->status ) ) ? $loopback_status->status : '';
+		}
+
+		$amp_settings = \AMP_Options_Manager::get_options();
+		$amp_settings = ( ! empty( $amp_settings ) && is_array( $amp_settings ) ) ? $amp_settings : [];
+
+		$this->assertSame(
+			$site_info['site_url'],
+			\AMP_Prepare_Data::get_home_url()
+		);
+		$this->assertSame(
+			$site_info['site_title'],
+			get_bloginfo( 'site_title' )
+		);
+		$this->assertSame(
+			$site_info['php_version'],
+			phpversion()
+		);
+		$this->assertSame(
+			$site_info['wp_version'],
+			get_bloginfo( 'version' )
+		);
+		$this->assertSame(
+			$site_info['wp_language'],
+			get_bloginfo( 'language' )
+		);
+		$this->assertSame(
+			$site_info['wp_https_status'],
+			is_ssl() ? true : false
+		);
+		$this->assertSame(
+			$site_info['wp_multisite'],
+			$wp_type
+		);
+		$this->assertSame(
+			$site_info['wp_active_theme'],
+			\AMP_Prepare_Data::normalize_theme_info( wp_get_theme() )
+		);
+		$this->assertSame(
+			$site_info['object_cache_status'],
+			wp_using_ext_object_cache()
+		);
+		$this->assertSame(
+			$site_info['libxml_version'],
+			( defined( 'LIBXML_VERSION' ) ) ? LIBXML_VERSION : ''
+		);
+		$this->assertSame(
+			$site_info['is_defined_curl_multi'],
+			function_exists( 'curl_multi_init' )
+		);
+		$this->assertSame(
+			$site_info['stylesheet_transient_caching'],
+			''
+		);
+		$this->assertSame(
+			$site_info['loopback_requests'],
+			$loopback_status
+		);
+		$this->assertSame(
+			$site_info['amp_mode'],
+			( ! empty( $amp_settings['theme_support'] ) ) ? $amp_settings['theme_support'] : ''
+		);
+		$this->assertSame(
+			$site_info['amp_version'],
+			( ! empty( $amp_settings['version'] ) ) ? $amp_settings['version'] : ''
+		);
+		$this->assertSame(
+			$site_info['amp_plugin_configured'],
+			( ! empty( $amp_settings['plugin_configured'] ) ) ? true : false
+		);
+		$this->assertSame(
+			$site_info['amp_all_templates_supported'],
+			( ! empty( $amp_settings['all_templates_supported'] ) ) ? true : false
+		);
+		$this->assertSame(
+			$site_info['amp_supported_post_types'],
+			( ! empty( $amp_settings['supported_post_types'] ) && is_array( $amp_settings['supported_post_types'] ) ) ? $amp_settings['supported_post_types'] : []
+		);
+		$this->assertSame(
+			$site_info['amp_supported_templates'],
+			( ! empty( $amp_settings['supported_templates'] ) && is_array( $amp_settings['supported_templates'] ) ) ? $amp_settings['supported_templates'] : []
+		);
+		$this->assertSame(
+			$site_info['amp_mobile_redirect'],
+			( ! empty( $amp_settings['mobile_redirect'] ) ) ? true : false
+		);
+		$this->assertSame(
+			$site_info['amp_reader_theme'],
+			( ! empty( $amp_settings['reader_theme'] ) ) ? $amp_settings['reader_theme'] : ''
+		);
+	}
+
+	/**
 	 * Populate sample validation errors.
 	 *
 	 * @param string   $url               URL to populate errors for. Defaults to the home URL.

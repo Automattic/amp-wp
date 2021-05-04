@@ -176,6 +176,8 @@ class AMP_Prepare_Data {
 	 */
 	public function get_site_info() {
 
+		global $wpdb;
+
 		$wp_type = 'single';
 
 		if ( is_multisite() ) {
@@ -199,7 +201,7 @@ class AMP_Prepare_Data {
 			'site_url'                     => static::get_home_url(),
 			'site_title'                   => get_bloginfo( 'site_title' ),
 			'php_version'                  => phpversion(),
-			'mysql_version'                => '',
+			'mysql_version'                => $wpdb->get_var( 'SELECT VERSION();' ),
 			'wp_version'                   => get_bloginfo( 'version' ),
 			'wp_language'                  => get_bloginfo( 'language' ),
 			'wp_https_status'              => is_ssl() ? true : false,
@@ -306,7 +308,7 @@ class AMP_Prepare_Data {
 	 *
 	 * @return array Plugin detail.
 	 */
-	protected static function normalize_plugin_info( $plugin_file ) {
+	public static function normalize_plugin_info( $plugin_file ) {
 
 		$absolute_plugin_file = WP_PLUGIN_DIR . DIRECTORY_SEPARATOR . $plugin_file;
 		if ( ! file_exists( $absolute_plugin_file ) ) {
@@ -351,7 +353,7 @@ class AMP_Prepare_Data {
 	 *
 	 * @return array Normalize theme information.
 	 */
-	protected static function normalize_theme_info( $theme_object ) {
+	public static function normalize_theme_info( $theme_object ) {
 
 		if ( empty( $theme_object ) || ! is_a( $theme_object, 'WP_Theme' ) ) {
 			return [];
@@ -398,7 +400,7 @@ class AMP_Prepare_Data {
 	 *
 	 * @return array List of errors.
 	 */
-	protected static function get_errors() {
+	public static function get_errors() {
 
 		$error_data      = [];
 		$amp_error_terms = get_terms(
@@ -455,7 +457,7 @@ class AMP_Prepare_Data {
 	 *
 	 * @return array|mixed|null
 	 */
-	protected static function normalize_error( $error_data ) {
+	public static function normalize_error( $error_data ) {
 
 		if ( empty( $error_data ) || ! is_array( $error_data ) ) {
 			return [];
@@ -488,7 +490,7 @@ class AMP_Prepare_Data {
 	 *
 	 * @return array Normalized error source data.
 	 */
-	protected static function normalize_error_source( $source ) {
+	public static function normalize_error_source( $source ) {
 
 		if ( empty( $source ) || ! is_array( $source ) ) {
 			return [];
@@ -569,7 +571,7 @@ class AMP_Prepare_Data {
 	 *
 	 * @return array List amp validated URLs.
 	 */
-	protected function get_amp_urls() {
+	public function get_amp_urls() {
 
 		global $wpdb;
 
@@ -729,7 +731,7 @@ class AMP_Prepare_Data {
 	 *
 	 * @return array AMP stylesheet used info.
 	 */
-	protected static function get_stylesheet_info( $post_id ) {
+	public static function get_stylesheet_info( $post_id ) {
 
 		$stylesheets = get_post_meta( $post_id, \AMP_Validated_URL_Post_Type::STYLESHEETS_POST_META_KEY, true );
 
@@ -833,7 +835,7 @@ class AMP_Prepare_Data {
 	 *
 	 * @return string Content after removing home_url.
 	 */
-	protected static function remove_domain( $content ) {
+	public static function remove_domain( $content ) {
 
 		if ( empty( $content ) ) {
 			return '';
@@ -861,7 +863,7 @@ class AMP_Prepare_Data {
 	 *
 	 * @return string Hash value of provided object.
 	 */
-	protected static function generate_hash( $object ) {
+	public static function generate_hash( $object ) {
 
 		if ( empty( $object ) ) {
 			return '';
