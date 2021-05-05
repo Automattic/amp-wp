@@ -227,6 +227,27 @@ class AMP_Admin_Support_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test amp_validated_url_status_actions method.
+	 *
+	 * @covers ::amp_validated_url_status_actions()
+	 */
+	public function test_amp_validated_url_status_actions() {
+		$post = new WP_Post();
+		$post->ID = 123;
+
+		$actions = $this->instance->amp_validated_url_status_actions( $actions, $post );
+
+		$this->assertStringContains(
+			'page=amp-support',
+			$actions['send-diagnostic']
+		);
+		$this->assertStringContains(
+			'post_id=123',
+			$actions['send-diagnostic']
+		);
+	}
+
+	/**
 	 * Test plugin_row_meta method.
 	 *
 	 * @covers ::plugin_row_meta()
