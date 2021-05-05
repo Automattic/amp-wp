@@ -493,6 +493,112 @@ class AMP_Prepare_Data_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test get_stylesheet_info method.
+	 *
+	 * @covers ::get_stylesheet_info()
+	 */
+	public function test_get_stylesheet_info() {
+		$posts = get_posts(
+			[
+				'post_type' => \AMP_Validated_URL_Post_Type::POST_TYPE_SLUG,
+				'numberposts' => 1,
+			]
+		);
+		$post = $posts[0];
+
+		$meta_value = <<<EOT
+[
+  {
+    "group": "amp-custom",
+    "original_size": 370,
+    "final_size": 0,
+    "element": {
+      "name": "style",
+      "attributes": {
+        "type": "text/css"
+      }
+    },
+    "origin": "style_element",
+    "sources": [
+      {
+        "type": "core",
+        "name": "wp-includes",
+        "file": "functions.wp-styles.php",
+        "line": 44,
+        "function": "wp_print_styles",
+        "hook": "wp_head",
+        "priority": 8
+      },
+      {
+        "type": "plugin",
+        "name": "amp",
+        "file": "includes/class-amp-theme-support.php",
+        "line": 2130,
+        "function": "AMP_Theme_Support::print_emoji_styles",
+        "hook": "wp_print_styles",
+        "priority": 10
+      }
+    ],
+    "priority": 70,
+    "hash": "bce4601f6f39498a77c695bd9125e0ee",
+    "parse_time": 0.033727169036865234,
+    "shake_time": 0.008584976196289062,
+    "cached": false,
+    "imported_font_urls": [],
+    "shaken_tokens": [
+      [
+        false,
+        {
+          ":root:not(#_):not(#_):not(#_):not(#_):not(#_):not(#_):not(#_):not(#_) amp-img.wp-smiley": false,
+          ":root:not(#_):not(#_):not(#_):not(#_):not(#_):not(#_):not(#_):not(#_) amp-anim.wp-smiley": false,
+          ":root:not(#_):not(#_):not(#_):not(#_):not(#_):not(#_):not(#_):not(#_) amp-img.emoji": false,
+          ":root:not(#_):not(#_):not(#_):not(#_):not(#_):not(#_):not(#_):not(#_) amp-anim.emoji": false
+        },
+        [
+          "display:inline-block",
+          "border:none",
+          "box-shadow:none",
+          "height:1em",
+          "width:1em",
+          "margin:0 .07em",
+          "vertical-align:-.1em",
+          "background:none",
+          "padding:0"
+        ]
+      ]
+    ],
+    "included": true
+  }
+]
+EOT;
+
+		update_post_meta(
+			$post->ID,
+			\AMP_Validated_URL_Post_Type::STYLESHEETS_POST_META_KEY,
+			$meta_value
+		);
+
+		$response = \AMP_Prepare_Data::get_stylesheet_info( $post->ID );
+
+		$this->assertEquals(
+			370,
+			$response['css_size_before']
+		);
+		$this->assertEquals(
+			0,
+			$response['css_size_after']
+		);
+		$this->assertEquals(
+			0,
+			$response['css_size_excluded']
+		);
+		$this->assertEquals(
+			0,
+			$response['css_budget_percentage']
+		);
+	}
+
+	/**
 	 * Populate sample validation errors.
 	 *
 	 * @param string   $url               URL to populate errors for. Defaults to the home URL.
