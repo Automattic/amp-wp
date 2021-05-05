@@ -493,6 +493,89 @@ class AMP_Prepare_Data_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test normalize_error method.
+	 *
+	 * @covers ::normalize_error()
+	 */
+	public function test_normalize_error() {
+		// @see setUp.
+		$posts = get_posts(
+			[
+				'post_type'   => \AMP_Validated_URL_Post_Type::POST_TYPE_SLUG,
+				'numberposts' => 1,
+			]
+		);
+		$post  = $posts[0];
+
+		$post_errors_raw = json_decode( $post->post_content, true );
+
+		$error_data = $post_errors_raw[0]['data'];
+		$error_data = \AMP_Prepare_Data::normalize_error( $error_data );
+
+		$this->AssertEquals(
+			'bad',
+			$error_data['code']
+		);
+		$this->AssertEquals(
+			'30ce7183f572beb50ceab11285265c54a1dd03fb68b5203fa25dfe322ed332b5',
+			$error_data['error_slug']
+		);
+	}
+
+	/**
+	 * Test normalize_error_source method.
+	 *
+	 * @covers ::normalize_error_source()
+	 */
+	public function test_normalize_error_source() {
+		// @see setUp.
+		$posts = get_posts(
+			[
+				'post_type'   => \AMP_Validated_URL_Post_Type::POST_TYPE_SLUG,
+				'numberposts' => 1,
+			]
+		);
+		$post  = $posts[0];
+
+		$post_errors_raw = json_decode( $post->post_content, true );
+
+		$source = [];
+
+		$this->assertEmpty( \AMP_Prepare_Data::normalize_error_source( $source ) );
+
+		$source = $post_errors_raw[0]['data']['sources'][0];
+
+		$source = \AMP_Prepare_Data::normalize_error_source( $source );
+
+		$this->assertNotEmpty(
+			$source['error_source_slug']
+		);
+	}
+
+	/**
+	 * Test get_amp_urls method.
+	 *
+	 * @covers ::get_amp_urls()
+	 */
+	public function test_get_amp_urls() {
+		$pd = new \AMP_Prepare_Data();
+		$data = $pd->get_amp_urls();
+
+		$this->assertNotEmpty( $data['errors'] );
+		$this->assertNotEmpty( $data['error_sources'] );
+		$this->assertNotEmpty( $data['urls'] );
+		$this->assertNotEmpty( $data['urls'][0]['errors'][0]['error_slug'] );
+		$this->assertSame(
+			$data['urls'][0]['errors'][0]['error_slug'],
+			array_keys( $data['errors'] )[0]
+		);
+		$this->assertSame(
+			$data['urls'][0]['errors'][0]['sources'][0],
+			array_keys( $data['error_sources'] )[0]
+		);
+	}
+
+	/**
 	 * Test get_stylesheet_info method.
 	 *
 	 * @covers ::get_stylesheet_info()
@@ -500,11 +583,11 @@ class AMP_Prepare_Data_Test extends WP_UnitTestCase {
 	public function test_get_stylesheet_info() {
 		$posts = get_posts(
 			[
-				'post_type' => \AMP_Validated_URL_Post_Type::POST_TYPE_SLUG,
+				'post_type'   => \AMP_Validated_URL_Post_Type::POST_TYPE_SLUG,
 				'numberposts' => 1,
 			]
 		);
-		$post = $posts[0];
+		$post  = $posts[0];
 
 		$meta_value = <<<EOT
 [
