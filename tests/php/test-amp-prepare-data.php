@@ -621,6 +621,19 @@ EOT;
 	}
 
 	/**
+	 * Test remove_domain method.
+	 *
+	 * @covers ::remove_domain()
+	 */
+	public function test_remove_domain() {
+		$this->assertEmpty(
+			\AMP_Prepare_Data::remove_domain(
+				home_url()
+			)
+		);
+	}
+
+	/**
 	 * Populate sample validation errors.
 	 *
 	 * @param string   $url               URL to populate errors for. Defaults to the home URL.
