@@ -645,7 +645,7 @@ class AMP_Admin_Support {
 	 *
 	 * @throws \Exception When the AMP plugin is not active.
 	 *
-	 * @return void
+	 * @return void|array
 	 */
 	public function amp_send_diagnostic( $args = [], $assoc_args = [] ) {
 
@@ -755,6 +755,10 @@ class AMP_Admin_Support {
 
 		if ( $is_synthetic ) {
 			$summary['Synthetic Data'] = 'Yes';
+		}
+
+		if ( defined( 'TESTS_PLUGIN_DIR' ) ) { // @see tests/php/bootstrap.php.
+			return $summary;
 		}
 
 		\WP_CLI::log( sprintf( PHP_EOL . "%'=100s", '' ) );

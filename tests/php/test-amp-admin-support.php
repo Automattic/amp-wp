@@ -43,6 +43,7 @@ class AMP_Admin_Support_Test extends WP_UnitTestCase {
 			new ReaderThemes(),
 			new RESTPreloader()
 		);
+
 		$this->instance = new \AMP_Admin_Support();
 	}
 
@@ -232,8 +233,10 @@ class AMP_Admin_Support_Test extends WP_UnitTestCase {
 	 * @covers ::amp_validated_url_status_actions()
 	 */
 	public function test_amp_validated_url_status_actions() {
-		$post = new stdClass();
-		$post->ID = 123;
+		$post = (object) [
+			'post_type' => AMP_Validated_URL_Post_Type::POST_TYPE_SLUG,
+			'ID'        => 123,
+		];
 
 		$actions = $this->instance->amp_validated_url_status_actions( [], $post );
 
@@ -253,14 +256,19 @@ class AMP_Admin_Support_Test extends WP_UnitTestCase {
 	 * @covers ::post_row_actions()
 	 */
 	public function test_post_row_actions() {
-		$post = new stdClass();
+		$post = (object) [
+			'post_type' => 'post',
+			'ID'        => 123,
+		];
 
 		$actions = $this->instance->post_row_actions( [], $post );
 
 		$this->assertEmpty( $actions );
 
-		$post->post_type = AMP_Validated_URL_Post_Type::POST_TYPE_SLUG;
-		$post->ID = 123;
+		$post = (object) [
+			'post_type' => AMP_Validated_URL_Post_Type::POST_TYPE_SLUG,
+			'ID'        => 123,
+		];
 
 		$actions = $this->instance->post_row_actions( [], $post );
 
@@ -322,6 +330,69 @@ class AMP_Admin_Support_Test extends WP_UnitTestCase {
 				[],
 				''
 			)
+		);
+	}
+
+	/**
+	 * Test amp_send_diagnostic method.
+	 *
+	 * @covers ::amp_send_diagnostic()
+	 */
+	public function test_amp_send_diagnostic() {
+		ob_start();
+		$summary = $this->instance->amp_send_diagnostic( [], [ 'print' => 'json-pretty' ] );
+		$output  = ob_get_clean();
+
+		$this->assertEquals(
+			7,
+			count( $summary )
+		);
+		$this->assertStringContains(
+			'site_url',
+			$output
+		);
+		$this->assertStringContains(
+			'wp_active_theme',
+			$output
+		);
+		$this->assertStringContains(
+			'amp_supported_templates',
+			$output
+		);
+		$this->assertStringContains(
+			'plugins',
+			$output
+		);
+		$this->assertStringContains(
+			'themes',
+			$output
+		);
+		$this->assertStringContains(
+			'errors',
+			$output
+		);
+		$this->assertStringContains(
+			'error_sources',
+			$output
+		);
+		$this->assertStringContains(
+			'error_log',
+			$output
+		);
+
+		ob_start();
+		$summary = $this->instance->amp_send_diagnostic(
+			[],
+			[
+				'is-synthetic' => 'true',
+				'print'        => 'json-pretty',
+			]
+		);
+		$output  = ob_get_clean();
+
+		$this->assertEquals(
+			8,
+			count( $summary )
 		);
 	}
 }
