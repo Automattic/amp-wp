@@ -117,6 +117,7 @@ class AMP_Admin_Support {
 			);
 
 			$urls = wp_list_pluck( $scannable_url_provider->get_urls(), 'url' );
+
 			$args['urls'] = $urls;
 		}
 
@@ -144,7 +145,7 @@ class AMP_Admin_Support {
 		}
 
 		/**
-		 * @see tests/php/bootstrap.php
+		 * See tests/php/bootstrap.php.
 		 */
 		if ( defined( 'TESTS_PLUGIN_DIR' ) ) {
 			return [
@@ -612,6 +613,8 @@ class AMP_Admin_Support {
 	 *
 	 * @param string[] $plugin_meta An array of the plugin's metadata, including the version, author, author URI, and plugin URI.
 	 * @param string   $plugin_file Path to the plugin file relative to the plugins directory.
+	 * @param array    $plugin_data Plugin data from headers.
+	 * @param string   $status      Status filter currently applied to the plugin list. Possible values are: 'all', 'active', 'inactive', 'recently_activated', 'upgrade', 'mustuse', 'dropins', 'search', 'paused', 'auto-update-enabled', 'auto-update-disabled'.
 	 *
 	 * @return string[] Filtered array of plugin's metadata.
 	 */

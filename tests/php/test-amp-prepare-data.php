@@ -558,7 +558,7 @@ class AMP_Prepare_Data_Test extends WP_UnitTestCase {
 	 * @covers ::get_amp_urls()
 	 */
 	public function test_get_amp_urls() {
-		$pd = new \AMP_Prepare_Data();
+		$pd   = new \AMP_Prepare_Data();
 		$data = $pd->get_amp_urls();
 
 		$this->assertNotEmpty( $data['errors'] );
@@ -753,6 +753,7 @@ EOT;
 	 * @param string   $url               URL to populate errors for. Defaults to the home URL.
 	 * @param string[] $plugin_file_slugs Plugin file slugs.
 	 * @return int ID for amp_validated_url post.
+	 * @throws Exception WP_Error error message.
 	 */
 	private function populate_validation_errors( $url, $plugin_file_slugs ) {
 		if ( ! $url ) {
