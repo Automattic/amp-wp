@@ -3,7 +3,7 @@
  * Class AMP_Prepare_Data
  *
  * @package AMP
- * @since 2.1
+ * @since 2.2
  */
 
 use AmpProject\AmpWP\QueryVar;
@@ -11,7 +11,7 @@ use AmpProject\AmpWP\QueryVar;
 /**
  * Class AMP_Prepare_Data
  *
- * @since 2.1
+ * @since 2.2
  * @internal
  */
 class AMP_Prepare_Data {
@@ -19,7 +19,7 @@ class AMP_Prepare_Data {
 	/**
 	 * Args for AMP send data.
 	 *
-	 * @since 2.1
+	 * @since 2.2
 	 *
 	 * @var array
 	 */
@@ -28,7 +28,7 @@ class AMP_Prepare_Data {
 	/**
 	 * List of URL to send data.
 	 *
-	 * @since 2.1
+	 * @since 2.2
 	 *
 	 * @var string[]
 	 */
@@ -37,7 +37,7 @@ class AMP_Prepare_Data {
 	/**
 	 * Constructor method.
 	 *
-	 * @since 2.1
+	 * @since 2.2
 	 *
 	 * @param array $args Arguments for AMP Send data.
 	 */
@@ -51,7 +51,7 @@ class AMP_Prepare_Data {
 	/**
 	 * To parse args for AMP data that will send.
 	 *
-	 * @since 2.1
+	 * @since 2.2
 	 *
 	 * @return void
 	 */
@@ -99,7 +99,7 @@ class AMP_Prepare_Data {
 	 * The AMP query param is removed to facilitate switching between standard and transitional.
 	 * The URL scheme is also normalized to HTTPS to help with transition from HTTP to HTTPS.
 	 *
-	 * @since 2.1
+	 * @since 2.2
 	 *
 	 * @reference AMP_Validated_URL_Post_Type::normalize_url_for_storage
 	 *
@@ -145,7 +145,7 @@ class AMP_Prepare_Data {
 	/**
 	 * To get amp data to send it to compatibility server.
 	 *
-	 * @since 2.1
+	 * @since 2.2
 	 *
 	 * @return array
 	 */
@@ -170,7 +170,7 @@ class AMP_Prepare_Data {
 	/**
 	 * To get site info.
 	 *
-	 * @since 2.1
+	 * @since 2.2
 	 *
 	 * @return array Site information.
 	 */
@@ -227,7 +227,7 @@ class AMP_Prepare_Data {
 	/**
 	 * To get list of active plugin's information.
 	 *
-	 * @since 2.1
+	 * @since 2.2
 	 *
 	 * @return array List of plugin detail.
 	 */
@@ -250,7 +250,7 @@ class AMP_Prepare_Data {
 	/**
 	 * To get active theme info.
 	 *
-	 * @since 2.1
+	 * @since 2.2
 	 *
 	 * @return array List of theme information.
 	 */
@@ -266,7 +266,7 @@ class AMP_Prepare_Data {
 	/**
 	 * To get error log.
 	 *
-	 * @since 2.1
+	 * @since 2.2
 	 *
 	 * @return array Error log contents and log_errors ini setting.
 	 */
@@ -303,7 +303,7 @@ class AMP_Prepare_Data {
 	/**
 	 * To get plugin information by plugin file.
 	 *
-	 * @since 2.1
+	 * @since 2.2
 	 *
 	 * @param string $plugin_file Plugin file.
 	 *
@@ -348,7 +348,7 @@ class AMP_Prepare_Data {
 	/**
 	 * To normalize theme information.
 	 *
-	 * @since 2.1
+	 * @since 2.2
 	 *
 	 * @param \WP_Theme $theme_object Theme object.
 	 *
@@ -397,7 +397,7 @@ class AMP_Prepare_Data {
 	/**
 	 * To get list of AMP errors.
 	 *
-	 * @since 2.1
+	 * @since 2.2
 	 *
 	 * @return array List of errors.
 	 */
@@ -452,7 +452,7 @@ class AMP_Prepare_Data {
 	/**
 	 * Normalize error data.
 	 *
-	 * @since 2.1
+	 * @since 2.2
 	 *
 	 * @param array $error_data Error data array.
 	 *
@@ -485,7 +485,7 @@ class AMP_Prepare_Data {
 	/**
 	 * To normalize the error source data.
 	 *
-	 * @since 2.1
+	 * @since 2.2
 	 *
 	 * @param array $source Error source detail.
 	 *
@@ -568,7 +568,7 @@ class AMP_Prepare_Data {
 	/**
 	 * To get amp validated URLs.
 	 *
-	 * @since 2.1
+	 * @since 2.2
 	 *
 	 * @return array List amp validated URLs.
 	 */
@@ -724,7 +724,7 @@ class AMP_Prepare_Data {
 	/**
 	 * Get style sheet info of the post.
 	 *
-	 * @since 2.1
+	 * @since 2.2
 	 *
 	 * Reference: AMP_Validated_URL_Post_Type::print_stylesheets_meta_box()
 	 *
@@ -810,7 +810,7 @@ class AMP_Prepare_Data {
 	 * To get home url of the site.
 	 * Note: It will give home url without protocol.
 	 *
-	 * @since 2.1
+	 * @since 2.2
 	 *
 	 * @return string Home URL.
 	 */
@@ -830,7 +830,7 @@ class AMP_Prepare_Data {
 	/**
 	 * To remove home url from the content.
 	 *
-	 * @since 2.1
+	 * @since 2.2
 	 *
 	 * @param string $content Content from home_url need to remove.
 	 *
@@ -858,7 +858,7 @@ class AMP_Prepare_Data {
 	/**
 	 * To generate hash of object.
 	 *
-	 * @since 2.1
+	 * @since 2.2
 	 *
 	 * @param string|array|object $object Object for that hash need to generate.
 	 *

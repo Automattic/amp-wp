@@ -3,7 +3,7 @@
  * Class AMP_Admin_Support
  *
  * @package AMP
- * @since 2.1
+ * @since 2.2
  */
 
 use AmpProject\AmpWP\Admin\GoogleFonts;
@@ -12,14 +12,14 @@ use AmpProject\AmpWP\QueryVar;
 /**
  * Class managing support pages in wp-admin dashboard.
  *
- * @since 2.1
+ * @since 2.2
  * @internal
  */
 class AMP_Admin_Support {
 	/**
 	 * Handle for CSS file.
 	 *
-	 * @since 2.1
+	 * @since 2.2
 	 *
 	 * @var string
 	 */
@@ -28,7 +28,7 @@ class AMP_Admin_Support {
 	/**
 	 * Endpoint to send diagnostic data.
 	 *
-	 * @since 2.1
+	 * @since 2.2
 	 *
 	 * @var string
 	 */
@@ -37,7 +37,7 @@ class AMP_Admin_Support {
 	/**
 	 * Registers functionality through WordPress hooks.
 	 *
-	 * @since 2.1
+	 * @since 2.2
 	 */
 	public function init() {
 		if (
@@ -80,7 +80,7 @@ class AMP_Admin_Support {
 	 *
 	 * Prints the UUID returned from the server, if data is sent successfully, else, prints the error message.
 	 *
-	 * @since 2.1
+	 * @since 2.2
 	 *
 	 * @return void|array
 	 */
@@ -194,7 +194,7 @@ class AMP_Admin_Support {
 	/**
 	 * Enqueue assets for admin page.
 	 *
-	 * @since 2.1
+	 * @since 2.2
 	 *
 	 * @param string $hook The current admin page.
 	 */
@@ -218,7 +218,7 @@ class AMP_Admin_Support {
 	/**
 	 * Adds support page to AMP's submenu.
 	 *
-	 * @since 2.1
+	 * @since 2.2
 	 *
 	 * @return void
 	 */
@@ -236,7 +236,7 @@ class AMP_Admin_Support {
 	/**
 	 * Renders support page.
 	 *
-	 * @since 2.1
+	 * @since 2.2
 	 *
 	 * @return void
 	 */
@@ -512,7 +512,7 @@ class AMP_Admin_Support {
 	/**
 	 * Add Diagnostic link to Admin Bar.
 	 *
-	 * @since 2.1
+	 * @since 2.2
 	 *
 	 * @param WP_Admin_Bar $wp_admin_bar WP_Admin_Bar object.
 	 *
@@ -552,7 +552,7 @@ class AMP_Admin_Support {
 	/**
 	 * Add diagnostic link to meta box.
 	 *
-	 * @since 2.1
+	 * @since 2.2
 	 *
 	 * @param string[] $actions Array of actions.
 	 * @param WP_Post  $post Referenced WP_Post object.
@@ -578,7 +578,7 @@ class AMP_Admin_Support {
 	/**
 	 * Add diagnostic link to Post row actions.
 	 *
-	 * @since 2.1
+	 * @since 2.2
 	 *
 	 * @param string[] $actions Array of actions.
 	 * @param WP_Post  $post Referenced WP_Post object.
@@ -608,7 +608,7 @@ class AMP_Admin_Support {
 	/**
 	 * Plugin row Support link.
 	 *
-	 * @since 2.1
+	 * @since 2.2
 	 *
 	 * @param string[] $plugin_meta An array of the plugin's metadata, including the version, author, author URI, and plugin URI.
 	 * @param string   $plugin_file Path to the plugin file relative to the plugins directory.
@@ -638,7 +638,7 @@ class AMP_Admin_Support {
 	/**
 	 * Sends data to our endpoint where we queue it for further analysis.
 	 *
-	 * @since 2.1
+	 * @since 2.2
 	 *
 	 * @param string[] $args       Not Used.
 	 * @param string[] $assoc_args Associative array of arguments passed to the CLI command.
