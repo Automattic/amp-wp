@@ -53,6 +53,14 @@ class AMP_Admin_Support_Test extends WP_UnitTestCase {
 	 * @covers ::init()
 	 */
 	public function test_init() {
+		// No hooks if not admin.
+		$this->instance->init();
+
+		$this->assertFalse(
+			has_action( 'admin_enqueue_scripts', [ $this->instance, 'admin_enqueue_scripts' ] )
+		);
+
+		wp_set_current_user( self::factory()->user->create( [ 'role' => 'administrator' ] ) );
 		$this->instance->init();
 
 		$this->assertEquals(

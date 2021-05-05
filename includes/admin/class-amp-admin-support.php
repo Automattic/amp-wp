@@ -40,10 +40,7 @@ class AMP_Admin_Support {
 	 * @since 2.2
 	 */
 	public function init() {
-		if (
-			! current_user_can( 'manage_options' )
-			&& ! defined( 'TESTS_PLUGIN_DIR' ) // @see tests/php/bootstrap.php
-		) {
+		if ( ! current_user_can( 'manage_options' ) ) {
 			return;
 		}
 
