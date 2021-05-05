@@ -634,6 +634,37 @@ EOT;
 	}
 
 	/**
+	 * Test generate_hash method.
+	 *
+	 * @covers ::generate_hash()
+	 */
+	public function test_generate_hash() {
+		$expected = '209b5a7686f30ea1cd993b0573fc6ba6fba2c0936b2380763b7235c294056556';
+
+		// Method should sort keys.
+		$object = (object) [
+			'xyz' => 456,
+			'abc' => 123,
+		];
+
+		$this->assertSame(
+			$expected,
+			\AMP_Prepare_Data::generate_hash( $object )
+		);
+
+		// Sorted array should be same hash as unsorted array.
+		$object = (object) [
+			'abc' => 123,
+			'xyz' => 456,
+		];
+
+		$this->assertSame(
+			$expected,
+			\AMP_Prepare_Data::generate_hash( $object )
+		);
+	}
+
+	/**
 	 * Populate sample validation errors.
 	 *
 	 * @param string   $url               URL to populate errors for. Defaults to the home URL.
