@@ -72,7 +72,7 @@ class AMP_Admin_Support {
 		/**
 		 * Plugin row Support link.
 		 */
-		add_filter( 'plugin_row_meta', [ $this, 'plugin_row_meta' ], 10, 2 );
+		add_filter( 'plugin_row_meta', [ $this, 'plugin_row_meta' ], 10, 4 );
 	}
 
 	/**
