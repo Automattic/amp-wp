@@ -474,7 +474,7 @@ class AMP_Prepare_Data_Test extends WP_UnitTestCase {
 	public function test_get_errors() {
 		$error_data = \AMP_Prepare_Data::get_errors();
 
-		// @see setUp
+		// @see setUp.
 		$this->assertSame(
 			[ 'c8b31ce3370595c52a3528d1df9e25f8' ],
 			array_keys( $error_data )

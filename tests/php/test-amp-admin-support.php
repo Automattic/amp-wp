@@ -7,6 +7,7 @@
  */
 
 use AmpProject\AmpWP\Admin\GoogleFonts;
+use AmpProject\AmpWP\Option;
 use AmpProject\AmpWP\Admin\OptionsMenu;
 use AmpProject\AmpWP\Admin\ReaderThemes;
 use AmpProject\AmpWP\Admin\RESTPreloader;
@@ -202,6 +203,27 @@ class AMP_Admin_Support_Test extends WP_UnitTestCase {
 			"'_ajax_nonce': '" . esc_js( wp_create_nonce( 'amp-diagnostic' ) ) . "'",
 			$html
 		);
+	}
+
+	/**
+	 * Test admin_bar_menu method.
+	 *
+	 * @covers ::admin_bar_menu()
+	 */
+	public function test_admin_bar_menu() {
+		$this->go_to( home_url( '/' ) );
+		require_once ABSPATH . WPINC . '/class-wp-admin-bar.php';
+		$admin_bar = new WP_Admin_Bar();
+
+		// AMP-first mode.
+		AMP_Options_Manager::update_option( Option::THEME_SUPPORT, AMP_Theme_Support::STANDARD_MODE_SLUG );
+		wp_set_current_user( self::factory()->user->create( [ 'role' => 'administrator' ] ) );
+		AMP_Validation_Manager::add_admin_bar_menu_items( $admin_bar );
+		$this->instance->admin_bar_menu( $admin_bar );
+
+		$node = $admin_bar->get_node( 'amp-diagnostic' );
+		$this->assertInternalType( 'object', $node );
+		$this->assertStringContains( 'page=amp-support', $node->href );
 	}
 
 	/**
