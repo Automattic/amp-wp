@@ -599,6 +599,28 @@ EOT;
 	}
 
 	/**
+	 * Test get_home_url method.
+	 *
+	 * @covers ::get_home_url()
+	 */
+	public function test_get_home_url() {
+		$expected = strtolower(
+			str_replace(
+				[ 'https://', 'http://' ],
+				[ '', '' ],
+				untrailingslashit(
+					home_url()
+				)
+			)
+		);
+
+		$this->assertEquals(
+			$expected,
+			\AMP_Prepare_Data::get_home_url()
+		);
+	}
+
+	/**
 	 * Populate sample validation errors.
 	 *
 	 * @param string   $url               URL to populate errors for. Defaults to the home URL.
