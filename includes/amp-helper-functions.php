@@ -928,14 +928,6 @@ function amp_register_default_scripts( $wp_scripts ) {
 			null
 		);
 	}
-
-	if ( $wp_scripts->query( 'amp-experiment', 'registered' ) ) {
-		/*
-		 * Version 1.0 of amp-experiment is still experimental and requires the user to enable it.
-		 * @todo Revisit once amp-experiment is no longer experimental.
-		 */
-		$wp_scripts->registered['amp-experiment']->src = 'https://cdn.ampproject.org/v0/amp-experiment-0.1.js';
-	}
 }
 
 /**
