@@ -43,12 +43,10 @@ def SetupOutDir(out_dir):
 	Args:
 		out_dir: directory name of the output directory.
 	"""
-	logging.info('entering ...')
 
 	if os.path.exists(out_dir):
 		subprocess.check_call(['rm', '-rf', out_dir])
 	os.mkdir(out_dir)
-	logging.info('... done')
 
 
 def GenValidatorPb2Py(validator_directory, out_dir):
@@ -58,14 +56,11 @@ def GenValidatorPb2Py(validator_directory, out_dir):
 		validator_directory: directory name of the validator.
 		out_dir: directory name of the output directory.
 	"""
-	logging.info('entering ...')
 
 	os.chdir( validator_directory )
 	subprocess.check_call(['protoc', 'validator.proto', '--python_out=%s' % out_dir])
 	os.chdir( out_dir )
 	open('__init__.py', 'w').close()
-	logging.info('... done')
-
 
 def GenValidatorProtoascii(validator_directory, out_dir):
 	"""Assembles the validator protoascii file from the main and extensions.
@@ -74,7 +69,6 @@ def GenValidatorProtoascii(validator_directory, out_dir):
 		validator_directory: directory for where the validator is located, inside the amphtml repo.
 		out_dir: directory name of the output directory.
 	"""
-	logging.info('entering ...')
 
 	protoascii_segments = [
 		open(os.path.join(validator_directory, 'validator-main.protoascii')).read(),
@@ -89,8 +83,6 @@ def GenValidatorProtoascii(validator_directory, out_dir):
 	f.write(''.join(protoascii_segments))
 	f.close()
 
-	logging.info('... done')
-
 
 def GeneratePHP(out_dir):
 	"""Generates PHP for WordPress AMP plugin to consume.
@@ -99,7 +91,6 @@ def GeneratePHP(out_dir):
 		validator_directory: directory for where the validator is located, inside the amphtml repo.
 		out_dir: directory name of the output directory
 	"""
-	logging.info('entering ...')
 
 	allowed_tags, attr_lists, descendant_lists, reference_points, versions = ParseRules(out_dir)
 
@@ -132,11 +123,7 @@ def GeneratePHP(out_dir):
 	# Write the php file to STDOUT.
 	print output
 
-	logging.info('... done')
-
 def GenerateHeaderPHP(out):
-	logging.info('entering ...')
-
 	# Output the file's header
 	out.append('<?php')
 	out.append('/**')
@@ -155,67 +142,45 @@ def GenerateHeaderPHP(out):
 	out.append(' */')
 	out.append('class AMP_Allowed_Tags_Generated {')
 	out.append('')
-	logging.info('... done')
-
 
 def GenerateSpecVersionPHP(out, versions):
-	logging.info('entering ...')
-
 	# Output the version of the spec file and matching validator version
 	if versions['spec_file_revision']:
 		out.append('\tprivate static $spec_file_revision = %d;' % versions['spec_file_revision'])
 	if versions['min_validator_revision_required']:
 		out.append('\tprivate static $minimum_validator_revision_required = %d;' % versions['min_validator_revision_required'])
-	logging.info('... done')
 
 def GenerateDescendantListsPHP(out, descendant_lists):
-	logging.info('entering ...')
-
 	out.append('')
 	out.append('\tprivate static $descendant_tag_lists = %s;' % Phpize( descendant_lists, 1 ).lstrip() )
-	logging.info('... done')
 
 
 def GenerateAllowedTagsPHP(out, allowed_tags):
-	logging.info('entering ...')
-
-  # Output the allowed tags dictionary along with each tag's allowed attributes
+	# Output the allowed tags dictionary along with each tag's allowed attributes
 	out.append('')
 	out.append('\tprivate static $allowed_tags = %s;' % Phpize( allowed_tags, 1 ).lstrip() )
-	logging.info('... done')
 
 
 def GenerateLayoutAttributesPHP(out, attr_lists):
-	logging.info('entering ...')
-
 	# Output the attribute list allowed for layouts.
 	out.append('')
 	out.append('\tprivate static $layout_allowed_attrs = %s;' % Phpize( attr_lists['$AMP_LAYOUT_ATTRS'], 1 ).lstrip() )
 	out.append('')
-	logging.info('... done')
 
 
 def GenerateGlobalAttributesPHP(out, attr_lists):
-	logging.info('entering ...')
-
 	# Output the globally allowed attribute list.
 	out.append('')
 	out.append('\tprivate static $globally_allowed_attrs = %s;' % Phpize( attr_lists['$GLOBAL_ATTRS'], 1 ).lstrip() )
 	out.append('')
-	logging.info('... done')
 
 def GenerateReferencePointsPHP(out, reference_points):
-	logging.info('entering ...')
-
 	# Output the reference points.
 	out.append('')
 	out.append('\tprivate static $reference_points = %s;' % Phpize( reference_points, 1 ).lstrip() )
 	out.append('')
-	logging.info('... done')
 
 def GenerateFooterPHP(out):
-	logging.info('entering ...')
-
 	# Output the footer.
 	out.append('''
 	/**
@@ -332,12 +297,8 @@ def GenerateFooterPHP(out):
 	out.append('}')
 	out.append('')
 
-	logging.info('... done')
-
 
 def ParseRules(out_dir):
-	logging.info('entering ...')
-
 	# These imports happen late, within this method because they don't necessarily
 	# exist when the module starts running, and the ones that probably do
 	# are checked by CheckPrereqs.
@@ -426,13 +387,10 @@ def ParseRules(out_dir):
 
 					descendant_lists[list.name].append( val.lower() )
 
-	logging.info('... done')
 	return allowed_tags, attr_lists, descendant_lists, reference_points, versions
 
 
 def GetTagSpec(tag_spec, attr_lists):
-	logging.info('entering ...')
-
 	tag_dict = GetTagRules(tag_spec)
 	if tag_dict is None:
 		return None
@@ -447,7 +405,6 @@ def GetTagSpec(tag_spec, attr_lists):
 	# Then merge the spec-specific attributes on top to override any list definitions.
 	attr_dict.update(GetAttrs(tag_spec.attrs))
 
-	logging.info('... done')
 	tag_spec_dict = {'tag_spec':tag_dict, 'attr_spec_list':attr_dict}
 	if tag_spec.HasField('cdata'):
 		cdata_dict = {}
@@ -520,8 +477,6 @@ def GetTagSpec(tag_spec, attr_lists):
 
 
 def GetTagRules(tag_spec):
-	logging.info('entering ...')
-
 	tag_rules = {}
 
 	if hasattr(tag_spec, 'also_requires_tag') and tag_spec.also_requires_tag:
@@ -673,13 +628,10 @@ def GetTagRules(tag_spec):
 		if mandatory_of_spec:
 			tag_rules[ mandatory_of_constraint ] = mandatory_of_spec
 
-	logging.info('... done')
 	return tag_rules
 
 
 def GetAttrs(attrs):
-	logging.info('entering ...')
-
 	attr_dict = {}
 	for attr_spec in attrs:
 
@@ -702,13 +654,10 @@ def GetAttrs(attrs):
 			# Add attribute name and alternative_names
 			attr_dict[UnicodeEscape(name)] = value_dict
 
-	logging.info('... done')
 	return attr_dict
 
 
 def GetValues(attr_spec):
-	logging.info('entering ...')
-
 	value_dict = {}
 
 	# Ignore transformed AMP for now.
@@ -784,7 +733,6 @@ def GetValues(attr_spec):
 			requires_extension_list.append(requires_extension)
 		value_dict['requires_extension'] = requires_extension_list
 
-	logging.info('... done')
 	return value_dict
 
 
