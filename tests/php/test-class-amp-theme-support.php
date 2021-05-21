@@ -1377,7 +1377,6 @@ class Test_AMP_Theme_Support extends WP_UnitTestCase {
 			'amp-dynamic-css-classes',
 			'amp-subscriptions',
 			'amp-lightbox-gallery',
-			'amp-video',
 		];
 
 		ob_start();
@@ -1409,8 +1408,8 @@ class Test_AMP_Theme_Support extends WP_UnitTestCase {
 		}
 
 		$this->assertEqualSets(
-			$expected_script_srcs,
-			$actual_script_srcs
+			array_map( 'basename', $expected_script_srcs ),
+			array_map( 'basename', $actual_script_srcs )
 		);
 	}
 
@@ -1439,6 +1438,19 @@ class Test_AMP_Theme_Support extends WP_UnitTestCase {
 				<script async custom-element="amp-video" src="https://cdn.ampproject.org/v0/amp-video-0.1.js"></script>
 			</head>
 			<body>
+				<amp-video controls
+					width="640"
+					height="360"
+					layout="responsive"
+					poster="https://amp.dev/static/inline-examples/images/kitten-playing.png">
+					<source src="https://amp.dev/static/inline-examples/videos/kitten-playing.webm"
+							type="video/webm" />
+					<source src="https://amp.dev/static/inline-examples/videos/kitten-playing.mp4"
+							type="video/mp4" />
+					<div fallback>
+						<p>This browser does not support the video element.</p>
+					</div>
+				</amp-video>
 				<?php wp_print_scripts( [ 'amp-video', 'amp-runtime' ] ); ?>
 				<?php wp_footer(); ?>
 			</body>
