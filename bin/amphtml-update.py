@@ -351,8 +351,8 @@ def ParseRules(out_dir):
 				if tag_spec.HasField('mandatory_parent') and tag_spec.mandatory_parent in mandatory_parent_denylist and tag_spec.tag_name != 'HTML':
 					continue
 
-				# Ignore deprecated tags
-				if tag_spec.HasField('deprecation'):
+				# Ignore deprecated tags (except for amp-sidebar in amp-story for now).
+				if tag_spec.HasField('deprecation') and 'AMP-SIDEBAR' != tag_spec.tag_name:
 					continue
 
 				# Handle the special $REFERENCE_POINT tag

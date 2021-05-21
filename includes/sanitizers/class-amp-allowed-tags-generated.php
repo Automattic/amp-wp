@@ -5572,6 +5572,22 @@ class AMP_Allowed_Tags_Generated {
 					'spec_url' => 'https://amp.dev/documentation/components/amp-sidebar/',
 				),
 			),
+			array(
+				'attr_spec_list' => array(),
+				'tag_spec' => array(
+					'amp_layout' => array(
+						'supported_layouts' => array(
+							1,
+						),
+					),
+					'mandatory_parent' => 'amp-story',
+					'requires_extension' => array(
+						'amp-sidebar',
+					),
+					'spec_name' => 'amp-story >> amp-sidebar',
+					'spec_url' => 'https://amp.dev/documentation/components/amp-sidebar/',
+				),
+			),
 		),
 		'amp-skimlinks' => array(
 			array(
