@@ -373,19 +373,43 @@ def ParseRules(out_dir):
 					tag_list.append(gotten_tag_spec)
 					allowed_tags[UnicodeEscape(tag_spec.tag_name).lower()] = tag_list
 		elif 'descendant_tag_list' == field_desc.name:
-			for list in field_val:
-				descendant_lists[list.name] = []
-				for val in list.tag:
+			for _list in field_val:
+				descendant_lists[_list.name] = []
+				for val in _list.tag:
 
 					# Skip tags specific to transformed AMP.
 					if 'I-AMPHTML-SIZER' == val:
 						continue
 
 					# The img tag is currently exclusively to transformed AMP, except as descendant of amp-story-player.
-					if 'IMG' == val and 'amp-story-player-allowed-descendants' != list.name:
+					if 'IMG' == val and 'amp-story-player-allowed-descendants' != _list.name:
 						continue
 
-					descendant_lists[list.name].append( val.lower() )
+					descendant_lists[_list.name].append( val.lower() )
+
+	# Separate extension scripts from non-extension scripts
+	extension_scripts = defaultdict(list)
+	script_tags = []
+	for script_tag in allowed_tags['script']:
+		if 'extension_spec' in script_tag['tag_spec']:
+			extension_scripts[script_tag['tag_spec']['extension_spec']['name']].append(script_tag)
+		else:
+			script_tags.append(script_tag)
+
+	# Merge extension scripts (e.g. Bento and non-Bento) into one script per extension.
+	for extension_name in sorted(extension_scripts):
+		extension_script_list = extension_scripts[extension_name]
+		script_versions = set(extension_script_list[0]['tag_spec']['extension_spec']['version'])
+		for extension_script in extension_script_list[1:]:
+			script_versions.update(extension_script['tag_spec']['extension_spec']['version'])
+		if 'latest' in script_versions:
+			script_versions.remove( 'latest' )
+		extension_script_list[0]['tag_spec']['extension_spec']['version'] = sorted( script_versions, key=lambda version: map(int, version.split('.') ) )
+		if 'version_name' in extension_script_list[0]['tag_spec']['extension_spec']:
+			del extension_script_list[0]['tag_spec']['extension_spec']['version_name']
+		script_tags.append(extension_script_list[0])
+
+	allowed_tags['script'] = script_tags
 
 	return allowed_tags, attr_lists, descendant_lists, reference_points, versions
 
@@ -468,10 +492,7 @@ def GetTagSpec(tag_spec, attr_lists):
 	else:
 		spec_name = tag_spec_dict['tag_spec']['spec_name']
 
-	if '$reference_point' != spec_name:
-		if spec_name in seen_spec_names:
-			raise Exception( 'Already seen spec_name: %s' % spec_name )
-		seen_spec_names.add( spec_name )
+	seen_spec_names.add( spec_name )
 
 	return tag_spec_dict
 
@@ -556,11 +577,6 @@ def GetTagRules(tag_spec):
 			raise Exception( 'Missing required version field' )
 		if 'name' not in extension_spec:
 			raise Exception( 'Missing required name field' )
-
-		# Get the versions and sort.
-		versions = set( extension_spec['version'] )
-		versions.remove( 'latest' )
-		extension_spec['version'] = sorted( versions, key=lambda version: map(int, version.split('.') ) )
 
 		# Unused since amp_filter_script_loader_tag() and \AMP_Tag_And_Attribute_Sanitizer::get_rule_spec_list_to_validate() just hard-codes the check for amp-mustache.
 		if 'extension_type' in extension_spec:
