@@ -29,6 +29,7 @@ import google
 from collections import defaultdict
 import imp
 import re
+import urllib
 
 seen_spec_names = set()
 
@@ -396,6 +397,11 @@ def ParseRules(out_dir):
 		else:
 			script_tags.append(script_tag)
 
+	bento_versions = dict()
+	bento_components = json.loads(urllib.urlopen('https://amp.dev/static/bento-components.json').read())
+	for bento_component in bento_components:
+		bento_versions[bento_component['name']] = bento_component['version']
+
 	# Merge extension scripts (e.g. Bento and non-Bento) into one script per extension.
 	for extension_name in sorted(extension_scripts):
 		extension_script_list = extension_scripts[extension_name]
@@ -404,7 +410,16 @@ def ParseRules(out_dir):
 			script_versions.update(extension_script['tag_spec']['extension_spec']['version'])
 		if 'latest' in script_versions:
 			script_versions.remove( 'latest' )
-		extension_script_list[0]['tag_spec']['extension_spec']['version'] = sorted( script_versions, key=lambda version: map(int, version.split('.') ) )
+
+		script_versions = sorted( script_versions, key=lambda version: map(int, version.split('.') ) )
+
+		# Make sure the Bento version is not the last so it is not auto-loaded.
+		if extension_name in bento_versions:
+			script_versions.remove(bento_versions[extension_name])
+			script_versions.insert(0, bento_versions[extension_name])
+
+		extension_script_list[0]['tag_spec']['extension_spec']['version'] = script_versions
+
 		if 'version_name' in extension_script_list[0]['tag_spec']['extension_spec']:
 			del extension_script_list[0]['tag_spec']['extension_spec']['version_name']
 		script_tags.append(extension_script_list[0])

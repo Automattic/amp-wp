@@ -14829,8 +14829,8 @@ class AMP_Allowed_Tags_Generated {
 						'name' => 'amp-accordion',
 						'requires_usage' => true,
 						'version' => array(
-							'0.1',
 							'1.0',
+							'0.1',
 						),
 					),
 				),
@@ -15221,8 +15221,8 @@ class AMP_Allowed_Tags_Generated {
 						'name' => 'amp-base-carousel',
 						'requires_usage' => true,
 						'version' => array(
-							'0.1',
 							'1.0',
+							'0.1',
 						),
 					),
 				),
@@ -15613,8 +15613,8 @@ class AMP_Allowed_Tags_Generated {
 						'name' => 'amp-date-countdown',
 						'requires_usage' => true,
 						'version' => array(
-							'0.1',
 							'1.0',
+							'0.1',
 						),
 					),
 				),
@@ -15644,8 +15644,8 @@ class AMP_Allowed_Tags_Generated {
 						'name' => 'amp-date-display',
 						'requires_usage' => true,
 						'version' => array(
-							'0.1',
 							'1.0',
+							'0.1',
 						),
 					),
 				),
@@ -15946,8 +15946,8 @@ class AMP_Allowed_Tags_Generated {
 						'name' => 'amp-fit-text',
 						'requires_usage' => true,
 						'version' => array(
-							'0.1',
 							'1.0',
+							'0.1',
 						),
 					),
 				),
@@ -16457,8 +16457,8 @@ class AMP_Allowed_Tags_Generated {
 						'name' => 'amp-inline-gallery',
 						'requires_usage' => true,
 						'version' => array(
-							'0.1',
 							'1.0',
+							'0.1',
 						),
 					),
 				),
@@ -16518,8 +16518,8 @@ class AMP_Allowed_Tags_Generated {
 						'name' => 'amp-instagram',
 						'requires_usage' => true,
 						'version' => array(
-							'0.1',
 							'1.0',
+							'0.1',
 						),
 					),
 				),
@@ -16669,8 +16669,8 @@ class AMP_Allowed_Tags_Generated {
 						'name' => 'amp-lightbox',
 						'requires_usage' => true,
 						'version' => array(
-							'0.1',
 							'1.0',
+							'0.1',
 						),
 					),
 				),
@@ -17544,8 +17544,8 @@ class AMP_Allowed_Tags_Generated {
 						'name' => 'amp-selector',
 						'requires_usage' => true,
 						'version' => array(
-							'0.1',
 							'1.0',
+							'0.1',
 						),
 					),
 				),
@@ -17665,8 +17665,8 @@ class AMP_Allowed_Tags_Generated {
 						'name' => 'amp-social-share',
 						'requires_usage' => true,
 						'version' => array(
-							'0.1',
 							'1.0',
+							'0.1',
 						),
 					),
 				),
@@ -18091,8 +18091,8 @@ class AMP_Allowed_Tags_Generated {
 						'name' => 'amp-timeago',
 						'requires_usage' => true,
 						'version' => array(
-							'0.1',
 							'1.0',
+							'0.1',
 						),
 					),
 				),
@@ -18212,8 +18212,8 @@ class AMP_Allowed_Tags_Generated {
 						'name' => 'amp-video',
 						'requires_usage' => true,
 						'version' => array(
-							'0.1',
 							'1.0',
+							'0.1',
 						),
 					),
 				),
@@ -18515,8 +18515,8 @@ class AMP_Allowed_Tags_Generated {
 						'name' => 'amp-youtube',
 						'requires_usage' => true,
 						'version' => array(
-							'0.1',
 							'1.0',
+							'0.1',
 						),
 					),
 				),
