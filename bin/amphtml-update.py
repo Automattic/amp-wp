@@ -367,7 +367,6 @@ def ParseRules(out_dir):
 					tag_list = []
 				else:
 					tag_list = allowed_tags[UnicodeEscape(tag_spec.tag_name).lower()]
-				# AddTag(allowed_tags, tag_spec, attr_lists)
 
 				gotten_tag_spec = GetTagSpec(tag_spec, attr_lists)
 				if gotten_tag_spec is not None:
@@ -397,10 +396,12 @@ def ParseRules(out_dir):
 		else:
 			script_tags.append(script_tag)
 
+	# Obtain the Bento and Latest versions.
 	bento_versions = dict()
 	bento_components = json.loads(urllib.urlopen('https://amp.dev/static/bento-components.json').read())
 	for bento_component in bento_components:
 		bento_versions[bento_component['name']] = bento_component['version']
+	latest_versions = json.loads(urllib.urlopen('https://amp.dev/static/files/component-versions.json').read())
 
 	# Merge extension scripts (e.g. Bento and non-Bento) into one script per extension.
 	for extension_name in sorted(extension_scripts):
@@ -409,16 +410,32 @@ def ParseRules(out_dir):
 		for extension_script in extension_script_list[1:]:
 			script_versions.update(extension_script['tag_spec']['extension_spec']['version'])
 		if 'latest' in script_versions:
-			script_versions.remove( 'latest' )
+			script_versions.remove('latest')
 
 		script_versions = sorted( script_versions, key=lambda version: map(int, version.split('.') ) )
-
-		# Make sure the Bento version is not the last so it is not auto-loaded.
-		if extension_name in bento_versions:
-			script_versions.remove(bento_versions[extension_name])
-			script_versions.insert(0, bento_versions[extension_name])
-
 		extension_script_list[0]['tag_spec']['extension_spec']['version'] = script_versions
+
+		if extension_name in bento_versions:
+			extension_script_list[0]['tag_spec']['extension_spec']['bento_version'] = bento_versions[extension_name]
+		else:
+			extension_script_list[0]['tag_spec']['extension_spec']['bento_version'] = None
+
+		latest_version = None
+		if extension_name in latest_versions and latest_versions[extension_name] in script_versions:
+			latest_version = latest_versions[extension_name]
+		else:
+			if extension_name not in latest_versions:
+				logging.info('Warning: component-versions.json lacks component: ' + extension_name)
+			elif latest_versions[extension_name] not in script_versions:
+				logging.info('Warning: latest_version is not a valid version for ' + extension_name)
+
+			# Make best guess about what the latest version is by removing the Bento version if it is present, if there is more than one candidate version.
+			latest_version_candidates = list(script_versions)
+			if extension_script_list[0]['tag_spec']['extension_spec']['bento_version'] in latest_version_candidates and len(latest_version_candidates) > 1:
+				latest_version_candidates.remove(extension_script_list[0]['tag_spec']['extension_spec']['bento_version'])
+
+			latest_version = latest_version_candidates[-1]
+		extension_script_list[0]['tag_spec']['extension_spec']['latest_version'] = latest_version
 
 		if 'version_name' in extension_script_list[0]['tag_spec']['extension_spec']:
 			del extension_script_list[0]['tag_spec']['extension_spec']['version_name']

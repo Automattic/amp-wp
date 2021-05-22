@@ -918,7 +918,7 @@ function amp_register_default_scripts( $wp_scripts ) {
 		$src = sprintf(
 			'https://cdn.ampproject.org/v0/%s-%s.js',
 			$extension_name,
-			end( $extension_spec['version'] )
+			$extension_spec['latest_version']
 		);
 
 		$wp_scripts->add(
