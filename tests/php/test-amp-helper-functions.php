@@ -1254,6 +1254,158 @@ class Test_AMP_Helper_Functions extends DependencyInjectedTestCase {
 		$this->assertStringContains( '<script type=\'text/javascript\' src=\'https://cdn.ampproject.org/v0/amp-foo-0.1.js\' async custom-element="amp-foo"></script>', $output ); // phpcs:ignore WordPress.WP.EnqueuedResources.NonEnqueuedScript
 	}
 
+	/** @covers ::amp_register_default_scripts() */
+	public function test_amp_register_default_scripts() {
+		global $wp_scripts;
+		$wp_scripts = null;
+
+		$registered_script_srcs = [];
+		foreach ( wp_scripts()->registered as $handle => $dependency ) {
+			if ( 'amp-' === substr( $handle, 0, 4 ) ) {
+				$this->assertStringStartsWith( 'https://cdn.ampproject.org/', $dependency->src );
+				$registered_script_srcs[ $handle ] = str_replace( 'https://cdn.ampproject.org/', '', $dependency->src );
+			}
+		}
+		ksort( $registered_script_srcs );
+
+		// This allows us to ensure that we catch any version changes in scripts.
+		$expected = [
+			'amp-3d-gltf'                   => 'v0/amp-3d-gltf-0.1.js',
+			'amp-3q-player'                 => 'v0/amp-3q-player-0.1.js',
+			'amp-access'                    => 'v0/amp-access-0.1.js',
+			'amp-access-laterpay'           => 'v0/amp-access-laterpay-0.2.js',
+			'amp-access-poool'              => 'v0/amp-access-poool-0.1.js',
+			'amp-access-scroll'             => 'v0/amp-access-scroll-0.1.js',
+			'amp-accordion'                 => 'v0/amp-accordion-0.1.js',
+			'amp-action-macro'              => 'v0/amp-action-macro-0.1.js',
+			'amp-ad'                        => 'v0/amp-ad-0.1.js',
+			'amp-ad-custom'                 => 'v0/amp-ad-custom-0.1.js',
+			'amp-addthis'                   => 'v0/amp-addthis-0.1.js',
+			'amp-analytics'                 => 'v0/amp-analytics-0.1.js',
+			'amp-anim'                      => 'v0/amp-anim-0.1.js',
+			'amp-animation'                 => 'v0/amp-animation-0.1.js',
+			'amp-apester-media'             => 'v0/amp-apester-media-0.1.js',
+			'amp-app-banner'                => 'v0/amp-app-banner-0.1.js',
+			'amp-audio'                     => 'v0/amp-audio-0.1.js',
+			'amp-auto-ads'                  => 'v0/amp-auto-ads-0.1.js',
+			'amp-autocomplete'              => 'v0/amp-autocomplete-0.1.js',
+			'amp-base-carousel'             => 'v0/amp-base-carousel-0.1.js',
+			'amp-beopinion'                 => 'v0/amp-beopinion-0.1.js',
+			'amp-bind'                      => 'v0/amp-bind-0.1.js',
+			'amp-bodymovin-animation'       => 'v0/amp-bodymovin-animation-0.1.js',
+			'amp-brid-player'               => 'v0/amp-brid-player-0.1.js',
+			'amp-brightcove'                => 'v0/amp-brightcove-0.1.js',
+			'amp-byside-content'            => 'v0/amp-byside-content-0.1.js',
+			'amp-call-tracking'             => 'v0/amp-call-tracking-0.1.js',
+			'amp-carousel'                  => 'v0/amp-carousel-0.2.js',
+			'amp-connatix-player'           => 'v0/amp-connatix-player-0.1.js',
+			'amp-consent'                   => 'v0/amp-consent-0.1.js',
+			'amp-dailymotion'               => 'v0/amp-dailymotion-0.1.js',
+			'amp-date-countdown'            => 'v0/amp-date-countdown-0.1.js',
+			'amp-date-display'              => 'v0/amp-date-display-0.1.js',
+			'amp-date-picker'               => 'v0/amp-date-picker-0.1.js',
+			'amp-delight-player'            => 'v0/amp-delight-player-0.1.js',
+			'amp-dynamic-css-classes'       => 'v0/amp-dynamic-css-classes-0.1.js',
+			'amp-embedly-card'              => 'v0/amp-embedly-card-0.1.js',
+			'amp-experiment'                => 'v0/amp-experiment-0.1.js',
+			'amp-facebook'                  => 'v0/amp-facebook-0.1.js',
+			'amp-facebook-comments'         => 'v0/amp-facebook-comments-0.1.js',
+			'amp-facebook-like'             => 'v0/amp-facebook-like-0.1.js',
+			'amp-facebook-page'             => 'v0/amp-facebook-page-0.1.js',
+			'amp-fit-text'                  => 'v0/amp-fit-text-0.1.js',
+			'amp-font'                      => 'v0/amp-font-0.1.js',
+			'amp-form'                      => 'v0/amp-form-0.1.js',
+			'amp-fx-collection'             => 'v0/amp-fx-collection-0.1.js',
+			'amp-fx-flying-carpet'          => 'v0/amp-fx-flying-carpet-0.1.js',
+			'amp-geo'                       => 'v0/amp-geo-0.1.js',
+			'amp-gfycat'                    => 'v0/amp-gfycat-0.1.js',
+			'amp-gist'                      => 'v0/amp-gist-0.1.js',
+			'amp-google-assistant-assistjs' => 'v0/amp-google-assistant-assistjs-0.1.js',
+			'amp-google-document-embed'     => 'v0/amp-google-document-embed-0.1.js',
+			'amp-hulu'                      => 'v0/amp-hulu-0.1.js',
+			'amp-iframe'                    => 'v0/amp-iframe-0.1.js',
+			'amp-ima-video'                 => 'v0/amp-ima-video-0.1.js',
+			'amp-image-lightbox'            => 'v0/amp-image-lightbox-0.1.js',
+			'amp-image-slider'              => 'v0/amp-image-slider-0.1.js',
+			'amp-imgur'                     => 'v0/amp-imgur-0.1.js',
+			'amp-inline-gallery'            => 'v0/amp-inline-gallery-0.1.js',
+			'amp-inputmask'                 => 'v0/amp-inputmask-0.1.js',
+			'amp-instagram'                 => 'v0/amp-instagram-0.1.js',
+			'amp-install-serviceworker'     => 'v0/amp-install-serviceworker-0.1.js',
+			'amp-izlesene'                  => 'v0/amp-izlesene-0.1.js',
+			'amp-jwplayer'                  => 'v0/amp-jwplayer-0.1.js',
+			'amp-kaltura-player'            => 'v0/amp-kaltura-player-0.1.js',
+			'amp-lightbox'                  => 'v0/amp-lightbox-0.1.js',
+			'amp-lightbox-gallery'          => 'v0/amp-lightbox-gallery-0.1.js',
+			'amp-link-rewriter'             => 'v0/amp-link-rewriter-0.1.js',
+			'amp-list'                      => 'v0/amp-list-0.1.js',
+			'amp-live-list'                 => 'v0/amp-live-list-0.1.js',
+			'amp-mathml'                    => 'v0/amp-mathml-0.1.js',
+			'amp-mega-menu'                 => 'v0/amp-mega-menu-0.1.js',
+			'amp-megaphone'                 => 'v0/amp-megaphone-0.1.js',
+			'amp-minute-media-player'       => 'v0/amp-minute-media-player-0.1.js',
+			'amp-mowplayer'                 => 'v0/amp-mowplayer-0.1.js',
+			'amp-mustache'                  => 'v0/amp-mustache-0.2.js',
+			'amp-nested-menu'               => 'v0/amp-nested-menu-0.1.js',
+			'amp-next-page'                 => 'v0/amp-next-page-1.0.js',
+			'amp-nexxtv-player'             => 'v0/amp-nexxtv-player-0.1.js',
+			'amp-o2-player'                 => 'v0/amp-o2-player-0.1.js',
+			'amp-onetap-google'             => 'v0/amp-onetap-google-0.1.js',
+			'amp-ooyala-player'             => 'v0/amp-ooyala-player-0.1.js',
+			'amp-orientation-observer'      => 'v0/amp-orientation-observer-0.1.js',
+			'amp-pan-zoom'                  => 'v0/amp-pan-zoom-0.1.js',
+			'amp-pinterest'                 => 'v0/amp-pinterest-0.1.js',
+			'amp-playbuzz'                  => 'v0/amp-playbuzz-0.1.js',
+			'amp-position-observer'         => 'v0/amp-position-observer-0.1.js',
+			'amp-powr-player'               => 'v0/amp-powr-player-0.1.js',
+			'amp-reach-player'              => 'v0/amp-reach-player-0.1.js',
+			'amp-recaptcha-input'           => 'v0/amp-recaptcha-input-0.1.js',
+			'amp-redbull-player'            => 'v0/amp-redbull-player-0.1.js',
+			'amp-reddit'                    => 'v0/amp-reddit-0.1.js',
+			'amp-riddle-quiz'               => 'v0/amp-riddle-quiz-0.1.js',
+			'amp-runtime'                   => 'v0.js',
+			'amp-script'                    => 'v0/amp-script-0.1.js',
+			'amp-selector'                  => 'v0/amp-selector-0.1.js',
+			'amp-shadow'                    => 'shadow-v0.js',
+			'amp-sidebar'                   => 'v0/amp-sidebar-0.1.js',
+			'amp-skimlinks'                 => 'v0/amp-skimlinks-0.1.js',
+			'amp-smartlinks'                => 'v0/amp-smartlinks-0.1.js',
+			'amp-social-share'              => 'v0/amp-social-share-0.1.js',
+			'amp-soundcloud'                => 'v0/amp-soundcloud-0.1.js',
+			'amp-springboard-player'        => 'v0/amp-springboard-player-0.1.js',
+			'amp-sticky-ad'                 => 'v0/amp-sticky-ad-1.0.js',
+			'amp-story'                     => 'v0/amp-story-1.0.js',
+			'amp-story-360'                 => 'v0/amp-story-360-0.1.js',
+			'amp-story-auto-ads'            => 'v0/amp-story-auto-ads-0.1.js',
+			'amp-story-auto-analytics'      => 'v0/amp-story-auto-analytics-0.1.js',
+			'amp-story-interactive'         => 'v0/amp-story-interactive-0.1.js',
+			'amp-story-panning-media'       => 'v0/amp-story-panning-media-0.1.js',
+			'amp-story-player'              => 'v0/amp-story-player-0.1.js',
+			'amp-subscriptions'             => 'v0/amp-subscriptions-0.1.js',
+			'amp-subscriptions-google'      => 'v0/amp-subscriptions-google-0.1.js',
+			'amp-timeago'                   => 'v0/amp-timeago-0.1.js',
+			'amp-truncate-text'             => 'v0/amp-truncate-text-0.1.js',
+			'amp-twitter'                   => 'v0/amp-twitter-0.1.js',
+			'amp-user-notification'         => 'v0/amp-user-notification-0.1.js',
+			'amp-video'                     => 'v0/amp-video-0.1.js',
+			'amp-video-docking'             => 'v0/amp-video-docking-0.1.js',
+			'amp-video-iframe'              => 'v0/amp-video-iframe-0.1.js',
+			'amp-vimeo'                     => 'v0/amp-vimeo-0.1.js',
+			'amp-vine'                      => 'v0/amp-vine-0.1.js',
+			'amp-viqeo-player'              => 'v0/amp-viqeo-player-0.1.js',
+			'amp-vk'                        => 'v0/amp-vk-0.1.js',
+			'amp-web-push'                  => 'v0/amp-web-push-0.1.js',
+			'amp-wistia-player'             => 'v0/amp-wistia-player-0.1.js',
+			'amp-yotpo'                     => 'v0/amp-yotpo-0.1.js',
+			'amp-youtube'                   => 'v0/amp-youtube-0.1.js',
+		];
+
+		ksort( $expected );
+		ksort( $registered_script_srcs );
+		// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_var_export
+		$this->assertEquals( $expected, $registered_script_srcs, "Expected fixture:\n" . var_export( $expected, true ) );
+	}
+
 	/**
 	 * Test amp_get_content_embed_handlers().
 	 *
