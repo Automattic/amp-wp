@@ -1383,7 +1383,7 @@ class Test_AMP_Helper_Functions extends DependencyInjectedTestCase {
 			'amp-story-interactive'         => 'v0/amp-story-interactive-0.1.js',
 			'amp-story-panning-media'       => 'v0/amp-story-panning-media-0.1.js',
 			'amp-story-player'              => 'v0/amp-story-player-0.1.js',
-			'amp-stream-gallery'            => 'v0/amp-stream-gallery-1.0.js',
+			'amp-stream-gallery'            => 'v0/amp-stream-gallery-0.1.js',
 			'amp-subscriptions'             => 'v0/amp-subscriptions-0.1.js',
 			'amp-subscriptions-google'      => 'v0/amp-subscriptions-google-0.1.js',
 			'amp-timeago'                   => 'v0/amp-timeago-0.1.js',

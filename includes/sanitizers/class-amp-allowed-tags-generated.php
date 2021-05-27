@@ -14661,8 +14661,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-3d-gltf',
 						'requires_usage' => true,
 						'version' => array(
@@ -14693,8 +14692,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-3q-player',
 						'requires_usage' => true,
 						'version' => array(
@@ -14725,8 +14723,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-access',
 						'requires_usage' => true,
 						'version' => array(
@@ -14757,8 +14754,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.2',
+						'latest' => '0.2',
 						'name' => 'amp-access-laterpay',
 						'requires_usage' => false,
 						'version' => array(
@@ -14793,8 +14789,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-access-poool',
 						'requires_usage' => false,
 						'version' => array(
@@ -14828,8 +14823,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-access-scroll',
 						'requires_usage' => false,
 						'version' => array(
@@ -14863,8 +14857,11 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => '1.0',
-						'latest_version' => '0.1',
+						'bento' => array(
+							'css' => true,
+							'version' => '1.0',
+						),
+						'latest' => '0.1',
 						'name' => 'amp-accordion',
 						'requires_usage' => true,
 						'version' => array(
@@ -14896,8 +14893,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-action-macro',
 						'requires_usage' => true,
 						'version' => array(
@@ -14928,8 +14924,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-ad',
 						'requires_usage' => true,
 						'version' => array(
@@ -14961,8 +14956,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-ad-custom',
 						'requires_usage' => true,
 						'version' => array(
@@ -14993,8 +14987,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-addthis',
 						'requires_usage' => true,
 						'version' => array(
@@ -15025,8 +15018,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-analytics',
 						'requires_usage' => true,
 						'version' => array(
@@ -15057,8 +15049,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-anim',
 						'requires_usage' => true,
 						'version' => array(
@@ -15089,8 +15080,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-animation',
 						'requires_usage' => true,
 						'version' => array(
@@ -15121,8 +15111,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-apester-media',
 						'requires_usage' => true,
 						'version' => array(
@@ -15153,8 +15142,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-app-banner',
 						'requires_usage' => true,
 						'version' => array(
@@ -15185,8 +15173,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-audio',
 						'requires_usage' => true,
 						'version' => array(
@@ -15217,8 +15204,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-auto-ads',
 						'requires_usage' => true,
 						'version' => array(
@@ -15249,8 +15235,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-autocomplete',
 						'requires_usage' => true,
 						'version' => array(
@@ -15281,8 +15266,11 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => '1.0',
-						'latest_version' => '0.1',
+						'bento' => array(
+							'css' => true,
+							'version' => '1.0',
+						),
+						'latest' => '0.1',
 						'name' => 'amp-base-carousel',
 						'requires_usage' => true,
 						'version' => array(
@@ -15314,8 +15302,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-beopinion',
 						'requires_usage' => true,
 						'version' => array(
@@ -15346,8 +15333,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-bind',
 						'requires_usage' => false,
 						'version' => array(
@@ -15378,8 +15364,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-bodymovin-animation',
 						'requires_usage' => true,
 						'version' => array(
@@ -15410,8 +15395,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-brid-player',
 						'requires_usage' => true,
 						'version' => array(
@@ -15442,8 +15426,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-brightcove',
 						'requires_usage' => true,
 						'version' => array(
@@ -15474,8 +15457,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-byside-content',
 						'requires_usage' => true,
 						'version' => array(
@@ -15506,8 +15488,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-cache-url',
 						'requires_usage' => true,
 						'version' => array(
@@ -15538,8 +15519,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-call-tracking',
 						'requires_usage' => true,
 						'version' => array(
@@ -15570,8 +15550,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.2',
+						'latest' => '0.1',
 						'name' => 'amp-carousel',
 						'requires_usage' => true,
 						'version' => array(
@@ -15603,8 +15582,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-connatix-player',
 						'requires_usage' => true,
 						'version' => array(
@@ -15635,8 +15613,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-consent',
 						'requires_usage' => true,
 						'version' => array(
@@ -15667,8 +15644,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-dailymotion',
 						'requires_usage' => true,
 						'version' => array(
@@ -15699,8 +15675,11 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => '1.0',
-						'latest_version' => '0.1',
+						'bento' => array(
+							'css' => false,
+							'version' => '1.0',
+						),
+						'latest' => '0.1',
 						'name' => 'amp-date-countdown',
 						'requires_usage' => true,
 						'version' => array(
@@ -15732,8 +15711,11 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => '1.0',
-						'latest_version' => '1.0',
+						'bento' => array(
+							'css' => false,
+							'version' => '1.0',
+						),
+						'latest' => '0.1',
 						'name' => 'amp-date-display',
 						'requires_usage' => true,
 						'version' => array(
@@ -15765,8 +15747,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-date-picker',
 						'requires_usage' => true,
 						'version' => array(
@@ -15797,8 +15778,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-delight-player',
 						'requires_usage' => true,
 						'version' => array(
@@ -15829,8 +15809,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-dynamic-css-classes',
 						'requires_usage' => false,
 						'version' => array(
@@ -15861,8 +15840,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-embedly-card',
 						'requires_usage' => true,
 						'version' => array(
@@ -15893,8 +15871,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '1.0',
+						'latest' => '0.1',
 						'name' => 'amp-experiment',
 						'requires_usage' => true,
 						'version' => array(
@@ -15926,8 +15903,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-facebook',
 						'requires_usage' => true,
 						'version' => array(
@@ -15958,8 +15934,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-facebook-comments',
 						'requires_usage' => true,
 						'version' => array(
@@ -15990,8 +15965,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-facebook-like',
 						'requires_usage' => true,
 						'version' => array(
@@ -16022,8 +15996,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-facebook-page',
 						'requires_usage' => true,
 						'version' => array(
@@ -16054,8 +16027,11 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => '1.0',
-						'latest_version' => '0.1',
+						'bento' => array(
+							'css' => true,
+							'version' => '1.0',
+						),
+						'latest' => '0.1',
 						'name' => 'amp-fit-text',
 						'requires_usage' => true,
 						'version' => array(
@@ -16087,8 +16063,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-font',
 						'requires_usage' => true,
 						'version' => array(
@@ -16119,8 +16094,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-form',
 						'requires_usage' => true,
 						'version' => array(
@@ -16151,8 +16125,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-fx-collection',
 						'requires_usage' => false,
 						'version' => array(
@@ -16183,8 +16156,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-fx-flying-carpet',
 						'requires_usage' => true,
 						'version' => array(
@@ -16215,8 +16187,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-geo',
 						'requires_usage' => true,
 						'version' => array(
@@ -16247,8 +16218,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-gfycat',
 						'requires_usage' => true,
 						'version' => array(
@@ -16279,8 +16249,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-gist',
 						'requires_usage' => true,
 						'version' => array(
@@ -16311,8 +16280,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-google-assistant-assistjs',
 						'requires_usage' => true,
 						'version' => array(
@@ -16343,8 +16311,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-google-document-embed',
 						'requires_usage' => true,
 						'version' => array(
@@ -16375,8 +16342,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-hulu',
 						'requires_usage' => true,
 						'version' => array(
@@ -16407,8 +16373,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-iframe',
 						'requires_usage' => true,
 						'version' => array(
@@ -16439,8 +16404,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-iframely',
 						'requires_usage' => true,
 						'version' => array(
@@ -16471,8 +16435,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-ima-video',
 						'requires_usage' => true,
 						'version' => array(
@@ -16503,8 +16466,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-image-lightbox',
 						'requires_usage' => true,
 						'version' => array(
@@ -16535,8 +16497,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-image-slider',
 						'requires_usage' => true,
 						'version' => array(
@@ -16567,8 +16528,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-imgur',
 						'requires_usage' => true,
 						'version' => array(
@@ -16599,8 +16559,11 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => '1.0',
-						'latest_version' => '0.1',
+						'bento' => array(
+							'css' => true,
+							'version' => '1.0',
+						),
+						'latest' => '0.1',
 						'name' => 'amp-inline-gallery',
 						'requires_usage' => true,
 						'version' => array(
@@ -16632,8 +16595,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-inputmask',
 						'requires_usage' => false,
 						'version' => array(
@@ -16664,8 +16626,11 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => '1.0',
-						'latest_version' => '0.1',
+						'bento' => array(
+							'css' => true,
+							'version' => '1.0',
+						),
+						'latest' => '0.1',
 						'name' => 'amp-instagram',
 						'requires_usage' => true,
 						'version' => array(
@@ -16697,8 +16662,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-install-serviceworker',
 						'requires_usage' => true,
 						'version' => array(
@@ -16729,8 +16693,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-izlesene',
 						'requires_usage' => true,
 						'version' => array(
@@ -16761,8 +16724,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-jwplayer',
 						'requires_usage' => true,
 						'version' => array(
@@ -16793,8 +16755,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-kaltura-player',
 						'requires_usage' => true,
 						'version' => array(
@@ -16825,8 +16786,11 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => '1.0',
-						'latest_version' => '0.1',
+						'bento' => array(
+							'css' => true,
+							'version' => '1.0',
+						),
+						'latest' => '0.1',
 						'name' => 'amp-lightbox',
 						'requires_usage' => true,
 						'version' => array(
@@ -16858,8 +16822,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-lightbox-gallery',
 						'requires_usage' => false,
 						'version' => array(
@@ -16890,8 +16853,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-link-rewriter',
 						'requires_usage' => true,
 						'version' => array(
@@ -16922,8 +16884,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-list',
 						'requires_usage' => true,
 						'version' => array(
@@ -16954,8 +16915,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-live-list',
 						'requires_usage' => true,
 						'version' => array(
@@ -16988,8 +16948,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-mathml',
 						'requires_usage' => true,
 						'version' => array(
@@ -17020,8 +16979,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-mega-menu',
 						'requires_usage' => true,
 						'version' => array(
@@ -17052,8 +17010,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-megaphone',
 						'requires_usage' => true,
 						'version' => array(
@@ -17084,8 +17041,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-minute-media-player',
 						'requires_usage' => true,
 						'version' => array(
@@ -17116,8 +17072,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-mowplayer',
 						'requires_usage' => true,
 						'version' => array(
@@ -17148,8 +17103,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.2',
+						'latest' => '0.2',
 						'name' => 'amp-mustache',
 						'requires_usage' => true,
 						'version' => array(
@@ -17181,8 +17135,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-nested-menu',
 						'requires_usage' => true,
 						'version' => array(
@@ -17213,8 +17166,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '1.0',
+						'latest' => '1.0',
 						'name' => 'amp-next-page',
 						'requires_usage' => true,
 						'version' => array(
@@ -17246,8 +17198,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-nexxtv-player',
 						'requires_usage' => true,
 						'version' => array(
@@ -17278,8 +17229,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-o2-player',
 						'requires_usage' => true,
 						'version' => array(
@@ -17310,8 +17260,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-onetap-google',
 						'requires_usage' => true,
 						'version' => array(
@@ -17342,8 +17291,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-ooyala-player',
 						'requires_usage' => true,
 						'version' => array(
@@ -17374,8 +17322,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-orientation-observer',
 						'requires_usage' => true,
 						'version' => array(
@@ -17406,8 +17353,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-pan-zoom',
 						'requires_usage' => true,
 						'version' => array(
@@ -17438,8 +17384,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-pinterest',
 						'requires_usage' => true,
 						'version' => array(
@@ -17470,8 +17415,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-playbuzz',
 						'requires_usage' => true,
 						'version' => array(
@@ -17502,8 +17446,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-position-observer',
 						'requires_usage' => true,
 						'version' => array(
@@ -17534,8 +17477,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-powr-player',
 						'requires_usage' => true,
 						'version' => array(
@@ -17566,8 +17508,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-reach-player',
 						'requires_usage' => true,
 						'version' => array(
@@ -17598,8 +17539,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-recaptcha-input',
 						'requires_usage' => true,
 						'version' => array(
@@ -17630,8 +17570,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-redbull-player',
 						'requires_usage' => true,
 						'version' => array(
@@ -17662,8 +17601,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-reddit',
 						'requires_usage' => true,
 						'version' => array(
@@ -17694,8 +17632,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-riddle-quiz',
 						'requires_usage' => true,
 						'version' => array(
@@ -17726,8 +17663,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-script',
 						'requires_usage' => true,
 						'version' => array(
@@ -17758,8 +17694,11 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => '1.0',
-						'latest_version' => '0.1',
+						'bento' => array(
+							'css' => true,
+							'version' => '1.0',
+						),
+						'latest' => '0.1',
 						'name' => 'amp-selector',
 						'requires_usage' => true,
 						'version' => array(
@@ -17791,8 +17730,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-sidebar',
 						'requires_usage' => true,
 						'version' => array(
@@ -17823,8 +17761,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-skimlinks',
 						'requires_usage' => true,
 						'version' => array(
@@ -17855,8 +17792,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-smartlinks',
 						'requires_usage' => true,
 						'version' => array(
@@ -17887,8 +17823,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => '1.0',
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-social-share',
 						'requires_usage' => true,
 						'version' => array(
@@ -17920,8 +17855,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-soundcloud',
 						'requires_usage' => true,
 						'version' => array(
@@ -17952,8 +17886,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-springboard-player',
 						'requires_usage' => true,
 						'version' => array(
@@ -17984,8 +17917,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '1.0',
+						'latest' => '1.0',
 						'name' => 'amp-sticky-ad',
 						'requires_usage' => true,
 						'version' => array(
@@ -18017,8 +17949,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '1.0',
+						'latest' => '1.0',
 						'name' => 'amp-story',
 						'requires_usage' => true,
 						'version' => array(
@@ -18049,8 +17980,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-story-360',
 						'requires_usage' => true,
 						'version' => array(
@@ -18081,8 +18011,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-story-auto-ads',
 						'requires_usage' => true,
 						'version' => array(
@@ -18113,8 +18042,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-story-auto-analytics',
 						'requires_usage' => true,
 						'version' => array(
@@ -18145,8 +18073,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-story-interactive',
 						'requires_usage' => true,
 						'version' => array(
@@ -18177,8 +18104,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-story-panning-media',
 						'requires_usage' => true,
 						'version' => array(
@@ -18209,8 +18135,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-story-player',
 						'requires_usage' => true,
 						'version' => array(
@@ -18242,8 +18167,11 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => '1.0',
-						'latest_version' => '1.0',
+						'bento' => array(
+							'css' => true,
+							'version' => '1.0',
+						),
+						'latest' => '0.1',
 						'name' => 'amp-stream-gallery',
 						'requires_usage' => true,
 						'version' => array(
@@ -18274,8 +18202,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-subscriptions',
 						'requires_usage' => false,
 						'version' => array(
@@ -18306,8 +18233,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-subscriptions-google',
 						'requires_usage' => false,
 						'version' => array(
@@ -18341,8 +18267,11 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => '1.0',
-						'latest_version' => '0.1',
+						'bento' => array(
+							'css' => false,
+							'version' => '1.0',
+						),
+						'latest' => '0.1',
 						'name' => 'amp-timeago',
 						'requires_usage' => true,
 						'version' => array(
@@ -18374,8 +18303,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-truncate-text',
 						'requires_usage' => true,
 						'version' => array(
@@ -18406,8 +18334,11 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'bento' => array(
+							'css' => false,
+							'version' => '1.0',
+						),
+						'latest' => '0.1',
 						'name' => 'amp-twitter',
 						'requires_usage' => true,
 						'version' => array(
@@ -18438,8 +18369,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-user-notification',
 						'requires_usage' => true,
 						'version' => array(
@@ -18470,8 +18400,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => '1.0',
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-video',
 						'requires_usage' => true,
 						'version' => array(
@@ -18503,8 +18432,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-video-docking',
 						'requires_usage' => true,
 						'version' => array(
@@ -18535,8 +18463,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '1.0',
+						'latest' => '0.1',
 						'name' => 'amp-video-iframe',
 						'requires_usage' => true,
 						'version' => array(
@@ -18568,8 +18495,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '1.0',
+						'latest' => '0.1',
 						'name' => 'amp-vimeo',
 						'requires_usage' => true,
 						'version' => array(
@@ -18601,8 +18527,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-vine',
 						'requires_usage' => true,
 						'version' => array(
@@ -18633,8 +18558,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-viqeo-player',
 						'requires_usage' => true,
 						'version' => array(
@@ -18665,8 +18589,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-vk',
 						'requires_usage' => true,
 						'version' => array(
@@ -18697,8 +18620,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-web-push',
 						'requires_usage' => true,
 						'version' => array(
@@ -18729,8 +18651,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-wistia-player',
 						'requires_usage' => true,
 						'version' => array(
@@ -18761,8 +18682,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => NULL,
-						'latest_version' => '0.1',
+						'latest' => '0.1',
 						'name' => 'amp-yotpo',
 						'requires_usage' => true,
 						'version' => array(
@@ -18794,8 +18714,11 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento_version' => '1.0',
-						'latest_version' => '0.1',
+						'bento' => array(
+							'css' => true,
+							'version' => '1.0',
+						),
+						'latest' => '0.1',
 						'name' => 'amp-youtube',
 						'requires_usage' => true,
 						'version' => array(

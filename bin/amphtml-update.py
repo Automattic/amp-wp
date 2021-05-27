@@ -85,7 +85,7 @@ def GenValidatorProtoascii(validator_directory, out_dir):
 	f.close()
 
 
-def GeneratePHP(out_dir):
+def GeneratePHP(repo_directory, out_dir):
 	"""Generates PHP for WordPress AMP plugin to consume.
 
 	Args:
@@ -93,7 +93,7 @@ def GeneratePHP(out_dir):
 		out_dir: directory name of the output directory
 	"""
 
-	allowed_tags, attr_lists, descendant_lists, reference_points, versions = ParseRules(out_dir)
+	allowed_tags, attr_lists, descendant_lists, reference_points, versions = ParseRules(repo_directory, out_dir)
 
 	expected_spec_names = (
 		'style amp-custom',
@@ -299,7 +299,7 @@ def GenerateFooterPHP(out):
 	out.append('')
 
 
-def ParseRules(out_dir):
+def ParseRules(repo_directory, out_dir):
 	# These imports happen late, within this method because they don't necessarily
 	# exist when the module starts running, and the ones that probably do
 	# are checked by CheckPrereqs.
@@ -396,15 +396,40 @@ def ParseRules(out_dir):
 		else:
 			script_tags.append(script_tag)
 
-	# Obtain the Bento and Latest versions.
-	bento_versions = dict()
-	bento_components = json.loads(urllib.urlopen('https://amp.dev/static/bento-components.json').read())
-	for bento_component in bento_components:
-		bento_versions[bento_component['name']] = bento_component['version']
-	latest_versions = json.loads(urllib.urlopen('https://amp.dev/static/files/component-versions.json').read())
+	extensions = json.load( open( os.path.join( repo_directory, 'build-system/compile/bundles.config.extensions.json' ) ) )
+	extension_versions = dict()
+	for extension in extensions:
+		if extension['name'] not in extension_versions:
+			extension_versions[ extension['name'] ] = {
+				'versions': [],
+				'latest': None,
+			}
+
+		if type(extension['version']) == list:
+			extension_versions[ extension['name'] ]['versions'].extend( extension['version'] )
+		else:
+			extension_versions[ extension['name'] ]['versions'].append( extension['version'] )
+		if extension_versions[ extension['name'] ]['latest'] is not None and extension_versions[ extension['name'] ]['latest'] != extension['latestVersion']:
+			logging.info('Warning: latestVersion mismatch for ' + extension['name'])
+		extension_versions[ extension['name'] ]['latest'] = extension['latestVersion']
+		if 'options' in extension and 'npm' in extension['options'] and extension['options']['npm'] == True:
+			extension_versions[ extension['name'] ]['bento'] = {
+				'version': extension['version'],
+				'css': extension['options'].get( 'hasCss', False )
+			}
+
+	# Temporary until added to https://github.com/ampproject/amphtml/blob/main/build-system/compile/bundles.config.extensions.json.
+	if 'amp-iframely' not in extension_versions:
+		extension_versions['amp-iframely'] = {
+			'versions': [ '0.1' ],
+			'latest': '0.1'
+		}
 
 	# Merge extension scripts (e.g. Bento and non-Bento) into one script per extension.
 	for extension_name in sorted(extension_scripts):
+		if extension_name not in extension_versions:
+			raise Exception( 'There is a script for an unknown extension: ' + extension_name );
+
 		extension_script_list = extension_scripts[extension_name]
 		script_versions = set(extension_script_list[0]['tag_spec']['extension_spec']['version'])
 		for extension_script in extension_script_list[1:]:
@@ -412,30 +437,15 @@ def ParseRules(out_dir):
 		if 'latest' in script_versions:
 			script_versions.remove('latest')
 
+		# TODO: Make sure that script_versions matches extension_versions['versions].
+
 		script_versions = sorted( script_versions, key=lambda version: map(int, version.split('.') ) )
 		extension_script_list[0]['tag_spec']['extension_spec']['version'] = script_versions
 
-		if extension_name in bento_versions:
-			extension_script_list[0]['tag_spec']['extension_spec']['bento_version'] = bento_versions[extension_name]
-		else:
-			extension_script_list[0]['tag_spec']['extension_spec']['bento_version'] = None
+		if 'bento' in extension_versions[extension_name]:
+			extension_script_list[0]['tag_spec']['extension_spec']['bento'] = extension_versions[extension_name]['bento']
 
-		latest_version = None
-		if extension_name in latest_versions and latest_versions[extension_name] in script_versions:
-			latest_version = latest_versions[extension_name]
-		else:
-			if extension_name not in latest_versions:
-				logging.info('Warning: component-versions.json lacks component: ' + extension_name)
-			elif latest_versions[extension_name] not in script_versions:
-				logging.info('Warning: latest_version is not a valid version for ' + extension_name)
-
-			# Make best guess about what the latest version is by removing the Bento version if it is present, if there is more than one candidate version.
-			latest_version_candidates = list(script_versions)
-			if extension_script_list[0]['tag_spec']['extension_spec']['bento_version'] in latest_version_candidates and len(latest_version_candidates) > 1:
-				latest_version_candidates.remove(extension_script_list[0]['tag_spec']['extension_spec']['bento_version'])
-
-			latest_version = latest_version_candidates[-1]
-		extension_script_list[0]['tag_spec']['extension_spec']['latest_version'] = latest_version
+		extension_script_list[0]['tag_spec']['extension_spec']['latest'] = extension_versions[extension_name]['latest']
 
 		if 'version_name' in extension_script_list[0]['tag_spec']['extension_spec']:
 			del extension_script_list[0]['tag_spec']['extension_spec']['version_name']
@@ -843,25 +853,25 @@ def Phpize(data, indent=0):
 		php_exported = re.sub( r'^', '\t' * indent, php_exported, flags=re.MULTILINE )
 	return php_exported
 
-def Main( validator_directory, out_dir ):
+def Main( repo_directory, out_dir ):
 	"""The main method, which executes all build steps and runs the tests."""
 	logging.basicConfig(format='[[%(filename)s %(funcName)s]] - %(message)s', level=logging.INFO)
 
-	validator_directory = os.path.realpath(validator_directory)
+	validator_directory = os.path.realpath( os.path.join( repo_directory, 'validator' ) )
 	out_dir = os.path.realpath(out_dir)
 
 	SetupOutDir(out_dir)
 	GenValidatorProtoascii(validator_directory, out_dir)
 	GenValidatorPb2Py(validator_directory, out_dir)
 	GenValidatorProtoascii(validator_directory,out_dir)
-	GeneratePHP(out_dir)
+	GeneratePHP(repo_directory, out_dir)
 
 if __name__ == '__main__':
 	if len( sys.argv ) == 0:
 		Die( "Error: Must supply amphtml directory as first argument" )
-	validator_directory = os.path.join( sys.argv[1], 'validator' )
-	if not os.path.exists( validator_directory ):
+	repo_directory = sys.argv[1]
+	if not os.path.exists( repo_directory ):
 		Die( "Error: The amphtml directory does not exist: %s" % validator_directory )
-	validator_directory = os.path.realpath( validator_directory )
+	repo_directory = os.path.realpath( repo_directory )
 	out_dir = os.path.join( tempfile.gettempdir(), 'amp_wp' )
-	Main( validator_directory, out_dir )
+	Main( repo_directory, out_dir )

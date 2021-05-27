@@ -914,11 +914,21 @@ function amp_register_default_scripts( $wp_scripts ) {
 	);
 
 	// Register all AMP components as defined in the spec.
-	foreach ( AMP_Allowed_Tags_Generated::get_extension_specs() as $extension_name => $extension_spec ) {
+	$extension_specs = AMP_Allowed_Tags_Generated::get_extension_specs();
+	if ( isset( $extension_specs['amp-carousel'] ) && '0.1' === $extension_specs['amp-carousel']['latest'] ) {
+		/*
+		 * The latestVersion of amp-carousel is 0.1 in https://github.com/ampproject/amphtml/blob/main/build-system/compile/bundles.config.extensions.json
+		 * But we have been using 0.2 since https://github.com/ampproject/amp-wp/pull/3115
+		 * Therefore, we override the latest version to also be 0.2 since it has been shown to be stable.
+		 */
+		$extension_specs['amp-carousel']['latest'] = '0.2';
+	}
+
+	foreach ( $extension_specs as $extension_name => $extension_spec ) {
 		$src = sprintf(
 			'https://cdn.ampproject.org/v0/%s-%s.js',
 			$extension_name,
-			$extension_spec['latest_version']
+			$extension_spec['latest']
 		);
 
 		$wp_scripts->add(
