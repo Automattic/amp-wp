@@ -517,6 +517,7 @@ def GetTagSpec(tag_spec, attr_lists):
 						raise Exception( 'Missing error_message for disallowed_cdata_regex.' );
 					if entry['error_message'] not in ( 'contents', 'html comments', 'CSS i-amphtml- name prefix' ):
 						raise Exception( 'Unexpected error_message "%s" for disallowed_cdata_regex.' % entry['error_message'] );
+					entry['regex'] = EscapeRegex( entry['regex'] )
 			tag_spec_dict['cdata'] = cdata_dict
 
 	if 'spec_name' not in tag_spec_dict['tag_spec']:
@@ -726,7 +727,7 @@ def GetValues(attr_spec):
 
 	# Add disallowed value regex
 	if attr_spec.HasField('disallowed_value_regex'):
-		value_dict['disallowed_value_regex'] = attr_spec.disallowed_value_regex
+		value_dict['disallowed_value_regex'] = EscapeRegex( attr_spec.disallowed_value_regex )
 
 	# dispatch_key is an int
 	if attr_spec.HasField('dispatch_key'):
@@ -746,11 +747,11 @@ def GetValues(attr_spec):
 
 	# value_regex
 	if attr_spec.HasField('value_regex'):
-		value_dict['value_regex'] = attr_spec.value_regex
+		value_dict['value_regex'] = EscapeRegex( attr_spec.value_regex )
 
 	# value_regex_casei
 	if attr_spec.HasField('value_regex_casei'):
-		value_dict['value_regex_casei'] = attr_spec.value_regex_casei
+		value_dict['value_regex_casei'] = EscapeRegex( attr_spec.value_regex_casei )
 
 	#value_properties is a dictionary of dictionaries
 	if attr_spec.HasField('value_properties'):
@@ -798,6 +799,9 @@ def UnicodeEscape(string):
 		An escaped string.
 	"""
 	return ('' + string).encode('unicode-escape')
+
+def EscapeRegex(string):
+	return re.sub( r'(?<!\\)/', r'\\/', string )
 
 def GetMandatoryOf( attr, constraint ):
 	"""Gets the attributes with the passed mandatory_*of constraint, if there are any.

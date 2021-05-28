@@ -4828,7 +4828,7 @@ class AMP_Allowed_Tags_Generated {
 					),
 					'data-mediaid' => array(
 						'mandatory' => true,
-						'value_regex' => '[^=/?:]+',
+						'value_regex' => '[^=\\/?:]+',
 					),
 					'data-mode' => array(
 						'value' => array(
@@ -7747,10 +7747,10 @@ class AMP_Allowed_Tags_Generated {
 					),
 					'data-amp-bind-data-videoid' => array(),
 					'data-live-channelid' => array(
-						'value_regex' => '[^=/?:]+',
+						'value_regex' => '[^=\\/?:]+',
 					),
 					'data-videoid' => array(
-						'value_regex' => '[^=/?:]+',
+						'value_regex' => '[^=\\/?:]+',
 					),
 					'dock' => array(
 						'requires_extension' => array(
@@ -12257,7 +12257,7 @@ class AMP_Allowed_Tags_Generated {
 					'crossorigin' => array(),
 					'href' => array(
 						'mandatory' => true,
-						'value_regex' => 'https://cdn\\.materialdesignicons\\.com/([0-9]+\\.?)+/css/materialdesignicons\\.min\\.css|https://cloud\\.typography\\.com/[0-9]*/[0-9]*/css/fonts\\.css|https://fast\\.fonts\\.net/.*|https://fonts\\.googleapis\\.com/css2?\\?.*|https://fonts\\.googleapis\\.com/icon\\?.*|https://fonts\\.googleapis\\.com/earlyaccess/.*\\.css|https://maxcdn\\.bootstrapcdn\\.com/font-awesome/([0-9]+\\.?)+/css/font-awesome\\.min\\.css(\\?.*)?|https://(use|pro|kit)\\.fontawesome\\.com/releases/v([0-9]+\\.?)+/css/[0-9a-zA-Z-]+\\.css|https://(use|pro|kit)\\.fontawesome\\.com/[0-9a-zA-Z-]+\\.css|https://use\\.typekit\\.net/[\\w\\p{L}\\p{N}_]+\\.css',
+						'value_regex' => 'https:\\/\\/cdn\\.materialdesignicons\\.com\\/([0-9]+\\.?)+\\/css\\/materialdesignicons\\.min\\.css|https:\\/\\/cloud\\.typography\\.com\\/[0-9]*\\/[0-9]*\\/css\\/fonts\\.css|https:\\/\\/fast\\.fonts\\.net\\/.*|https:\\/\\/fonts\\.googleapis\\.com\\/css2?\\?.*|https:\\/\\/fonts\\.googleapis\\.com\\/icon\\?.*|https:\\/\\/fonts\\.googleapis\\.com\\/earlyaccess\\/.*\\.css|https:\\/\\/maxcdn\\.bootstrapcdn\\.com\\/font-awesome\\/([0-9]+\\.?)+\\/css\\/font-awesome\\.min\\.css(\\?.*)?|https:\\/\\/(use|pro|kit)\\.fontawesome\\.com\\/releases\\/v([0-9]+\\.?)+\\/css\\/[0-9a-zA-Z-]+\\.css|https:\\/\\/(use|pro|kit)\\.fontawesome\\.com\\/[0-9a-zA-Z-]+\\.css|https:\\/\\/use\\.typekit\\.net\\/[\\w\\p{L}\\p{N}_]+\\.css',
 					),
 					'integrity' => array(),
 					'media' => array(),

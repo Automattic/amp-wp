@@ -356,7 +356,7 @@ class AMP_Tag_And_Attribute_Sanitizer extends AMP_Base_Sanitizer {
 					'',
 					[
 						'^',
-						preg_quote( 'https://cdn.ampproject.org/v0/' . $extension_spec['name'] . '-' ), // phpcs:ignore WordPress.PHP.PregQuoteDelimiter.Missing
+						preg_quote( 'https://cdn.ampproject.org/v0/' . $extension_spec['name'] . '-', '/' ),
 						'(' . implode( '|', array_merge( $extension_spec['version'], [ 'latest' ] ) ) . ')',
 						'\.js$',
 					]
@@ -1784,7 +1784,6 @@ class AMP_Tag_And_Attribute_Sanitizer extends AMP_Base_Sanitizer {
 		// Check 'value_regex' - case sensitive regex match.
 		if ( isset( $attr_spec_rule[ AMP_Rule_Spec::VALUE_REGEX ] ) && $node->hasAttribute( $attr_name ) ) {
 			$rule_value = $attr_spec_rule[ AMP_Rule_Spec::VALUE_REGEX ];
-			$rule_value = str_replace( '/', '\\/', $rule_value );
 
 			/*
 			 * The regex pattern has '^' and '$' though they are not in the AMP spec.
@@ -1818,7 +1817,6 @@ class AMP_Tag_And_Attribute_Sanitizer extends AMP_Base_Sanitizer {
 		// Check 'value_regex_casei' - case insensitive regex match.
 		if ( isset( $attr_spec_rule[ AMP_Rule_Spec::VALUE_REGEX_CASEI ] ) && $node->hasAttribute( $attr_name ) ) {
 			$rule_value = $attr_spec_rule[ AMP_Rule_Spec::VALUE_REGEX_CASEI ];
-			$rule_value = str_replace( '/', '\\/', $rule_value );
 
 			// See note above regarding the '^' and '$' that are added here.
 			if ( preg_match( '/^(' . $rule_value . ')$/ui', $node->getAttribute( $attr_name ) ) ) {
