@@ -418,7 +418,7 @@ def ParseRules(repo_directory, out_dir):
 				'css': extension['options'].get( 'hasCss', False )
 			}
 
-	# Temporary until added to https://github.com/ampproject/amphtml/blob/main/build-system/compile/bundles.config.extensions.json.
+	# Temporary until <https://github.com/ampproject/amphtml/pull/34602>.
 	if 'amp-iframely' not in extension_versions:
 		extension_versions['amp-iframely'] = {
 			'versions': [ '0.1' ],
@@ -431,16 +431,18 @@ def ParseRules(repo_directory, out_dir):
 			raise Exception( 'There is a script for an unknown extension: ' + extension_name );
 
 		extension_script_list = extension_scripts[extension_name]
-		script_versions = set(extension_script_list[0]['tag_spec']['extension_spec']['version'])
+		validator_versions = set(extension_script_list[0]['tag_spec']['extension_spec']['version'])
 		for extension_script in extension_script_list[1:]:
-			script_versions.update(extension_script['tag_spec']['extension_spec']['version'])
-		if 'latest' in script_versions:
-			script_versions.remove('latest')
+			validator_versions.update(extension_script['tag_spec']['extension_spec']['version'])
+		if 'latest' in validator_versions:
+			validator_versions.remove('latest')
 
-		# TODO: Make sure that script_versions matches extension_versions['versions].
+		bundle_versions = set( extension_versions[extension_name]['versions'] )
+		if not validator_versions.issubset( bundle_versions ):
+			logging.info( 'Validator versions are not a subset of bundle versions: ' + extension_name )
 
-		script_versions = sorted( script_versions, key=lambda version: map(int, version.split('.') ) )
-		extension_script_list[0]['tag_spec']['extension_spec']['version'] = script_versions
+		validator_versions = sorted( validator_versions, key=lambda version: map(int, version.split('.') ) )
+		extension_script_list[0]['tag_spec']['extension_spec']['version'] = validator_versions
 
 		if 'bento' in extension_versions[extension_name]:
 			extension_script_list[0]['tag_spec']['extension_spec']['bento'] = extension_versions[extension_name]['bento']
