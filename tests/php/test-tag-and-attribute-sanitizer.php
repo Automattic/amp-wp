@@ -77,7 +77,7 @@ class AMP_Tag_And_Attribute_Sanitizer_Test extends WP_UnitTestCase {
 
 			'amp-script-intrinsic'                         => [
 				'
-				<amp-script src="https://example.com/hello-world.js" layout="intrinsic" width="200" height="123">
+				<amp-script src="https://example.com/hello-world.js" layout="intrinsic" width="200" height="123" sandbox="allow-forms">
 					<button>Hello amp-script!</button>
 				</amp-script>
 				',
@@ -523,6 +523,7 @@ class AMP_Tag_And_Attribute_Sanitizer_Test extends WP_UnitTestCase {
 									<amp-video autoplay loop width="720" height="960" poster="https://amp.dev/static/samples/img/story_video_dog_cover.jpg" layout="responsive" cache="google">
 										<source src="https://amp.dev/static/samples/video/story_video_dog.mp4" type="video/mp4">
 									</amp-video>
+									<amp-date-display datetime="2017-08-02T15:05:05.000" layout="fixed" width="360" height="20"><template type="amp-mustache"><div>{{dayName}} {{day}} {{monthName}} {{year}} {{hourTwoDigit}}:{{minuteTwoDigit}}:{{secondTwoDigit}}</div></template></amp-date-display>
 								</amp-story-grid-layer>
 								<amp-pixel src="https://example.com/tracker/foo" layout="nodisplay"></amp-pixel>
 							</amp-story-page>
@@ -589,6 +590,12 @@ class AMP_Tag_And_Attribute_Sanitizer_Test extends WP_UnitTestCase {
 								<amp-story-grid-layer template="fill">
 							 		<amp-story-panning-media layout="fill"></amp-story-panning-media>
 								</amp-story-grid-layer>
+								<!--
+								Note: amp-story-page-outlink cannot yet be used in a story because it is missing from the child_tag_name_oneof of amp-story-page.
+								See <https://github.com/ampproject/amphtml/pull/34171#issuecomment-850637626>
+								<amp-story-page-outlink title="Link Description" href="https://www.google.com" layout="nodisplay" cta-text="Shop at Forbes" cta-image="https://example.com/img/logo.jpg" cta-accent-color="navy" cta-accent-element="background">
+								</amp-story-page-outlink>
+								-->
 						 	</amp-story-page>
 							<amp-story-social-share layout="nodisplay">
 								<script type="application/json">{"shareProviders": ["facebook","whatsapp"]}</script>
@@ -603,7 +610,6 @@ class AMP_Tag_And_Attribute_Sanitizer_Test extends WP_UnitTestCase {
 						$html,
 						preg_replace( '#<\w+[^>]*>bad</\w+>#', '', $html ),
 						[
-							// @todo The 'amp-cache-url' component should have been detected.
 							'amp-story',
 							'amp-story-auto-analytics',
 							'amp-analytics',
@@ -613,6 +619,8 @@ class AMP_Tag_And_Attribute_Sanitizer_Test extends WP_UnitTestCase {
 							'amp-video',
 							'amp-story-interactive',
 							'amp-story-panning-media',
+							'amp-date-display',
+							'amp-mustache',
 						],
 						[
 							[
@@ -2258,7 +2266,7 @@ class AMP_Tag_And_Attribute_Sanitizer_Test extends WP_UnitTestCase {
 			],
 
 			'amp-script-1'                                 => [
-				'<amp-script layout="container" src="https://example.com/hello-world.js"><button id="hello">Insert Hello World!</button></amp-script>',
+				'<amp-script layout="container" src="https://example.com/hello-world.js" sandboxed><button id="hello">Insert Hello World!</button></amp-script>',
 				null,
 				[ 'amp-script' ],
 			],
@@ -2849,6 +2857,7 @@ class AMP_Tag_And_Attribute_Sanitizer_Test extends WP_UnitTestCase {
 				<button on="tap:sidebar1">Open Sidebar</button>
 				<amp-sidebar id="sidebar1" layout="nodisplay" style="width:300px">
 					<amp-nested-menu layout="fill">
+						<svg viewbox="0 0 100 100"><circle cx="50" cy="50" r="50"></circle></svg>
 						<ul>
 							<li>
 								<h4 amp-nested-submenu-open>Open Sub-Menu</h4>
