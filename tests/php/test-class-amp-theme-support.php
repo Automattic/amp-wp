@@ -1630,7 +1630,7 @@ class Test_AMP_Theme_Support extends WP_UnitTestCase {
 	 * @covers AMP_Theme_Support::ensure_required_markup()
 	 * @covers ::amp_render_scripts()
 	 */
-	public function test_prepare_response() {
+	public function test_prepare_response_standard() {
 		$this->set_template_mode( AMP_Theme_Support::STANDARD_MODE_SLUG );
 		wp_set_current_user( self::factory()->user->create( [ 'role' => 'administrator' ] ) );
 
@@ -1667,13 +1667,13 @@ class Test_AMP_Theme_Support extends WP_UnitTestCase {
 			'<link rel="preconnect" href="https://cdn.ampproject.org">',
 			'<link rel="dns-prefetch" href="//cdn.ampproject.org">',
 			'<link rel="preload" as="script" href="https://cdn.ampproject.org/v0/amp-dynamic-css-classes-0.1.js">',
-			'<link rel="preload" as="script" href="https://cdn.ampproject.org/v0/amp-experiment-1.0.js">',
+			'<link rel="preload" as="script" href="https://cdn.ampproject.org/v0/amp-experiment-0.1.js">',
 			'<meta name="generator" content="AMP Plugin',
 			'<link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">',
 
 			'<script type="module" src="https://cdn.ampproject.org/v0.mjs" async crossorigin="anonymous"></script>',
 			'<script async custom-element="amp-dynamic-css-classes" src="https://cdn.ampproject.org/v0/amp-dynamic-css-classes-0.1.mjs" type="module" crossorigin="anonymous"></script>',
-			'<script src="https://cdn.ampproject.org/v0/amp-experiment-1.0.mjs" async="" custom-element="amp-experiment" type="module" crossorigin="anonymous"></script>',
+			'<script src="https://cdn.ampproject.org/v0/amp-experiment-0.1.mjs" async="" custom-element="amp-experiment" type="module" crossorigin="anonymous"></script>',
 
 			'<script src="https://cdn.ampproject.org/v0/amp-ad-0.1.mjs" async="" custom-element="amp-ad" type="module" crossorigin="anonymous"></script>',
 			'<script src="https://cdn.ampproject.org/v0/amp-audio-0.1.mjs" async="" custom-element="amp-audio" type="module" crossorigin="anonymous"></script>',
