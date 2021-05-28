@@ -520,6 +520,9 @@ class AMP_Tag_And_Attribute_Sanitizer_Test extends WP_UnitTestCase {
 									<h2 scale-start="1.0" scale-end="200.1" translate-x="100px" translate-y="200px">Scaled</h2>
 									<amp-twitter width="375" height="472" layout="responsive" data-tweetid="885634330868850689"></amp-twitter>
 									<amp-twitter interactive width="375" height="472" layout="responsive" data-tweetid="885634330868850689"></amp-twitter>
+									<amp-video autoplay loop width="720" height="960" poster="https://amp.dev/static/samples/img/story_video_dog_cover.jpg" layout="responsive" cache="google">
+										<source src="https://amp.dev/static/samples/video/story_video_dog.mp4" type="video/mp4">
+									</amp-video>
 								</amp-story-grid-layer>
 								<amp-pixel src="https://example.com/tracker/foo" layout="nodisplay"></amp-pixel>
 							</amp-story-page>
@@ -599,7 +602,18 @@ class AMP_Tag_And_Attribute_Sanitizer_Test extends WP_UnitTestCase {
 					return [
 						$html,
 						preg_replace( '#<\w+[^>]*>bad</\w+>#', '', $html ),
-						[ 'amp-story', 'amp-story-auto-analytics', 'amp-analytics', 'amp-story-360', 'amp-twitter', 'amp-youtube', 'amp-video', 'amp-story-interactive', 'amp-story-panning-media' ],
+						[
+							// @todo The 'amp-cache-url' component should have been detected.
+							'amp-story',
+							'amp-story-auto-analytics',
+							'amp-analytics',
+							'amp-story-360',
+							'amp-twitter',
+							'amp-youtube',
+							'amp-video',
+							'amp-story-interactive',
+							'amp-story-panning-media',
+						],
 						[
 							[
 								'code'      => AMP_Tag_And_Attribute_Sanitizer::DISALLOWED_DESCENDANT_TAG,
@@ -826,7 +840,7 @@ class AMP_Tag_And_Attribute_Sanitizer_Test extends WP_UnitTestCase {
 
 			'form'                                         => [
 				'
-					<form method="get" action="/form/search-html/get" target="_blank">
+					<form method="get" action="/form/search-html/get" target="_blank" id="f1">
 						<fieldset>
 							<label><span>Search for</span><input type="search" placeholder="test" name="term" required></label>
 							<input type="checkbox" checked disabled readonly>
@@ -834,6 +848,7 @@ class AMP_Tag_And_Attribute_Sanitizer_Test extends WP_UnitTestCase {
 							<input type="submit" value="Search" enterkeyhint="search"><input type="button" value="Open Lightbox" on="tap:lb1.open">
 						</fieldset>
 					</form>
+					<input name="other" form="f1">
 				',
 				null,
 				[ 'amp-form' ],
