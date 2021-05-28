@@ -1364,6 +1364,7 @@ class Test_AMP_Helper_Functions extends DependencyInjectedTestCase {
 			'amp-recaptcha-input'           => 'v0/amp-recaptcha-input-0.1.js',
 			'amp-redbull-player'            => 'v0/amp-redbull-player-0.1.js',
 			'amp-reddit'                    => 'v0/amp-reddit-0.1.js',
+			'amp-render'                    => 'v0/amp-render-1.0.js',
 			'amp-riddle-quiz'               => 'v0/amp-riddle-quiz-0.1.js',
 			'amp-runtime'                   => 'v0.js',
 			'amp-script'                    => 'v0/amp-script-0.1.js',

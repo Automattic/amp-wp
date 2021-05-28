@@ -18544,6 +18544,10 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
+						'bento' => array(
+							'css' => true,
+							'version' => '1.0',
+						),
 						'latest' => '0.1',
 						'name' => 'amp-video-iframe',
 						'requires_usage' => true,
@@ -18576,6 +18580,10 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
+						'bento' => array(
+							'css' => true,
+							'version' => '1.0',
+						),
 						'latest' => '0.1',
 						'name' => 'amp-vimeo',
 						'requires_usage' => true,
