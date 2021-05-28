@@ -3017,6 +3017,143 @@ class AMP_Tag_And_Attribute_Sanitizer_Test extends WP_UnitTestCase {
 				null,
 				[],
 			],
+
+			'amp-iframely'                                 => [
+				'
+					<amp-iframely data-id="UjEwgS" width="400" height="140" layout="responsive" resizable></amp-iframely>
+					<amp-iframely data-id="JQfo4N" data-domain="cdn.iframe.ly" width="400" height="225" layout="responsive"></amp-iframely>
+					<amp-iframely data-id="CsmRlq" width="400" height="213" layout="responsive"></amp-iframely>
+					<amp-iframely data-url="https://iframely.com/" data-key="8a237467d51be2771401abcabbd46d92" height="200" width="400" layout="responsive"></amp-iframely>
+				',
+				null,
+				[ 'amp-iframely' ],
+			],
+
+			'amp-render'                                   => [
+				'
+				    <!-- Valid: amp-render with only src attribute -->
+				    <amp-render
+				      width="10"
+				      height="10"
+				      src="amp-state:source">
+				    </amp-render>
+
+				    <!-- Valid: amp-render with only [src] attribute -->
+				    <amp-render width="10" height="10" data-amp-bind-src="srcUrl"> </amp-render>
+
+				    <!-- Valid: amp-render with relative URL as src attribute -->
+				    <amp-render width="10" height="10" src="/path/to/data.json"> </amp-render>
+
+				    <!-- Valid: amp-render with both src and [src] attributes -->
+				    <amp-render
+				      width="10"
+				      height="10"
+				      src="https://data.com/articles.json?ref=CANONICAL_URL"
+				      data-amp-bind-src="foo.bar">
+				    </amp-render>
+
+				    <!-- Valid: amp-render with binding="refresh" attribute -->
+				    <amp-render
+				      width="10"
+				      height="10"
+				      src="https://data.com/articles.json?ref=CANONICAL_URL"
+				      binding="refresh">
+				    </amp-render>
+
+				    <!-- Valid: amp-render with binding="no" attribute -->
+				    <amp-render
+				      width="10"
+				      height="10"
+				      src="https://data.com/articles.json?ref=CANONICAL_URL"
+				      binding="no">
+				    </amp-render>
+
+				    <!-- Valid: amp-render with binding="always" attribute -->
+				    <amp-render
+				      width="10"
+				      height="10"
+				      src="https://data.com/articles.json?ref=CANONICAL_URL"
+				      binding="always">
+				    </amp-render>
+
+				    <!-- Valid: amp-render with credentials="include" -->
+				    <amp-render
+				      width="10"
+				      height="10"
+				      src="amp-script:scriptFn.dataFn"
+				      credentials="include">
+				    </amp-render>
+
+				    <!-- Valid: amp-render with credentials="omit" -->
+				    <amp-render
+				      width="10"
+				      height="10"
+				      src="https://data.com/articles.json?ref=CANONICAL_URL"
+				      credentials="omit">
+				    </amp-render>
+
+				    <!-- Valid: amp-render with xssi-prefix attribute -->
+				    <amp-render
+				      width="10"
+				      height="10"
+				      src="https://data.com/articles.json?ref=CANONICAL_URL"
+				      xssi-prefix="({[">
+				    </amp-render>
+
+				    <!-- Valid: amp-render with key attribute -->
+				    <amp-render
+				      width="10"
+				      height="10"
+				      src="https://data.com/articles.json?ref=CANONICAL_URL"
+				      key="name">
+				    </amp-render>
+				',
+				null,
+				[ 'amp-render', 'amp-bind' ],
+			],
+
+			'amp-stream-gallery'                           => [
+				'
+					<amp-stream-gallery width="4" height="3" loop="true">
+					</amp-stream-gallery>
+					<amp-stream-gallery width="4" height="3" loop="false">
+					</amp-stream-gallery>
+					<amp-stream-gallery width="4" height="3" loop="(min-width: 800px) true, false">
+					</amp-stream-gallery>
+					<amp-stream-gallery width="4" height="3" loop="(min-width: 800px) true, (max-height: 1000px) true, false">
+					</amp-stream-gallery>
+					<amp-stream-gallery width="4" height="3" min-item-width="200">
+					</amp-stream-gallery>
+					<amp-stream-gallery width="4" height="3" min-item-width="(min-width: 800px) 300, 100">
+					</amp-stream-gallery>
+					<amp-stream-gallery width="4" height="3" min-item-width="(min-width: 800px) 200, (max-height: 1000px) 300, 100">
+					</amp-stream-gallery>
+					<amp-stream-gallery width="4" height="3" min-visible-count="2">
+					</amp-stream-gallery>
+					<amp-stream-gallery width="4" height="3" min-visible-count="3.2">
+					</amp-stream-gallery>
+					<amp-stream-gallery width="4" height="3" min-visible-count="(min-width: 800px) 3.2, 1">
+					</amp-stream-gallery>
+					<amp-stream-gallery width="4" height="3" min-visible-count="(min-width: 800px) 3, (max-height: 1000px) 3, 1.1">
+					</amp-stream-gallery>
+					<amp-stream-gallery width="4" height="3" controls="always">
+					</amp-stream-gallery>
+					<amp-stream-gallery width="4" height="3" controls="auto">
+					</amp-stream-gallery>
+					<amp-stream-gallery width="4" height="3" controls="never">
+					</amp-stream-gallery>
+					<amp-stream-gallery width="4" height="3" controls="(min-width: 800px) never, auto">
+					</amp-stream-gallery>
+					<amp-stream-gallery width="4" height="3" controls="(min-width: 800px) always, (max-height: 1000px) auto, never">
+					</amp-stream-gallery>
+					<amp-stream-gallery width="4" height="3" loop="(min-width: 800px) true, false">
+					</amp-stream-gallery>
+					<amp-stream-gallery width="4" height="3" loop="(min-width: 800px) true,(max-height: 1000px) true,false">
+					</amp-stream-gallery>
+				',
+				null,
+				[ 'amp-stream-gallery' ],
+			],
 		];
 	}
 
