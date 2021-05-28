@@ -5390,6 +5390,59 @@ class AMP_Allowed_Tags_Generated {
 				),
 			),
 		),
+		'amp-render' => array(
+			array(
+				'attr_spec_list' => array(
+					'binding' => array(
+						'value' => array(
+							'always',
+							'no',
+							'refresh',
+						),
+					),
+					'credentials' => array(),
+					'data-amp-bind-src' => array(),
+					'key' => array(),
+					'media' => array(),
+					'noloading' => array(
+						'value' => array(
+							'',
+						),
+					),
+					'src' => array(
+						'disallowed_value_regex' => '__amp_source_origin',
+						'value_url' => array(
+							'protocol' => array(
+								'amp-script',
+								'amp-state',
+								'https',
+							),
+						),
+					),
+					'xssi-prefix' => array(),
+				),
+				'tag_spec' => array(
+					'amp_layout' => array(
+						'supported_layouts' => array(
+							6,
+							2,
+							3,
+							7,
+							1,
+							4,
+						),
+					),
+					'mandatory_anyof' => array(
+						'data-amp-bind-src',
+						'src',
+					),
+					'requires_extension' => array(
+						'amp-render',
+					),
+					'spec_url' => 'https://amp.dev/documentation/components/amp-render/',
+				),
+			),
+		),
 		'amp-riddle-quiz' => array(
 			array(
 				'attr_spec_list' => array(
@@ -7215,9 +7268,6 @@ class AMP_Allowed_Tags_Generated {
 						),
 					),
 					'cache' => array(
-						'requires_extension' => array(
-							'amp-cache-url',
-						),
 						'value' => array(
 							'google',
 						),
@@ -14041,7 +14091,7 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'mandatory_parent' => 'head',
-					'spec_name' => 'script amp-onerror',
+					'spec_name' => 'script amp-onerror (v0.js)',
 					'unique' => true,
 				),
 			),
@@ -17606,6 +17656,37 @@ class AMP_Allowed_Tags_Generated {
 						'requires_usage' => true,
 						'version' => array(
 							'0.1',
+						),
+					),
+				),
+			),
+			array(
+				'attr_spec_list' => array(
+					'async' => array(
+						'mandatory' => true,
+						'value' => array(
+							'',
+						),
+					),
+					'crossorigin' => array(
+						'value' => array(
+							'anonymous',
+						),
+					),
+					'nonce' => array(),
+					'type' => array(
+						'value_casei' => array(
+							'text/javascript',
+						),
+					),
+				),
+				'tag_spec' => array(
+					'extension_spec' => array(
+						'latest' => '1.0',
+						'name' => 'amp-render',
+						'requires_usage' => true,
+						'version' => array(
+							'1.0',
 						),
 					),
 				),

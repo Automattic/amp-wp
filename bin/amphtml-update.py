@@ -418,13 +418,6 @@ def ParseRules(repo_directory, out_dir):
 				'css': extension['options'].get( 'hasCss', False )
 			}
 
-	# Temporary until <https://github.com/ampproject/amphtml/pull/34602>.
-	if 'amp-iframely' not in extension_versions:
-		extension_versions['amp-iframely'] = {
-			'versions': [ '0.1' ],
-			'latest': '0.1'
-		}
-
 	# Merge extension scripts (e.g. Bento and non-Bento) into one script per extension.
 	for extension_name in sorted(extension_scripts):
 		if extension_name not in extension_versions:
