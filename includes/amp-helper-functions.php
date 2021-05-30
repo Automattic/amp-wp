@@ -874,6 +874,26 @@ function amp_add_generator_metadata() {
 }
 
 /**
+ * Determine whether Bento is enabled.
+ *
+ * @since 2.1.3
+ * @internal
+ *
+ * @return bool
+ */
+function amp_is_bento_enabled() {
+	/**
+	 * Filters whether Bento is enabled.
+	 *
+	 * @since 2.1.3
+	 * @internal
+	 *
+	 * @param bool $enabled Enabled.
+	 */
+	return apply_filters( 'amp_bento_enabled', false );
+}
+
+/**
  * Register default scripts for AMP components.
  *
  * @internal
@@ -924,17 +944,24 @@ function amp_register_default_scripts( $wp_scripts ) {
 		$extension_specs['amp-carousel']['latest'] = '0.2';
 	}
 
+	$bento_enabled = amp_is_bento_enabled();
 	foreach ( $extension_specs as $extension_name => $extension_spec ) {
+		if ( $bento_enabled && ! empty( $extension_spec['bento'] ) ) {
+			$version = $extension_spec['bento']['version'];
+		} else {
+			$version = $extension_spec['latest'];
+		}
+
 		$src = sprintf(
 			'https://cdn.ampproject.org/v0/%s-%s.js',
 			$extension_name,
-			$extension_spec['latest']
+			$version
 		);
 
 		$wp_scripts->add(
 			$extension_name,
 			$src,
-			[ 'amp-runtime' ],
+			[ 'amp-runtime' ], // @todo Eventually this will not be present for Bento.
 			null
 		);
 	}
@@ -964,6 +991,26 @@ function amp_register_default_styles( WP_Styles $styles ) {
 		AMP__VERSION
 	);
 	$styles->add_data( 'amp-icons', 'rtl', 'replace' );
+
+	if ( amp_is_bento_enabled() ) {
+		foreach ( AMP_Allowed_Tags_Generated::get_extension_specs() as $extension_name => $extension_spec ) {
+			if ( empty( $extension_spec['bento']['has_css'] ) ) {
+				continue;
+			}
+
+			$src = sprintf(
+				'https://cdn.ampproject.org/v0/%s-%s.css',
+				$extension_name,
+				$extension_spec['bento']['version']
+			);
+			$styles->add(
+				$extension_name,
+				$src,
+				[],
+				null
+			);
+		}
+	}
 }
 
 /**
@@ -1325,6 +1372,8 @@ function amp_is_dev_mode() {
 			( is_admin_bar_showing() && is_user_logged_in() )
 			||
 			is_customize_preview()
+			||
+			amp_is_bento_enabled()
 		)
 	);
 }
