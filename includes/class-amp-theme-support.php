@@ -2130,6 +2130,11 @@ class AMP_Theme_Support {
 		add_filter(
 			'amp_enable_ssr',
 			static function () use ( $args ) {
+				// SSR currently does not work with Bento.
+				if ( amp_is_bento_enabled() ) {
+					return false;
+				}
+
 				return array_key_exists( ConfigurationArgument::ENABLE_SSR, $args )
 					? $args[ ConfigurationArgument::ENABLE_SSR ]
 					: true;
