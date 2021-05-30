@@ -415,7 +415,7 @@ def ParseRules(repo_directory, out_dir):
 		if 'options' in extension and 'npm' in extension['options'] and extension['options']['npm'] == True:
 			extension_versions[ extension['name'] ]['bento'] = {
 				'version': extension['version'],
-				'css': extension['options'].get( 'hasCss', False )
+				'has_css': extension['options'].get( 'hasCss', False ),
 			}
 
 	# Merge extension scripts (e.g. Bento and non-Bento) into one script per extension.

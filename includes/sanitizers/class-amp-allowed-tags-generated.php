@@ -14908,7 +14908,7 @@ class AMP_Allowed_Tags_Generated {
 				'tag_spec' => array(
 					'extension_spec' => array(
 						'bento' => array(
-							'css' => true,
+							'has_css' => true,
 							'version' => '1.0',
 						),
 						'latest' => '0.1',
@@ -15317,7 +15317,7 @@ class AMP_Allowed_Tags_Generated {
 				'tag_spec' => array(
 					'extension_spec' => array(
 						'bento' => array(
-							'css' => true,
+							'has_css' => true,
 							'version' => '1.0',
 						),
 						'latest' => '0.1',
@@ -15726,7 +15726,7 @@ class AMP_Allowed_Tags_Generated {
 				'tag_spec' => array(
 					'extension_spec' => array(
 						'bento' => array(
-							'css' => false,
+							'has_css' => false,
 							'version' => '1.0',
 						),
 						'latest' => '0.1',
@@ -15762,7 +15762,7 @@ class AMP_Allowed_Tags_Generated {
 				'tag_spec' => array(
 					'extension_spec' => array(
 						'bento' => array(
-							'css' => false,
+							'has_css' => false,
 							'version' => '1.0',
 						),
 						'latest' => '0.1',
@@ -16078,7 +16078,7 @@ class AMP_Allowed_Tags_Generated {
 				'tag_spec' => array(
 					'extension_spec' => array(
 						'bento' => array(
-							'css' => true,
+							'has_css' => true,
 							'version' => '1.0',
 						),
 						'latest' => '0.1',
@@ -16610,7 +16610,7 @@ class AMP_Allowed_Tags_Generated {
 				'tag_spec' => array(
 					'extension_spec' => array(
 						'bento' => array(
-							'css' => true,
+							'has_css' => true,
 							'version' => '1.0',
 						),
 						'latest' => '0.1',
@@ -16677,7 +16677,7 @@ class AMP_Allowed_Tags_Generated {
 				'tag_spec' => array(
 					'extension_spec' => array(
 						'bento' => array(
-							'css' => true,
+							'has_css' => true,
 							'version' => '1.0',
 						),
 						'latest' => '0.1',
@@ -16837,7 +16837,7 @@ class AMP_Allowed_Tags_Generated {
 				'tag_spec' => array(
 					'extension_spec' => array(
 						'bento' => array(
-							'css' => true,
+							'has_css' => true,
 							'version' => '1.0',
 						),
 						'latest' => '0.1',
@@ -17776,7 +17776,7 @@ class AMP_Allowed_Tags_Generated {
 				'tag_spec' => array(
 					'extension_spec' => array(
 						'bento' => array(
-							'css' => true,
+							'has_css' => true,
 							'version' => '1.0',
 						),
 						'latest' => '0.1',
@@ -18249,7 +18249,7 @@ class AMP_Allowed_Tags_Generated {
 				'tag_spec' => array(
 					'extension_spec' => array(
 						'bento' => array(
-							'css' => true,
+							'has_css' => true,
 							'version' => '1.0',
 						),
 						'latest' => '0.1',
@@ -18349,7 +18349,7 @@ class AMP_Allowed_Tags_Generated {
 				'tag_spec' => array(
 					'extension_spec' => array(
 						'bento' => array(
-							'css' => false,
+							'has_css' => false,
 							'version' => '1.0',
 						),
 						'latest' => '0.1',
@@ -18416,7 +18416,7 @@ class AMP_Allowed_Tags_Generated {
 				'tag_spec' => array(
 					'extension_spec' => array(
 						'bento' => array(
-							'css' => false,
+							'has_css' => false,
 							'version' => '1.0',
 						),
 						'latest' => '0.1',
@@ -18545,7 +18545,7 @@ class AMP_Allowed_Tags_Generated {
 				'tag_spec' => array(
 					'extension_spec' => array(
 						'bento' => array(
-							'css' => true,
+							'has_css' => true,
 							'version' => '1.0',
 						),
 						'latest' => '0.1',
@@ -18581,7 +18581,7 @@ class AMP_Allowed_Tags_Generated {
 				'tag_spec' => array(
 					'extension_spec' => array(
 						'bento' => array(
-							'css' => true,
+							'has_css' => true,
 							'version' => '1.0',
 						),
 						'latest' => '0.1',
@@ -18804,7 +18804,7 @@ class AMP_Allowed_Tags_Generated {
 				'tag_spec' => array(
 					'extension_spec' => array(
 						'bento' => array(
-							'css' => true,
+							'has_css' => true,
 							'version' => '1.0',
 						),
 						'latest' => '0.1',
