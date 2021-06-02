@@ -69,6 +69,9 @@ class AMP_Img_Sanitizer extends AMP_Base_Sanitizer {
 	 * @return array Mapping.
 	 */
 	public function get_selector_conversion_mapping() {
+		if ( $this->args['use_native'] ) {
+			return [];
+		}
 		return [
 			Tag::IMG => [
 				'amp-img',
