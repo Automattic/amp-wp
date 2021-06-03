@@ -176,7 +176,7 @@ class AMP_Playlist_Embed_Handler extends AMP_Base_Embed_Handler {
 					<div>
 						<div class="wp-playlist-current-item">
 							<?php if ( $image_url ) : ?>
-								<amp-img src="<?php echo esc_url( $image_url ); ?>" height="<?php echo esc_attr( $dimensions['height'] ); ?>" width="<?php echo esc_attr( $dimensions['width'] ); ?>"></amp-img>
+								<img src="<?php echo esc_url( $image_url ); ?>" height="<?php echo esc_attr( $dimensions['height'] ); ?>" width="<?php echo esc_attr( $dimensions['width'] ); ?>">
 							<?php endif; ?>
 							<div class="wp-playlist-caption">
 								<span class="wp-playlist-item-meta wp-playlist-item-title"><?php echo esc_html( $title ); ?></span>
