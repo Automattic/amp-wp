@@ -565,6 +565,10 @@ class AMP_Core_Theme_Sanitizer extends AMP_Base_Sanitizer {
 	 * @link https://github.com/WordPress/wordpress-develop/blob/ddc8f803c6e99118998191fd2ea24124feb53659/src/wp-content/themes/twentyseventeen/functions.php#L545:L554
 	 */
 	public static function add_twentyseventeen_attachment_image_attributes() {
+		if ( amp_is_bento_enabled() ) {
+			return;
+		}
+
 		/*
 		 * The max-height of the `.custom-logo-link img` is defined as being 80px, unless
 		 * there is header media in which case it is 200px. Issues related to vertically-squashed
@@ -802,6 +806,10 @@ class AMP_Core_Theme_Sanitizer extends AMP_Base_Sanitizer {
 	 * Add required styles for featured image header and image blocks in Twenty Twenty.
 	 */
 	public static function add_twentytwenty_masthead_styles() {
+		if ( amp_is_bento_enabled() ) {
+			return;
+		}
+
 		add_action(
 			'wp_enqueue_scripts',
 			static function() {
@@ -862,6 +870,7 @@ class AMP_Core_Theme_Sanitizer extends AMP_Base_Sanitizer {
 					$desktop_width = $desktop_height * ( $width / $height );
 					$mobile_width  = $mobile_height * ( $width / $height );
 
+					// @todo Needed in AMP?
 					$html .= sprintf(
 						'<style data-src="%s">.site-logo amp-img { width: %frem; } @media (min-width: 700px) { .site-logo amp-img { width: %frem; } }</style>',
 						esc_attr( $method ),
@@ -887,6 +896,10 @@ class AMP_Core_Theme_Sanitizer extends AMP_Base_Sanitizer {
 	 * @link https://github.com/ampproject/amp-wp/issues/4419
 	 */
 	public static function add_img_display_block_fix() {
+		if ( amp_is_bento_enabled() ) {
+			return;
+		}
+
 		$method = __METHOD__;
 		// Note that wp_add_inline_style() is not used because this stylesheet needs to be added _before_ style.css so
 		// that any subsequent style rules for images will continue to override.
@@ -966,6 +979,10 @@ class AMP_Core_Theme_Sanitizer extends AMP_Base_Sanitizer {
 	 * @link https://github.com/WordPress/wordpress-develop/blob/1af1f65a21a1a697fb5f33027497f9e5ae638453/src/wp-content/themes/twentyseventeen/style.css#L2100
 	 */
 	public static function add_twentyseventeen_image_styles() {
+		if ( amp_is_bento_enabled() ) {
+			return;
+		}
+
 		add_action(
 			'wp_enqueue_scripts',
 			static function() {
@@ -1344,7 +1361,7 @@ class AMP_Core_Theme_Sanitizer extends AMP_Base_Sanitizer {
 						padding-top: 0; /* Override responsive hack which is handled by AMP layout. */
 						overflow: visible;
 					}
-					.featured-content .post-thumbnail amp-img {
+					.featured-content .post-thumbnail .wp-post-image {
 						position: static;
 						left: auto;
 						top: auto;
@@ -1420,7 +1437,7 @@ class AMP_Core_Theme_Sanitizer extends AMP_Base_Sanitizer {
 							font-size: 32px;
 							line-height: 46px;
 						}
-						.featured-content .post-thumbnail amp-img {
+						.featured-content .post-thumbnail .wp-post-image {
 							object-fit: cover;
 							object-position: top;
 						}
@@ -1430,7 +1447,7 @@ class AMP_Core_Theme_Sanitizer extends AMP_Base_Sanitizer {
 								float: none;
 								margin: 0;
 							}
-							.featured-content .post-thumbnail amp-img {
+							.featured-content .post-thumbnail .wp-post-image {
 								height: 55.49132947vw;
 							}
 							.slider-control-paging li {

@@ -211,6 +211,9 @@ class AMP_Gallery_Embed_Handler extends AMP_Base_Embed_Handler {
 	 * but that doesn't have the same effect as applying it to the <img>.
 	 */
 	public function print_styles() {
+		if ( amp_is_bento_enabled() ) {
+			return;
+		}
 		?>
 		<style>
 			.wp-block-gallery.is-cropped .blocks-gallery-item amp-img > img {

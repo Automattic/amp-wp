@@ -1422,6 +1422,8 @@ function amp_get_content_sanitizers( $post = null ) {
 		AMP_Theme_Support::TRANSITIONAL_MODE_SLUG === AMP_Options_Manager::get_option( Option::THEME_SUPPORT )
 	);
 
+	$bento_enabled = amp_is_bento_enabled();
+
 	$sanitizers = [
 		'AMP_Embed_Sanitizer'             => [
 			'amp_to_amp_linking_enabled' => $amp_to_amp_linking_enabled,
@@ -1436,6 +1438,7 @@ function amp_get_content_sanitizers( $post = null ) {
 		'AMP_Srcset_Sanitizer'            => [],
 		'AMP_Img_Sanitizer'               => [
 			'align_wide_support' => current_theme_supports( 'align-wide' ),
+			'use_native'         => $bento_enabled,
 		],
 		'AMP_Form_Sanitizer'              => [],
 		'AMP_Comments_Sanitizer'          => [

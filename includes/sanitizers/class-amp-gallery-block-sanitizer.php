@@ -97,7 +97,7 @@ class AMP_Gallery_Block_Sanitizer extends AMP_Base_Sanitizer {
 				$gallery_node->setAttribute( 'data-amp-carousel', 'true' );
 			}
 
-			$img_elements = $node->getElementsByTagName( 'amp-img' );
+			$img_elements = $this->dom->xpath->query( './/amp-img | .//img[ not( parent::noscript ) ]', $node );
 
 			$this->process_gallery_embed( $is_amp_carousel, $is_amp_lightbox, $node, $img_elements );
 		}
