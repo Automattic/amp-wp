@@ -4,7 +4,8 @@
  * width such as in the post content so that the contents do not get stretched or cropped.
  * See <https://github.com/ampproject/amphtml/issues/21371#issuecomment-475443219>.
  */
-.amp-wp-enforced-sizes {
+amp-img.amp-wp-enforced-sizes,
+amp-anim.amp-wp-enforced-sizes {
 	object-fit: contain;
 }
 

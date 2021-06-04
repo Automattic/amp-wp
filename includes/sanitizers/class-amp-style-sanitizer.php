@@ -1574,7 +1574,8 @@ class AMP_Style_Sanitizer extends AMP_Base_Sanitizer {
 				[ 'should_locate_sources', 'parsed_cache_variant', 'dynamic_element_selectors' ]
 			),
 			[
-				'language' => get_bloginfo( 'language' ), // Used to tree-shake html[lang] selectors.
+				'language'          => get_bloginfo( 'language' ), // Used to tree-shake html[lang] selectors.
+				'selector_mappings' => $this->selector_mappings,
 			]
 		);
 
