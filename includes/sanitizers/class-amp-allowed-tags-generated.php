@@ -5396,6 +5396,7 @@ class AMP_Allowed_Tags_Generated {
 					'binding' => array(
 						'value' => array(
 							'always',
+							'never',
 							'no',
 							'refresh',
 						),
@@ -6559,6 +6560,7 @@ class AMP_Allowed_Tags_Generated {
 							'amp-story-cta-layer',
 							'amp-story-grid-layer',
 							'amp-story-page-attachment',
+							'amp-story-page-outlink',
 						),
 						'mandatory_min_num_child_tags' => 1,
 					),
@@ -6572,21 +6574,6 @@ class AMP_Allowed_Tags_Generated {
 		'amp-story-page-attachment' => array(
 			array(
 				'attr_spec_list' => array(
-					'cta-accent-color' => array(),
-					'cta-accent-element' => array(
-						'value' => array(
-							'background',
-							'text',
-						),
-					),
-					'cta-image' => array(
-						'value_url' => array(
-							'protocol' => array(
-								'http',
-								'https',
-							),
-						),
-					),
 					'cta-text' => array(),
 					'href' => array(
 						'mandatory' => true,
@@ -6605,7 +6592,6 @@ class AMP_Allowed_Tags_Generated {
 					),
 					'theme' => array(
 						'value' => array(
-							'custom',
 							'dark',
 							'light',
 						),
@@ -6678,16 +6664,6 @@ class AMP_Allowed_Tags_Generated {
 							),
 						),
 					),
-					'cta-text' => array(),
-					'href' => array(
-						'mandatory' => true,
-						'value_url' => array(
-							'protocol' => array(
-								'http',
-								'https',
-							),
-						),
-					),
 					'layout' => array(
 						'mandatory' => true,
 						'value' => array(
@@ -6701,11 +6677,13 @@ class AMP_Allowed_Tags_Generated {
 							'light',
 						),
 					),
-					'title' => array(),
 				),
 				'tag_spec' => array(
 					'child_tags' => array(
-						'mandatory_num_child_tags' => 0,
+						'child_tag_name_oneof' => array(
+							'a',
+						),
+						'mandatory_num_child_tags' => 1,
 					),
 					'mandatory_ancestor' => 'amp-story-page',
 					'spec_name' => 'amp-story-page-outlink',
@@ -11159,7 +11137,6 @@ class AMP_Allowed_Tags_Generated {
 					'data-amp-bind-width' => array(),
 					'disabled' => array(),
 					'enterkeyhint' => array(),
-					'form' => array(),
 					'height' => array(),
 					'inputmode' => array(),
 					'list' => array(),
@@ -11227,7 +11204,6 @@ class AMP_Allowed_Tags_Generated {
 					'data-amp-bind-width' => array(),
 					'disabled' => array(),
 					'enterkeyhint' => array(),
-					'form' => array(),
 					'height' => array(),
 					'inputmode' => array(),
 					'list' => array(),
@@ -11301,7 +11277,6 @@ class AMP_Allowed_Tags_Generated {
 					'data-amp-bind-width' => array(),
 					'disabled' => array(),
 					'enterkeyhint' => array(),
-					'form' => array(),
 					'height' => array(),
 					'inputmode' => array(),
 					'list' => array(),
@@ -11389,7 +11364,6 @@ class AMP_Allowed_Tags_Generated {
 					'data-amp-bind-width' => array(),
 					'disabled' => array(),
 					'enterkeyhint' => array(),
-					'form' => array(),
 					'height' => array(),
 					'inputmode' => array(),
 					'list' => array(),
@@ -11469,7 +11443,6 @@ class AMP_Allowed_Tags_Generated {
 					'data-amp-bind-width' => array(),
 					'disabled' => array(),
 					'enterkeyhint' => array(),
-					'form' => array(),
 					'height' => array(),
 					'inputmode' => array(),
 					'list' => array(),
@@ -11548,7 +11521,6 @@ class AMP_Allowed_Tags_Generated {
 					'data-amp-bind-width' => array(),
 					'disabled' => array(),
 					'enterkeyhint' => array(),
-					'form' => array(),
 					'height' => array(),
 					'inputmode' => array(),
 					'list' => array(),
@@ -11627,7 +11599,6 @@ class AMP_Allowed_Tags_Generated {
 					'data-amp-bind-width' => array(),
 					'disabled' => array(),
 					'enterkeyhint' => array(),
-					'form' => array(),
 					'height' => array(),
 					'inputmode' => array(),
 					'list' => array(),
@@ -11706,7 +11677,6 @@ class AMP_Allowed_Tags_Generated {
 					'data-amp-bind-width' => array(),
 					'disabled' => array(),
 					'enterkeyhint' => array(),
-					'form' => array(),
 					'height' => array(),
 					'inputmode' => array(),
 					'list' => array(),
@@ -11785,7 +11755,6 @@ class AMP_Allowed_Tags_Generated {
 					'data-amp-bind-width' => array(),
 					'disabled' => array(),
 					'enterkeyhint' => array(),
-					'form' => array(),
 					'height' => array(),
 					'inputmode' => array(),
 					'list' => array(),

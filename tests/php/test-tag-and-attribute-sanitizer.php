@@ -590,12 +590,9 @@ class AMP_Tag_And_Attribute_Sanitizer_Test extends WP_UnitTestCase {
 								<amp-story-grid-layer template="fill">
 							 		<amp-story-panning-media layout="fill"></amp-story-panning-media>
 								</amp-story-grid-layer>
-								<!--
-								Note: amp-story-page-outlink cannot yet be used in a story because it is missing from the child_tag_name_oneof of amp-story-page.
-								See <https://github.com/ampproject/amphtml/pull/34171#issuecomment-850637626>
-								<amp-story-page-outlink title="Link Description" href="https://www.google.com" layout="nodisplay" cta-text="Shop at Forbes" cta-image="https://example.com/img/logo.jpg" cta-accent-color="navy" cta-accent-element="background">
+								<amp-story-page-outlink layout="nodisplay" cta-image="https://example.com/img/logo.jpg" cta-accent-color="navy" cta-accent-element="background">
+									<a href="https://www.google.com/search?q=why+do+cats+purr+so+loud" title="Link Description"></a>
 								</amp-story-page-outlink>
-								-->
 						 	</amp-story-page>
 							<amp-story-social-share layout="nodisplay">
 								<script type="application/json">{"shareProviders": ["facebook","whatsapp"]}</script>
@@ -848,7 +845,7 @@ class AMP_Tag_And_Attribute_Sanitizer_Test extends WP_UnitTestCase {
 
 			'form'                                         => [
 				'
-					<form method="get" action="/form/search-html/get" target="_blank" id="f1">
+					<form method="get" action="/form/search-html/get" target="_blank">
 						<fieldset>
 							<label><span>Search for</span><input type="search" placeholder="test" name="term" required></label>
 							<input type="checkbox" checked disabled readonly>
@@ -856,7 +853,6 @@ class AMP_Tag_And_Attribute_Sanitizer_Test extends WP_UnitTestCase {
 							<input type="submit" value="Search" enterkeyhint="search"><input type="button" value="Open Lightbox" on="tap:lb1.open">
 						</fieldset>
 					</form>
-					<input name="other" form="f1">
 				',
 				null,
 				[ 'amp-form' ],
