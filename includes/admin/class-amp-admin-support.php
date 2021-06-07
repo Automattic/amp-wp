@@ -738,7 +738,7 @@ class AMP_Admin_Support {
 		$plugin_count = count( $data['plugins'] );
 
 		if ( $is_synthetic ) {
-			$plugin_count_text = ( $plugin_count - 5 ) . " - Excluding common plugins of synthetic sites. ( $plugin_count - 5 )";
+			$plugin_count_text = ( $plugin_count - 3 ) . " - Excluding common plugins of synthetic sites. ( $plugin_count - 3 )";
 		} else {
 			$plugin_count_text = $plugin_count;
 		}
