@@ -7,6 +7,7 @@
  */
 
 use AmpProject\AmpWP\Admin\GoogleFonts;
+use AmpProject\AmpWP\DependencySupport;
 use AmpProject\AmpWP\Option;
 use AmpProject\AmpWP\Admin\OptionsMenu;
 use AmpProject\AmpWP\Admin\ReaderThemes;
@@ -41,7 +42,8 @@ class AMP_Admin_Support_Test extends WP_UnitTestCase {
 		$this->options_menu_instance = new OptionsMenu(
 			new GoogleFonts(),
 			new ReaderThemes(),
-			new RESTPreloader()
+			new RESTPreloader(),
+			new DependencySupport()
 		);
 
 		$this->instance = new \AMP_Admin_Support();
