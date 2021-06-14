@@ -2254,6 +2254,28 @@ class AMP_Theme_Support {
 					]
 				)
 			);
+
+			// @todo Also add this for amp-youtube?
+			$video_markup .= '<amp-state id="headerVideoPaused"><script type="application/json">false</script></amp-state>';
+			$video_markup .= sprintf(
+				'<button type="button" id="wp-custom-header-video-button" class="wp-custom-header-video-button wp-custom-header-video-play" [class]="%s" on="%s">',
+				esc_attr( '"wp-custom-header-video-button " + ( headerVideoPaused ? "wp-custom-header-video-play" : "wp-custom-header-video-pause" )' ),
+				esc_attr( 'tap:AMP.setState( { headerVideoPaused: ! headerVideoPaused } ),wp-custom-header-video.pause' ) // @todo There needs to be a way to play the video again, but there is no togglePlay action and there is no paused attribute on amp-video and thus no bindable [paused] attribute for us to connect to the headerVideoPaused state.
+			);
+			$video_markup .= sprintf(
+				'<span class="screen-reader-text" [text]="%s">%s</span>',
+				esc_attr(
+					sprintf(
+						'headerVideoPaused ? %s : %s',
+						wp_json_encode( __( 'Play background video', 'default' ), JSON_UNESCAPED_UNICODE ),
+						wp_json_encode( __( 'Pause background video', 'default' ), JSON_UNESCAPED_UNICODE )
+					)
+				),
+				esc_html__( 'Pause background video', 'default' )
+			);
+			$video_markup .= '<svg class="icon icon-pause" [hidden]="headerVideoPaused" aria-hidden="true" role="img"><use href="#icon-pause" xlink:href="#icon-pause"></use></svg>';
+			$video_markup .= '<svg class="icon icon-play" [hidden]="! headerVideoPaused" hidden aria-hidden="true" role="img"><use href="#icon-play" xlink:href="#icon-play"></use></svg>';
+			$video_markup .= '</button>';
 		}
 
 		return $image_markup . $video_markup;
