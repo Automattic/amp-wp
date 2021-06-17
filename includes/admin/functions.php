@@ -165,13 +165,6 @@ function amp_bootstrap_admin() {
 function amp_bootstrap_support() {
 	$admin_support = new AMP_Admin_Support();
 	$admin_support->init();
-
-	/**
-	 * `wp amp send-diagnostic` command for AJAX action 'wp_ajax_amp_diagnostic'.
-	 */
-	if ( defined( 'WP_CLI' ) && WP_CLI ) {
-		\WP_CLI::add_command( 'amp send-diagnostic', [ $admin_support, 'amp_send_diagnostic' ] );
-	}
 }
 
 /**

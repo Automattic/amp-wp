@@ -1,20 +1,28 @@
 <?php
 /**
- * Class AMP_Prepare_Data
+ * Class to prepare and send support data to insights server.
  *
- * @package AMP
- * @since 2.2
+ * @package AmpProject\AmpWP
  */
+
+namespace AmpProject\AmpWP\Support;
 
 use AmpProject\AmpWP\QueryVar;
 
 /**
- * Class AMP_Prepare_Data
- *
- * @since 2.2
- * @internal
+ * Class SupportData
+ * To prepare and send support data to insights server.
  */
-class AMP_Prepare_Data {
+class SupportData {
+
+	/**
+	 * Endpoint to send diagnostic data.
+	 *
+	 * @since 2.2
+	 *
+	 * @var string
+	 */
+	const SUPPORT_ENDPOINT = 'https://insights.amp-wp.org';
 
 	/**
 	 * Args for AMP send data.
@@ -33,6 +41,13 @@ class AMP_Prepare_Data {
 	 * @var string[]
 	 */
 	public $urls = [];
+
+	/**
+	 * Support Data.
+	 *
+	 * @var array
+	 */
+	private $data = [];
 
 	/**
 	 * Constructor method.
@@ -75,6 +90,7 @@ class AMP_Prepare_Data {
 		}
 
 		if ( ! empty( $this->args['post_ids'] ) && is_array( $this->args['post_ids'] ) ) {
+
 			$this->args['post_ids'] = array_map( 'intval', $this->args['post_ids'] );
 			$this->args['post_ids'] = array_filter( $this->args['post_ids'] );
 
@@ -91,6 +107,66 @@ class AMP_Prepare_Data {
 		$this->urls = array_map( __CLASS__ . '::normalize_url_for_storage', $this->urls );
 		$this->urls = array_values( array_unique( $this->urls ) );
 
+	}
+
+	/**
+	 * To send support data to insight server.
+	 *
+	 * @return array|\WP_Error \WP_Error on fail, Otherwise server response.
+	 */
+	public function send_data() {
+
+		$data     = ( ! empty( $this->data ) ) ? $this->data : $this->get_data();
+		$endpoint = ( ! empty( $this->args['endpoint'] ) ) ? $this->args['endpoint'] : self::SUPPORT_ENDPOINT;
+		$endpoint = untrailingslashit( $endpoint );
+
+		// Send data to server.
+		$response = wp_remote_post(
+			sprintf( '%s/api/v1/amp-wp/', $endpoint ),
+			[
+				// We need long timeout here, in case the data being sent is large or the network connection is slow.
+				'timeout'  => 3000, // phpcs:ignore WordPressVIPMinimum.Performance.RemoteRequestTimeout.timeout_timeout
+				'body'     => $data,
+				'compress' => true,
+			]
+		);
+
+		if ( ! is_wp_error( $response ) ) {
+			$response = wp_remote_retrieve_body( $response );
+		}
+
+		return $response;
+	}
+
+	/**
+	 * To get amp data to send it to compatibility server.
+	 *
+	 * @since 2.2
+	 *
+	 * @return array
+	 */
+	public function get_data() {
+
+		$amp_urls = $this->get_amp_urls();
+
+		$request_data = [
+			'site_url'      => static::get_home_url(),
+			'site_info'     => $this->get_site_info(),
+			'plugins'       => $this->get_plugin_info(),
+			'themes'        => $this->get_theme_info(),
+			'errors'        => array_values( $amp_urls['errors'] ),
+			'error_sources' => array_values( $amp_urls['error_sources'] ),
+			'urls'          => array_values( $amp_urls['urls'] ),
+			'error_log'     => $this->get_error_log(),
+		];
+
+		if ( ! empty( $this->args['is_synthetic'] ) ) {
+			$request_data['site_info']['is_synthetic_data'] = true;
+		}
+
+		$this->data = $request_data;
+
+		return $request_data;
 	}
 
 	/**
@@ -140,31 +216,6 @@ class AMP_Prepare_Data {
 		$url = set_url_scheme( $url, 'https' );
 
 		return $url;
-	}
-
-	/**
-	 * To get amp data to send it to compatibility server.
-	 *
-	 * @since 2.2
-	 *
-	 * @return array
-	 */
-	public function get_data() {
-
-		$amp_urls = $this->get_amp_urls();
-
-		$request_data = [
-			'site_url'      => static::get_home_url(),
-			'site_info'     => $this->get_site_info(),
-			'plugins'       => $this->get_plugin_info(),
-			'themes'        => $this->get_theme_info(),
-			'errors'        => array_values( $amp_urls['errors'] ),
-			'error_sources' => array_values( $amp_urls['error_sources'] ),
-			'urls'          => array_values( $amp_urls['urls'] ),
-			'error_log'     => $this->get_error_log(),
-		];
-
-		return $request_data;
 	}
 
 	/**

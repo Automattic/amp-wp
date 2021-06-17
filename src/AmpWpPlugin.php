@@ -17,6 +17,7 @@ use AmpProject\AmpWP\Optimizer\HeroCandidateFiltering;
 use AmpProject\AmpWP\Optimizer\OptimizerService;
 use AmpProject\AmpWP\RemoteRequest\CachedRemoteGetRequest;
 use AmpProject\AmpWP\RemoteRequest\WpHttpRemoteGetRequest;
+use AmpProject\AmpWP\Support\SupportService;
 use AmpProject\AmpWP\Validation\SavePostValidationEvent;
 use AmpProject\AmpWP\Validation\URLValidationCron;
 use AmpProject\AmpWP\BackgroundTask\BackgroundTaskDeactivator;
@@ -105,6 +106,7 @@ final class AmpWpPlugin extends ServiceBasedPlugin {
 		'rest.validation_counts_controller'  => Validation\ValidationCountsRestController::class,
 		'server_timing'                      => Instrumentation\ServerTiming::class,
 		'site_health_integration'            => Admin\SiteHealth::class,
+		'support'                            => SupportService::class,
 		'validated_url_stylesheet_gc'        => BackgroundTask\ValidatedUrlStylesheetDataGarbageCollection::class,
 		'url_validation_rest_controller'     => Validation\URLValidationRESTController::class,
 		'url_validation_cron'                => URLValidationCron::class,

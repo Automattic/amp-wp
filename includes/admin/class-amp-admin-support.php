@@ -253,7 +253,11 @@ class AMP_Admin_Support {
 			$urls = wp_list_pluck( $scannable_url_provider->get_urls(), 'url' );
 			$args = [ 'urls' => $urls ];
 		} else {
-			$args = [ 'post_ids' => $post_id ];
+			$args = [
+				'post_ids' => [
+					$post_id,
+				],
+			];
 		}
 
 		$amp_data_object = new AMP_Prepare_Data( $args );

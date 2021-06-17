@@ -53,6 +53,7 @@ namespace PHPSTORM_META {
 			'paired_routing'                     => \AmpProject\AmpWP\PairedRouting::class,
 			'paired_url'                         => \AmpProject\AmpWP\PairedUrl::class,
 			'loading_error'                      => \AmpProject\AmpWP\LoadingError::class,
+			'support'                            => \AmpProject\AmpWP\Support\SupportService::class,
 		] )
 	);
 
