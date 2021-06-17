@@ -75,6 +75,7 @@ final class AmpWpPlugin extends ServiceBasedPlugin {
 		'admin.onboarding_wizard'            => Admin\OnboardingWizardSubmenuPage::class,
 		'admin.options_menu'                 => Admin\OptionsMenu::class,
 		'admin.support_menu'                 => Admin\SupportMenu::class,
+		'admin.support'                      => \AmpProject\AmpWP\Admin\Support::class,
 		'admin.polyfills'                    => Admin\Polyfills::class,
 		'admin.paired_browsing'              => Admin\PairedBrowsing::class,
 		'admin.validation_counts'            => Admin\ValidationCounts::class,

@@ -1,6 +1,6 @@
 <?php
 /**
- * Class OptionsMenu
+ * Class SupportMenu
  *
  * @package Ampproject\Ampwp
  */

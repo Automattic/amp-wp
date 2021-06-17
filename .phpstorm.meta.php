@@ -12,6 +12,8 @@ namespace PHPSTORM_META {
 			'admin.onboarding_menu'              => \AmpProject\AmpWP\Admin\OnboardingWizardSubmenu::class,
 			'admin.onboarding_wizard'            => \AmpProject\AmpWP\Admin\OnboardingWizardSubmenuPage::class,
 			'admin.options_menu'                 => \AmpProject\AmpWP\Admin\OptionsMenu::class,
+			'admin.support_menu'                 => \AmpProject\AmpWP\Admin\SupportMenu::class,
+			'admin.support'                      => \AmpProject\AmpWP\Admin\Support::class,
 			'admin.polyfills'                    => \AmpProject\AmpWP\Admin\Polyfills::class,
 			'admin.paired_browsing'              => \AmpProject\AmpWP\Admin\PairedBrowsing::class,
 			'admin.validation_counts'            => \AmpProject\AmpWP\Admin\ValidationCounts::class,
