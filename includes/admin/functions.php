@@ -155,28 +155,3 @@ function amp_bootstrap_admin() {
 	$post_meta_box = new AMP_Post_Meta_Box();
 	$post_meta_box->init();
 }
-
-/**
- * Bootstraps AMP admin support class.
- *
- * @since 2.1
- * @internal
- */
-function amp_bootstrap_support() {
-	$admin_support = new AMP_Admin_Support();
-	$admin_support->init();
-}
-
-/**
- * Whether to activate the new onboarding feature.
- *
- * @internal
- * @return bool
- */
-function amp_should_use_new_onboarding() {
-	if ( version_compare( get_bloginfo( 'version' ), '5.0', '<' ) ) {
-		return false;
-	}
-
-	return true;
-}
