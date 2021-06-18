@@ -334,6 +334,25 @@ const settingsPage = {
 	],
 };
 
+const supportPage = {
+	...sharedConfig,
+	entry: {
+		'wp-api-fetch': './assets/src/polyfills/api-fetch.js',
+		'wp-components': '@wordpress/components/build-style/style.css',
+		'amp-support': './assets/src/support-page',
+	},
+	externals: {
+		'amp-support': 'ampSupport',
+	},
+	plugins: [
+		...sharedConfig.plugins,
+		new WebpackBar( {
+			name: 'Customizer',
+			color: '#f27136',
+		} ),
+	],
+};
+
 const styles = {
 	...sharedConfig,
 	entry: () => {
@@ -403,6 +422,7 @@ module.exports = [
 	wpPolyfills,
 	onboardingWizard,
 	settingsPage,
+	supportPage,
 	styles,
 	mobileRedirection,
 ];

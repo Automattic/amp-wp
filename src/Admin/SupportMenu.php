@@ -25,7 +25,7 @@ class SupportMenu implements Conditional, Service, Registerable {
 	 *
 	 * @var string
 	 */
-	const ASSET_HANDLE = 'amp-settings';
+	const ASSET_HANDLE = 'amp-support';
 
 	/**
 	 * The parent menu slug.
@@ -102,7 +102,7 @@ class SupportMenu implements Conditional, Service, Registerable {
 	 */
 	public function screen_handle() {
 
-		return sprintf( 'toplevel_page_%s', $this->get_menu_slug() );
+		return sprintf( 'amp_page_%s', $this->get_menu_slug() );
 	}
 
 	/**
@@ -155,7 +155,7 @@ class SupportMenu implements Conditional, Service, Registerable {
 
 		wp_enqueue_style(
 			self::ASSET_HANDLE,
-			amp_get_asset_url( 'css/amp-settings.css' ),
+			amp_get_asset_url( 'css/amp-support.css' ),
 			[
 				$this->google_fonts->get_handle(),
 				'wp-components',
@@ -171,16 +171,11 @@ class SupportMenu implements Conditional, Service, Registerable {
 	public function render_screen() {
 
 		?>
-		<div class="wrap">
-			<form id="amp-settings" action="options.php" method="post">
-				<?php settings_fields( $this->get_menu_slug() ); ?>
-				<h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
-				<?php settings_errors(); ?>
-
-				<div class="amp amp-support">
-					<div id="amp-support-root"></div>
-				</div>
-			</form>
+		<div id="amp-support" class="wrap">
+			<h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
+			<div class="amp amp-support">
+				<div id="amp-support-root"></div>
+			</div>
 		</div>
 		<?php
 	}
