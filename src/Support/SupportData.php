@@ -132,7 +132,7 @@ class SupportData {
 		);
 
 		if ( ! is_wp_error( $response ) ) {
-			$response = wp_remote_retrieve_body( $response );
+			$response = json_decode( wp_remote_retrieve_body( $response ), true );
 		}
 
 		return $response;
@@ -639,6 +639,13 @@ class SupportData {
 			$query     .= ' LIMIT %d, %d';
 			$query_data = [ 0, 100 ];
 
+			if ( ! empty( $this->args ) ) {
+				return [
+					'errors'        => [],
+					'error_sources' => [],
+					'urls'          => [],
+				];
+			}
 		}
 
 		// This query needs to be uncached and it is prepared, yet there's false positive in PHPCS because of using variable instead of string in prepare.

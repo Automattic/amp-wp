@@ -347,8 +347,8 @@ const supportPage = {
 	plugins: [
 		...sharedConfig.plugins,
 		new WebpackBar( {
-			name: 'Customizer',
-			color: '#f27136',
+			name: 'Support Page',
+			color: '#67b255',
 		} ),
 	],
 };

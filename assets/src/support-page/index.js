@@ -1,7 +1,4 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
+/* global ampSupportData */
 
 /**
  * WordPress dependencies
@@ -17,25 +14,16 @@ import '../css/elements.css';
 import '../css/core-components.css';
 import './style.css';
 import { ErrorContextProvider } from '../components/error-context-provider';
-
-/**
- * Settings page application root.
- */
-function Root( ) {
-	return '';
-}
-
-Root.propTypes = {
-	appRoot: PropTypes.instanceOf( global.Element ),
-};
+import { AMPSupport } from '../components/amp-support';
 
 domReady( () => {
 	const root = document.getElementById( 'amp-support-root' );
+	const { args, data, action, nonce } = ampSupportData;
 
 	if ( root ) {
 		render( (
 			<ErrorContextProvider>
-				<Root appRoot={ root } />
+				<AMPSupport args={ args } data={ data } action={ action } nonce={ nonce } />
 			</ErrorContextProvider>
 		), root );
 	}

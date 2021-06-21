@@ -10,6 +10,7 @@ namespace AmpProject\AmpWP\Admin;
 use AmpProject\AmpWP\Infrastructure\Conditional;
 use AmpProject\AmpWP\Infrastructure\Registerable;
 use AmpProject\AmpWP\Infrastructure\Service;
+use AmpProject\AmpWP\Services;
 
 /**
  * SupportMenu class.
@@ -21,11 +22,16 @@ class SupportMenu implements Conditional, Service, Registerable {
 	/**
 	 * Handle for JS file.
 	 *
-	 * @since 2.0
-	 *
 	 * @var string
 	 */
 	const ASSET_HANDLE = 'amp-support';
+
+	/**
+	 * AJAX action name to use.
+	 *
+	 * @var string
+	 */
+	const AJAX_ACTION = 'amp_send_support_request';
 
 	/**
 	 * The parent menu slug.
@@ -82,6 +88,7 @@ class SupportMenu implements Conditional, Service, Registerable {
 
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_assets' ] );
 		add_action( 'admin_menu', [ $this, 'add_menu_items' ], 9 );
+		add_action( 'wp_ajax_' . self::AJAX_ACTION, [ $this, 'ajax_callback' ] );
 
 	}
 
@@ -163,16 +170,71 @@ class SupportMenu implements Conditional, Service, Registerable {
 			AMP__VERSION
 		);
 
+		$args    = [];
+		$post_id = filter_input( INPUT_GET, 'post_id', FILTER_SANITIZE_NUMBER_INT );
+
+		if ( ! empty( $post_id ) && 0 < intval( $post_id ) ) {
+			$args = [
+				'post_ids' => [
+					$post_id,
+				],
+			];
+		}
+
+		$support_service = Services::get( 'support' );
+		$data            = $support_service->get_data( $args );
+
+		wp_localize_script(
+			self::ASSET_HANDLE,
+			'ampSupportData',
+			[
+				'action' => self::AJAX_ACTION,
+				'nonce'  => wp_create_nonce( self::AJAX_ACTION ),
+				'args'   => $args,
+				'data'   => $data,
+			]
+		);
+	}
+
+	/**
+	 * Ajax callback.
+	 *
+	 * @return void
+	 */
+	public function ajax_callback() {
+
+		check_ajax_referer( self::AJAX_ACTION, 'nonce' );
+
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_send_json_error( 'Unauthorized.', 401 );
+		}
+
+		$request_args = filter_input( INPUT_POST, 'args', FILTER_SANITIZE_STRING, FILTER_REQUIRE_ARRAY );
+		$request_args = ( ! empty( $request_args ) ) ? $request_args : [];
+
+		$support_response = Services::get( 'support' )->send_data( $request_args );
+
+		if ( ! empty( $support_response ) && is_wp_error( $support_response ) ) {
+			wp_send_json_error( $support_response->get_error_message(), 500 );
+		}
+
+		if ( 'ok' === $support_response['status'] && ! empty( $support_response['data']['uuid'] ) ) {
+			wp_send_json_success( $support_response['data'] );
+		}
+
+		wp_send_json_error( 'Fail to send data.', 500 );
+
 	}
 
 	/**
 	 * Display Settings.
+	 *
+	 * @return void
 	 */
 	public function render_screen() {
 
 		?>
 		<div id="amp-support" class="wrap">
-			<h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
 			<div class="amp amp-support">
 				<div id="amp-support-root"></div>
 			</div>

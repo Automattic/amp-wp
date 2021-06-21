@@ -9,6 +9,8 @@ namespace AmpProject\AmpWP\Support;
 
 use AmpProject\AmpWP\Infrastructure\Service;
 use AmpProject\AmpWP\Infrastructure\CliCommand;
+use AmpProject\AmpWP\Validation\ScannableURLProvider;
+use AmpProject\AmpWP\Validation\URLScanningContext;
 
 /**
  * Class SupportService
@@ -24,6 +26,34 @@ class SupportService implements Service, CliCommand {
 	public static function get_command_name() {
 
 		return 'amp';
+	}
+
+	/**
+	 * To send support data.
+	 *
+	 * @param array $args Support data argument.
+	 *
+	 * @return array|\WP_Error Response from insight server.
+	 */
+	public function send_data( $args = [] ) {
+
+		$support = new SupportData( $args );
+
+		return $support->send_data();
+	}
+
+	/**
+	 * To get support data.
+	 *
+	 * @param array $args Support data argument.
+	 *
+	 * @return array Support data.
+	 */
+	public function get_data( $args = [] ) {
+
+		$support = new SupportData( $args );
+
+		return $support->get_data();
 	}
 
 	/**
