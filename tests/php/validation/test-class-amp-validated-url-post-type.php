@@ -100,7 +100,7 @@ class Test_AMP_Validated_URL_Post_Type extends WP_UnitTestCase {
 		$this->assertEquals( 10, has_filter( 'manage_' . AMP_Validated_URL_Post_Type::POST_TYPE_SLUG . '_posts_columns', [ self::TESTED_CLASS, 'add_post_columns' ] ) );
 		$this->assertEquals( 10, has_filter( 'manage_' . AMP_Validated_URL_Post_Type::POST_TYPE_SLUG . '_columns', [ self::TESTED_CLASS, 'add_single_post_columns' ] ) );
 		$this->assertEquals( 10, has_action( 'manage_posts_custom_column', [ self::TESTED_CLASS, 'output_custom_column' ] ) );
-		$this->assertEquals( PHP_INT_MAX, has_filter( 'post_row_actions', [ self::TESTED_CLASS, 'filter_post_row_actions' ] ) );
+		$this->assertEquals( PHP_INT_MAX - 1, has_filter( 'post_row_actions', [ self::TESTED_CLASS, 'filter_post_row_actions' ] ) );
 		$this->assertEquals( 10, has_filter( 'bulk_actions-edit-' . AMP_Validated_URL_Post_Type::POST_TYPE_SLUG, [ self::TESTED_CLASS, 'filter_bulk_actions' ] ) );
 		$this->assertEquals( 10, has_filter( 'bulk_actions-' . AMP_Validated_URL_Post_Type::POST_TYPE_SLUG, '__return_false' ) );
 		$this->assertEquals( 10, has_filter( 'handle_bulk_actions-edit-' . AMP_Validated_URL_Post_Type::POST_TYPE_SLUG, [ self::TESTED_CLASS, 'handle_bulk_action' ] ) );

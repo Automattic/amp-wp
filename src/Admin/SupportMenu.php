@@ -175,7 +175,7 @@ class SupportMenu implements Conditional, Service, Registerable {
 
 		if ( ! empty( $post_id ) && 0 < intval( $post_id ) ) {
 			$args = [
-				'post_ids' => [
+				'amp_validated_post_ids' => [
 					$post_id,
 				],
 			];
@@ -207,6 +207,8 @@ class SupportMenu implements Conditional, Service, Registerable {
 
 		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_send_json_error( 'Unauthorized.', 401 );
+
+			return;
 		}
 
 		$request_args = filter_input( INPUT_POST, 'args', FILTER_SANITIZE_STRING, FILTER_REQUIRE_ARRAY );
@@ -216,10 +218,14 @@ class SupportMenu implements Conditional, Service, Registerable {
 
 		if ( ! empty( $support_response ) && is_wp_error( $support_response ) ) {
 			wp_send_json_error( $support_response->get_error_message(), 500 );
+
+			return;
 		}
 
 		if ( 'ok' === $support_response['status'] && ! empty( $support_response['data']['uuid'] ) ) {
 			wp_send_json_success( $support_response['data'] );
+
+			return;
 		}
 
 		wp_send_json_error( 'Fail to send data.', 500 );

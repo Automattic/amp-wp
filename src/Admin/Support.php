@@ -33,19 +33,19 @@ class Support implements Service, Conditional, Registerable {
 	public function register() {
 
 		/**
-		 * Add Diagnostic link to Admin Bar.
+		 * Add support link to Admin Bar.
 		 */
 		add_action( 'admin_bar_menu', [ $this, 'admin_bar_menu' ], 105 );
 
 		/**
-		 * Add diagnostic link to meta box.
+		 * Add support link to meta box.
 		 */
 		add_filter( 'amp_validated_url_status_actions', [ $this, 'amp_validated_url_status_actions' ], 10, 2 );
 
 		/**
-		 * Add diagnostic link to Post row actions.
+		 * Add support link to Post row actions.
 		 */
-		add_filter( 'post_row_actions', [ $this, 'post_row_actions' ], PHP_INT_MAX - 1, 2 );
+		add_filter( 'post_row_actions', [ $this, 'post_row_actions' ], PHP_INT_MAX, 2 );
 
 		/**
 		 * Plugin row Support link.
@@ -94,7 +94,7 @@ class Support implements Service, Conditional, Registerable {
 	}
 
 	/**
-	 * Add diagnostic link to meta box.
+	 * Add support link to meta box.
 	 *
 	 * @param string[] $actions Array of actions.
 	 * @param \WP_Post $post    Referenced WP_Post object.
@@ -103,17 +103,21 @@ class Support implements Service, Conditional, Registerable {
 	 */
 	public function amp_validated_url_status_actions( $actions, $post ) {
 
-		$actions['send-diagnostic'] = sprintf(
+		if ( empty( $post ) ||
+			! is_a( $post, 'WP_Post' ) ||
+			! \AMP_Validated_URL_Post_Type::POST_TYPE_SLUG === $post->post_type
+		) {
+			return $actions;
+		}
+
+		$query_args = [
+			'page'    => 'amp-support',
+			'post_id' => $post->ID,
+		];
+
+		$actions['amp-support'] = sprintf(
 			'<a href="%s">%s</a>',
-			esc_url(
-				add_query_arg(
-					[
-						'page'    => 'amp-support',
-						'post_id' => $post->ID,
-					],
-					admin_url( 'admin.php' )
-				)
-			),
+			esc_url( add_query_arg( $query_args, admin_url( 'admin.php' ) ) ),
 			esc_html__( 'Get Support', 'amp' )
 		);
 
@@ -121,28 +125,30 @@ class Support implements Service, Conditional, Registerable {
 	}
 
 	/**
-	 * Add diagnostic link to Post row actions.
+	 * Add support link to Post row actions.
 	 *
 	 * @param string[] $actions Array of actions.
 	 * @param \WP_Post $post    Referenced WP_Post object.
+	 *
+	 * @return string[] Array of actions
 	 */
 	public function post_row_actions( $actions, $post ) {
 
-		if ( ! is_object( $post ) || \AMP_Validated_URL_Post_Type::POST_TYPE_SLUG !== $post->post_type ) {
+		if ( empty( $post ) ||
+			! is_a( $post, 'WP_Post' )
+			|| \AMP_Validated_URL_Post_Type::POST_TYPE_SLUG !== $post->post_type
+		) {
 			return $actions;
 		}
 
-		$actions['send-diagnostic'] = sprintf(
+		$query_args = [
+			'page'    => 'amp-support',
+			'post_id' => $post->ID,
+		];
+
+		$actions['amp-support'] = sprintf(
 			'<a href="%s">%s</a>',
-			esc_url(
-				add_query_arg(
-					[
-						'page'    => 'amp-support',
-						'post_id' => $post->ID,
-					],
-					admin_url( 'admin.php' )
-				)
-			),
+			esc_url( add_query_arg( $query_args, admin_url( 'admin.php' ) ) ),
 			esc_html__( 'Get Support', 'amp' )
 		);
 
@@ -160,7 +166,6 @@ class Support implements Service, Conditional, Registerable {
 	 */
 	public function plugin_row_meta( $plugin_meta, $plugin_file ) {
 
-		global $post;
 		if ( 'amp/amp.php' === $plugin_file || 'amp-wp/amp.php' === $plugin_file ) {
 			$plugin_meta[] = sprintf(
 				'<a href="%s">%s</a>',

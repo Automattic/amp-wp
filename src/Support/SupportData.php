@@ -104,6 +104,19 @@ class SupportData {
 			}
 		}
 
+		if ( ! empty( $this->args['amp_validated_post_ids'] ) && is_array( $this->args['amp_validated_post_ids'] ) ) {
+			$this->args['amp_validated_post_ids'] = array_map( 'intval', $this->args['amp_validated_post_ids'] );
+			$this->args['amp_validated_post_ids'] = array_filter( $this->args['amp_validated_post_ids'] );
+
+			foreach ( $this->args['amp_validated_post_ids'] as $post_id ) {
+				$post = get_post( $post_id );
+
+				if ( ! empty( $post->post_title ) ) {
+					$this->urls[] = $post->post_title;
+				}
+			}
+		}
+
 		$this->urls = array_map( __CLASS__ . '::normalize_url_for_storage', $this->urls );
 		$this->urls = array_values( array_unique( $this->urls ) );
 
@@ -229,11 +242,7 @@ class SupportData {
 
 		global $wpdb;
 
-		$wp_type = 'single';
-
-		if ( is_multisite() ) {
-			$wp_type = ( defined( 'SUBDOMAIN_INSTALL' ) && SUBDOMAIN_INSTALL ) ? 'subdomain' : 'subdir';
-		}
+		$wp_type = is_multisite() ? ( defined( 'SUBDOMAIN_INSTALL' ) && SUBDOMAIN_INSTALL ) ? 'subdomain' : 'subdir' : 'single';
 
 		$active_theme = wp_get_theme();
 		$active_theme = static::normalize_theme_info( $active_theme );
@@ -446,68 +455,13 @@ class SupportData {
 	}
 
 	/**
-	 * To get list of AMP errors.
-	 *
-	 * @since 2.2
-	 *
-	 * @return array List of errors.
-	 */
-	public static function get_errors() {
-
-		$error_data      = [];
-		$amp_error_terms = get_terms(
-			[
-				'taxonomy'        => 'amp_validation_error',
-				'hide_empty'      => true,
-				'suppress_filter' => true,
-			]
-		);
-
-		if ( empty( $amp_error_terms ) || ! is_array( $amp_error_terms ) || is_wp_error( $amp_error_terms ) ) {
-			return [];
-		}
-
-		$amp_error_terms = array_values( $amp_error_terms );
-
-		foreach ( $amp_error_terms as $index => $error_term ) {
-
-			if ( empty( $error_term ) || ! is_a( $error_term, 'WP_Term' ) ) {
-				continue;
-			}
-
-			// Remove site specific detail like site home_url() from error detail.
-			$description = strtolower( trim( $error_term->description ) );
-			$description = static::remove_domain( $description );
-
-			// Convert that into array.
-			$error_detail = json_decode( $description, true );
-
-			$error_detail['text'] = ( ! empty( $error_detail['text'] ) ) ? trim( $error_detail['text'] ) : '';
-
-			ksort( $error_detail );
-
-			/**
-			 * Generate new slug after removing site specific data.
-			 */
-			$error_detail['error_slug'] = static::generate_hash( $error_detail );
-
-			/**
-			 * Keep the slug as key to quickly get error detail.
-			 */
-			$error_data[ $error_term->slug ] = $error_detail;
-		}
-
-		return $error_data;
-	}
-
-	/**
 	 * Normalize error data.
 	 *
 	 * @since 2.2
 	 *
 	 * @param array $error_data Error data array.
 	 *
-	 * @return array|mixed|null
+	 * @return array
 	 */
 	public static function normalize_error( $error_data ) {
 
@@ -639,7 +593,15 @@ class SupportData {
 			$query     .= ' LIMIT %d, %d';
 			$query_data = [ 0, 100 ];
 
-			if ( ! empty( $this->args ) ) {
+			/**
+			 * If argument provided and we don't have URL data.
+			 * then return empty values.
+			 */
+			if ( ! empty( $this->args['post_ids'] ) ||
+				! empty( $this->args['term_ids'] ) ||
+				! empty( $this->args['urls'] ) ||
+				! empty( $this->args['amp_validated_post_ids'] )
+			) {
 				return [
 					'errors'        => [],
 					'error_sources' => [],
