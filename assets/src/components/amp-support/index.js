@@ -14,7 +14,7 @@ import { Button } from '@wordpress/components';
  */
 import './style.scss';
 import { __ } from '@wordpress/i18n';
-import { ListItem } from '../ListItem';
+import { ListItem } from '../list-item';
 import { Selectable } from '../selectable';
 import { CopyButton } from '../copy-button';
 import { AMPNotice } from '../amp-notice';
