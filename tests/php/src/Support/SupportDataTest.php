@@ -335,7 +335,10 @@ class SupportDataTest extends WP_UnitTestCase {
 	public function normalize_error_source_data_provider() {
 
 		$plugin_info = SupportData::normalize_plugin_info( 'hello.php' );
-		$theme_info  = SupportData::normalize_theme_info( wp_get_theme() );
+
+		$themes     = wp_get_themes();
+		$theme_info = array_pop( $themes );
+		$theme_info = SupportData::normalize_theme_info( $theme_info );
 
 		$data = [
 			'empty'  => [
