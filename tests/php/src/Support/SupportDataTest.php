@@ -405,7 +405,6 @@ class SupportDataTest extends WP_UnitTestCase {
 					'priority' => 30,
 					'type'     => 'theme',
 					'version'  => $theme_info['version'],
-
 				],
 			],
 		];

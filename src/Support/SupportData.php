@@ -525,7 +525,7 @@ class SupportData {
 		 */
 		if ( empty( $theme_versions ) || ! is_array( $theme_versions ) ) {
 
-			$theme_list = wp_get_themes();
+			$theme_list = array_merge( [ wp_get_theme() ], wp_get_themes() );
 
 			foreach ( $theme_list as $theme ) {
 				if ( ! empty( $theme ) && is_a( $theme, 'WP_Theme' ) ) {
