@@ -327,12 +327,17 @@ class SupportDataTest extends WP_UnitTestCase {
 		$this->assertEquals( $expected, SupportData::normalize_error( $input ) );
 	}
 
+	/**
+	 * Data provider for $this->test_normalize_error_source()
+	 *
+	 * @return array
+	 */
 	public function normalize_error_source_data_provider() {
 
 		$plugin_info = SupportData::normalize_plugin_info( 'hello.php' );
 		$theme_info  = SupportData::normalize_theme_info( wp_get_theme() );
 
-		return [
+		$data = [
 			'empty'  => [
 				'input'    => [],
 				'expected' => [],
@@ -369,7 +374,6 @@ class SupportDataTest extends WP_UnitTestCase {
 				'expected' => [
 					'dependency_handle' => 'jquery-core',
 					'dependency_type'   => 'script',
-					'error_source_slug' => '9edef39a64b779ea518e7af704ac1a52decb816da4648a5d2f7cd0ad167c25ea',
 					'file'              => $plugin_info['slug'],
 					'function'          => 'dummy_function',
 					'handle'            => 'hello-script',
@@ -393,19 +397,25 @@ class SupportDataTest extends WP_UnitTestCase {
 					'priority' => 30,
 				],
 				'expected' => [
-					'error_source_slug' => '4f657c16370d324f0e14d9df9b0cf5a21b5978e70870f8eb06d41dac54e21a00',
-					'file'              => 'inc/template-functions.php',
-					'function'          => 'theme_post_content',
-					'hook'              => 'theme_loop_post',
-					'line'              => 403,
-					'name'              => $theme_info['slug'],
-					'priority'          => 30,
-					'type'              => 'theme',
-					'version'           => $theme_info['version'],
+					'file'     => 'inc/template-functions.php',
+					'function' => 'theme_post_content',
+					'hook'     => 'theme_loop_post',
+					'line'     => 403,
+					'name'     => $theme_info['slug'],
+					'priority' => 30,
+					'type'     => 'theme',
+					'version'  => $theme_info['version'],
 
 				],
 			],
 		];
+
+		foreach ( [ 'plugin', 'theme' ] as $key ) {
+			$data[ $key ]['expected']['error_source_slug'] = SupportData::generate_hash( $data[ $key ]['expected'] );
+			ksort( $data[ $key ]['expected'] );
+		}
+
+		return $data;
 	}
 
 	/**
@@ -507,7 +517,7 @@ class SupportDataTest extends WP_UnitTestCase {
 		];
 
 		foreach ( $keys as $key ) {
-			$this->assertArrayHasKey( $key, $data['url'][0] );
+			$this->assertArrayHasKey( $key, $data['urls'][0] );
 		}
 	}
 

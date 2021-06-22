@@ -63,7 +63,10 @@ class Support implements Service, Conditional, Registerable {
 	 */
 	public function admin_bar_menu( $wp_admin_bar ) {
 
-		if ( ! array_key_exists( 'amp', $wp_admin_bar->get_nodes() ) ) {
+		if ( empty( $wp_admin_bar ) ||
+			! is_a( $wp_admin_bar, 'WP_Admin_Bar' ) ||
+			! array_key_exists( 'amp', $wp_admin_bar->get_nodes() )
+		) {
 			return;
 		}
 

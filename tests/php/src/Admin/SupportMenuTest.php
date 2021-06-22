@@ -57,22 +57,19 @@ class SupportMenuTest extends WP_UnitTestCase {
 	 */
 	public function test_is_needed() {
 
-		/**
-		 * Without mocking.
-		 */
+		// Without mocking.
 		$this->assertFalse( SupportMenu::is_needed() );
 
-		/**
-		 * Mock is_wp_admin()
-		 */
-		if ( ! defined( 'WP_ADMIN' ) ) {
-			define( 'WP_ADMIN', true );
-		}
+		// Mock the is_admin()
+		set_current_screen( $this->instance->screen_handle() );
+		wp_set_current_user( self::factory()->user->create( [ 'role' => 'administrator' ] ) );
 
 		add_filter( 'amp_support_menu_is_enabled', '__return_true', 999 );
 
 		$this->assertTrue( SupportMenu::is_needed() );
 
+		// Reset data.
+		unset( $GLOBALS['current_screen'] );
 	}
 
 	/**
