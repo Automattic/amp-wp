@@ -109,10 +109,6 @@ function delete_terms() {
 	} while ( ! empty( $result ) );
 }
 
-$flag = get_option( 'amp-preserver-data', false );
-
-if ( empty( $flag ) ) {
-	delete_options();
-	delete_posts();
-	delete_terms();
-}
+delete_options();
+delete_posts();
+delete_terms();
