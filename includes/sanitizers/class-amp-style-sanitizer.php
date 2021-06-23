@@ -1469,6 +1469,22 @@ class AMP_Style_Sanitizer extends AMP_Base_Sanitizer {
 	 * @return string|WP_Error Stylesheet string on success, or WP_Error on failure.
 	 */
 	private function get_stylesheet_from_url( $stylesheet_url ) {
+		// For absolute paths, provide the origin (host and port).
+		if ( '/' === substr( $stylesheet_url, 0, 1 ) && '//' !== substr( $stylesheet_url, 0, 2 ) ) {
+			$parsed_home_url = wp_parse_url( home_url() );
+			if ( ! isset( $parsed_home_url['host'] ) ) {
+				// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+				$parsed_home_url['host'] = isset( $_SERVER['HTTP_HOST'] ) ? $_SERVER['HTTP_HOST'] : 'localhost';
+			}
+
+			$stylesheet_origin = '//' . $parsed_home_url['host'];
+			if ( isset( $parsed_home_url['port'] ) ) {
+				$stylesheet_origin .= ':' . $parsed_home_url['port'];
+			}
+
+			$stylesheet_url = $stylesheet_origin . $stylesheet_url;
+		}
+
 		$stylesheet    = false;
 		$css_file_path = $this->get_validated_url_file_path( $stylesheet_url, [ 'css', 'less', 'scss', 'sass' ] );
 		if ( ! is_wp_error( $css_file_path ) ) {
