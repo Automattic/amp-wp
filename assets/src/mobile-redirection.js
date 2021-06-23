@@ -70,6 +70,11 @@
 		// from ensuing. See <https://github.com/ampproject/amp-wp/issues/5767>.
 		window.stop(); // Stop loading the page! This should cancel all loading resources.
 
+		// Pass along referrer so that amp-analytics can report the correct referrer.
+		if ( document.referrer ) {
+			amphtmlUrlObject.searchParams.set( 'amp_referrer', document.referrer );
+		}
+
 		// Replace the current page with the AMP version.
 		location.replace( amphtmlUrlObject.href );
 	}
