@@ -132,6 +132,12 @@ class AMP_YouTube_Embed_Handler extends AMP_Base_Embed_Handler {
 			$img
 		);
 
+		// Find start time of video.
+		$start_time = $this->get_start_time_from_url( $url );
+		if ( ! empty( $start_time ) && 0 < intval( $start_time ) ) {
+			$props['start'] = intval( $start_time );
+		}
+
 		return $props;
 	}
 
@@ -151,6 +157,7 @@ class AMP_YouTube_Embed_Handler extends AMP_Base_Embed_Handler {
 				'width'       => $this->args['width'],
 				'height'      => $this->args['height'],
 				'placeholder' => '',
+				'start'       => 0,
 			]
 		);
 
@@ -173,6 +180,10 @@ class AMP_YouTube_Embed_Handler extends AMP_Base_Embed_Handler {
 		);
 		if ( ! empty( $args['title'] ) ) {
 			$attributes['title'] = $args['title'];
+		}
+
+		if ( ! empty( $args['start'] ) && 0 < intval( $args['start'] ) ) {
+			$attributes['data-param-start'] = intval( $args['start'] );
 		}
 
 		return AMP_HTML_Utils::build_tag( 'amp-youtube', $attributes, $args['placeholder'] );
@@ -234,6 +245,50 @@ class AMP_YouTube_Embed_Handler extends AMP_Base_Embed_Handler {
 		}
 
 		return false;
+	}
+
+	/**
+	 * To get start time of youtube video in second.
+	 *
+	 * @param string $url Youtube URL.
+	 *
+	 * @return int Start time in second.
+	 */
+	private function get_start_time_from_url( $url ) {
+
+		if ( empty( $url ) ) {
+			return 0;
+		}
+
+		$start_time = 0;
+		$parsed_url = wp_parse_url( $url );
+
+		if ( ! empty( $parsed_url['query'] ) ) {
+			wp_parse_str( $parsed_url['query'], $query_vars );
+
+			if ( ! empty( $query_vars['start'] ) && 0 < intval( $query_vars['start'] ) ) {
+				$start_time = intval( $query_vars['start'] );
+			}
+		}
+
+		if ( empty( $start_time ) && ! empty( $parsed_url['fragment'] ) ) {
+			$regex = '/^t=(?<minutes>[0-9])+m(?<seconds>[0-9]+)s$/iU';
+
+			preg_match( $regex, $parsed_url['fragment'], $matches );
+
+			if ( ! empty( $matches ) ) {
+				$matches    = wp_parse_args(
+					$matches,
+					[
+						'minutes' => 0,
+						'seconds' => 0,
+					]
+				);
+				$start_time = ( intval( $matches['seconds'] ) + ( intval( $matches['minutes'] ) * 60 ) );
+			}
+		}
+
+		return $start_time;
 	}
 
 	/**
