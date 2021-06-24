@@ -175,6 +175,12 @@ class Test_AMP_YouTube_Embed_Handler extends WP_UnitTestCase {
 				'<p><amp-youtube data-videoid="kfVsfOSbJY0" layout="responsive" width="500" height="281" title="Rebecca Black - Friday"><a placeholder href="https://youtube.com/watch?v=kfVsfOSbJY0"><img src="https://i.ytimg.com/vi/kfVsfOSbJY0/hqdefault.jpg" layout="fill" object-fit="cover" alt="Rebecca Black - Friday"></img></a></amp-youtube></p>' . PHP_EOL,
 				'<p><amp-youtube data-videoid="kfVsfOSbJY0" layout="responsive" width="500" height="281"><a placeholder href="https://youtube.com/watch?v=kfVsfOSbJY0"><img src="https://i.ytimg.com/vi/kfVsfOSbJY0/hqdefault.jpg" layout="fill" object-fit="cover"></img></a></amp-youtube></p>' . PHP_EOL,
 			],
+
+			'with_start_time'                  => [
+				'http://www.youtube.com/watch?v=kfVsfOSbJY0#t=1m10s' . PHP_EOL,
+				'<p><amp-youtube data-videoid="kfVsfOSbJY0" layout="responsive" width="500" height="281" title="Rebecca Black - Friday" data-param-start="70"><a placeholder href="http://www.youtube.com/watch?v=kfVsfOSbJY0#t=1m10s"><img src="https://i.ytimg.com/vi/kfVsfOSbJY0/hqdefault.jpg" layout="fill" object-fit="cover" alt="Rebecca Black - Friday"></img></a></amp-youtube></p>' . PHP_EOL,
+				'<p><amp-youtube data-videoid="kfVsfOSbJY0" layout="responsive" width="500" height="281"><a placeholder href="http://www.youtube.com/watch?v=kfVsfOSbJY0#t=1m10s"><img src="https://i.ytimg.com/vi/kfVsfOSbJY0/hqdefault.jpg" layout="fill" object-fit="cover"></img></a></amp-youtube></p>' . PHP_EOL,
+			],
 		];
 	}
 
@@ -299,6 +305,52 @@ class Test_AMP_YouTube_Embed_Handler extends WP_UnitTestCase {
 		$this->assertEquals(
 			$expected,
 			$this->call_private_method( $this->handler, 'get_video_id_from_url', [ $url ] )
+		);
+	}
+
+	/**
+	 * Gets the test data for test_get_start_time_from_url().
+	 *
+	 * @return array The test data.
+	 */
+	public function get_start_time_data() {
+
+		return [
+			'empty_because_no_start_data'   => [
+				'http://youtube.com/?wrong=XOY3ZUO6P0k',
+				0,
+			],
+			'data_in_query_string'          => [
+				'http://www.youtube.com/watch?v=0zM3nApSvMg&start=90',
+				90,
+			],
+			'data_in_fragment'              => [
+				'http://www.youtube.com/watch?v=0zM3nApSvMg#t=0m10s',
+				10,
+			],
+			'data_in_fragment_with_minutes' => [
+				'http://www.youtube.com/watch?v=0zM3nApSvMg#t=1m10s',
+				70,
+			],
+		];
+	}
+
+	/**
+	 * Tests get_start_time_from_url.
+	 *
+	 * @dataProvider get_start_time_data
+	 * @covers       AMP_YouTube_Embed_Handler::get_start_time_from_url
+	 *
+	 * @param string       $url      The URL to test.
+	 * @param string|false $expected The expected result.
+	 *
+	 * @throws ReflectionException If a reflection of the object is not possible.
+	 */
+	public function test_get_start_time_from_url( $url, $expected ) {
+
+		$this->assertEquals(
+			$expected,
+			$this->call_private_method( $this->handler, 'get_start_time_from_url', [ $url ] )
 		);
 	}
 
