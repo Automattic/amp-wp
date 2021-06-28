@@ -5,9 +5,14 @@
  * @package AMP
  */
 
+/**
+ * @group uninstall
+ */
 class Test_Uninstall extends WP_UnitTestCase {
 
 	/**
+	 * @runInSeparateProcess
+	 *
 	 * @covers ::delete_options
 	 * @covers ::delete_posts
 	 * @covers ::delete_terms
