@@ -38,10 +38,13 @@ function delete_posts() {
 		$offset = $per_page * ( $current_page - 1 );
 
 		/**
+		 * phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery
+		 * phpcs:disable WordPress.DB.DirectDatabaseQuery.NoCaching
+		 *
 		 * We don't need to cache result.
 		 * Since we are going to delete those records.
 		 */
-		$result = $wpdb->get_results( // phpcs:ignore
+		$result = $wpdb->get_results(
 			$wpdb->prepare(
 				"SELECT ID FROM $wpdb->posts WHERE post_type='amp_validated_url' LIMIT %d OFFSET %d;",
 				$per_page,
@@ -49,6 +52,7 @@ function delete_posts() {
 			),
 			ARRAY_A
 		);
+		// phpcs:enable
 
 		if ( empty( $result ) || ! is_array( $result ) ) {
 			break;
@@ -82,10 +86,13 @@ function delete_terms() {
 		$offset = $per_page * ( $current_page - 1 );
 
 		/**
+		 * phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery
+		 * phpcs:disable WordPress.DB.DirectDatabaseQuery.NoCaching
+		 *
 		 * We don't need to cache result.
 		 * Since we are going to delete those records.
 		 */
-		$result = $wpdb->get_results( // phpcs:ignore
+		$result = $wpdb->get_results(
 			$wpdb->prepare(
 				"SELECT term_id FROM $wpdb->term_taxonomy WHERE taxonomy=%s LIMIT %d OFFSET %d;",
 				$taxonomy,
@@ -94,6 +101,7 @@ function delete_terms() {
 			),
 			ARRAY_A
 		);
+		// phpcs:enable
 
 		if ( empty( $result ) || ! is_array( $result ) ) {
 			break;
