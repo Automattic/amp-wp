@@ -1,5 +1,5 @@
 /* Welcome section. */
-.amp-support {
+.amp.amp-support {
 	margin: 2.5rem 0;
 
 	h2 {
@@ -32,6 +32,15 @@
 
 	.amp-notice {
 		align-items: center;
+	}
+
+	.components-clipboard-button {
+		box-shadow: none;
+		text-decoration: none;
+		padding: 0.25rem .5rem;
+		margin: 0 .5rem;
+		outline: none !important;
+		height: auto;
 	}
 
 }

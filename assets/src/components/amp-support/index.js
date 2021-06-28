@@ -16,8 +16,8 @@ import './style.scss';
 import { __ } from '@wordpress/i18n';
 import { ListItem } from '../list-item';
 import { Selectable } from '../selectable';
-import { CopyButton } from '../copy-button';
 import { AMPNotice } from '../amp-notice';
+import ClipboardButton from '../clipboard-button';
 
 export class AMPSupport extends Component {
 	/**
@@ -39,6 +39,7 @@ export class AMPSupport extends Component {
 		this.state = {
 			uuid: null,
 			error: null,
+			hasCopied: false,
 		};
 	}
 
@@ -327,13 +328,26 @@ export class AMPSupport extends Component {
 	 */
 	_renderUUID() {
 		if ( this.state.uuid ) {
+			const setHasCopied = ( flag ) => {
+				this.setState( {
+					hasCopied: Boolean( flag ),
+				} );
+			};
+
 			return (
 				<AMPNotice type="info" size="small">
 					{ __( 'Support UUID: ', 'amp' ) }
 					<code>
 						{ this.state.uuid }
 					</code>
-					<CopyButton value={ this.state.uuid } />
+					<ClipboardButton
+						isSmall={ true }
+						text={ this.state.uuid }
+						onCopy={ () => setHasCopied( true ) }
+						onFinishCopy={ () => setHasCopied( false ) }
+					>
+						{ this.state.hasCopied ? __( 'Copied!', 'amp' ) : __( 'Copy UUID', 'amp' ) }
+					</ClipboardButton>
 				</AMPNotice>
 			);
 		}
