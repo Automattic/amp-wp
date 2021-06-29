@@ -5,6 +5,8 @@
  * @package AMP
  */
 
+use AmpProject\Dom\Document;
+
 /**
  * Class AMP_YouTube_Embed_Handler
  *
@@ -75,6 +77,93 @@ class AMP_YouTube_Embed_Handler extends AMP_Base_Embed_Handler {
 	 */
 	public function unregister_embed() {
 		remove_filter( 'embed_oembed_html', [ $this, 'filter_embed_oembed_html' ], 10 );
+	}
+
+	/**
+	 * Sanitize HTML that are not added via Gutenberg.
+	 *
+	 * @param Document $dom  Document.
+	 *
+	 * @return void
+	 */
+	public function sanitize_raw_embeds( Document $dom ) {
+
+		$nodes = $dom->xpath->query( '//iframe[ contains( @src, "youtu" ) ]' );
+
+		foreach ( $nodes as $node ) {
+
+			$html             = $dom->saveHTML( $node );
+			$url              = $node->getAttribute( 'src' );
+			$amp_youtube_node = $this->process_embed( $dom, $html, $url );
+
+			if ( ! empty( $amp_youtube_node ) ) {
+				$node->parentNode->replaceChild( $amp_youtube_node, $node );
+			}
+		}
+
+	}
+
+	/**
+	 * To AMP youtube component from DOM Document.
+	 *
+	 * @param Document $dom  Document DOM.
+	 * @param string   $html HTML markup of youtube iframe.
+	 * @param string   $url  Youtube URL.
+	 *
+	 * @return DOMElement|false DOMElement on success, Otherwise false.
+	 */
+	public function process_embed( Document $dom, $html, $url ) {
+
+		$id = $this->get_video_id_from_url( $url );
+
+		if ( ! $id ) {
+			return false;
+		}
+
+		$args = $this->parse_props( $html, $url, $id );
+		if ( empty( $args ) ) {
+			return false;
+		}
+
+		$args['video_id'] = $id;
+
+		$args = wp_parse_args(
+			$args,
+			[
+				'video_id'    => false,
+				'layout'      => 'responsive',
+				'width'       => $this->args['width'],
+				'height'      => $this->args['height'],
+				'placeholder' => '',
+			]
+		);
+
+		if ( empty( $args['video_id'] ) ) {
+			return AMP_DOM_Utils::create_node(
+				$dom,
+				'a',
+				[
+					'href'  => esc_url_raw( $url ),
+					'class' => 'amp-wp-embed-fallback',
+				]
+			);
+		}
+
+		$this->did_convert_elements = true;
+
+		$attributes = array_merge(
+			[ 'data-videoid' => $args['video_id'] ],
+			wp_array_slice_assoc( $args, [ 'layout', 'width', 'height' ] )
+		);
+		if ( ! empty( $args['title'] ) ) {
+			$attributes['title'] = $args['title'];
+		}
+
+		return AMP_DOM_Utils::create_node(
+			$dom,
+			'amp-youtube',
+			$attributes
+		);
 	}
 
 	/**
