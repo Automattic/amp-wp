@@ -310,6 +310,8 @@ class AMP_YouTube_Embed_Handler extends AMP_Base_Embed_Handler {
 
 		$this->did_convert_elements = true;
 
+		$args['placeholder'] = ( ! empty( $args['placeholder'] ) ) ? $args['placeholder'] : '';
+
 		return AMP_HTML_Utils::build_tag( 'amp-youtube', $attributes, $args['placeholder'] );
 	}
 
