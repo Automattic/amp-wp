@@ -102,6 +102,50 @@ class Test_AMP_YouTube_Embed_Handler extends WP_UnitTestCase {
 	}
 
 	/**
+	 * data provider for $this->test_sanitize_raw_embeds()
+	 *
+	 * @return string[][]
+	 */
+	public function sanitize_raw_embeds_data_provider() {
+
+		return [
+			'youtube-embed' => [
+				'source'   => '<iframe src="https://www.youtube.com/embed/q4xKvHANqjk?controls=0&amp;autoplay=1&amp;loop=1&amp;modestbranding=1" title="YouTube video player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="" width="560" height="315" frameborder="0"></iframe>',
+				'expected' => '<amp-youtube data-videoid="q4xKvHANqjk" layout="responsive" width="560" height="315" title="YouTube video player" data-param-controls="0" data-param-modestbranding="1" autoplay="1" loop="1"></amp-youtube>',
+			],
+			'short-url'     => [
+				'source'   => '<iframe src="https://youtu.be/kfVsfOSbJY0?controls=0&amp;autoplay=1&amp;loop=1&amp;modestbranding=1" title="YouTube video player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="" width="560" height="315" frameborder="0"></iframe>',
+				'expected' => '<amp-youtube data-videoid="kfVsfOSbJY0" layout="responsive" width="560" height="315" title="YouTube video player" data-param-controls="0" data-param-modestbranding="1" autoplay="1" loop="1"></amp-youtube>',
+			],
+			'none-youtube'  => [
+				'source'   => '<iframe src="https://amp-wp.org/" title="YouTube video player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="" width="560" height="315" frameborder="0"></iframe>',
+				'expected' => '<iframe src="https://amp-wp.org/" title="YouTube video player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="" width="560" height="315" frameborder="0"></iframe>',
+			],
+		];
+	}
+
+	/**
+	 * @dataProvider sanitize_raw_embeds_data_provider
+	 *
+	 * @covers       AMP_YouTube_Embed_Handler::sanitize_raw_embeds
+	 */
+	public function test_sanitize_raw_embeds( $source, $expected ) {
+
+		$embed = new AMP_YouTube_Embed_Handler();
+		$embed->register_embed();
+
+		$dom = AMP_DOM_Utils::get_dom_from_content( $source );
+		$embed->sanitize_raw_embeds( $dom );
+
+		$layout_sanitizer = new AMP_Layout_Sanitizer( $dom );
+		$layout_sanitizer->sanitize();
+
+		$content = AMP_DOM_Utils::get_content_from_dom( $dom );
+
+		$this->assertEquals( $expected, trim( $content ) );
+	}
+
+	/**
 	 * Test video_override().
 	 *
 	 * @covers AMP_YouTube_Embed_Handler::video_override()
@@ -160,7 +204,7 @@ class Test_AMP_YouTube_Embed_Handler extends WP_UnitTestCase {
 
 			'url_with_querystring'             => [
 				'http://www.youtube.com/watch?v=kfVsfOSbJY0&hl=en&fs=1&w=425&h=349' . PHP_EOL,
-				'<p><amp-youtube data-videoid="kfVsfOSbJY0" layout="responsive" width="500" height="281" title="Rebecca Black - Friday"><a placeholder href="http://www.youtube.com/watch?v=kfVsfOSbJY0&amp;hl=en&amp;fs=1&amp;w=425&amp;h=349"><img src="https://i.ytimg.com/vi/kfVsfOSbJY0/hqdefault.jpg" layout="fill" object-fit="cover" alt="Rebecca Black - Friday"></img></a></amp-youtube></p>' . PHP_EOL,
+				'<p><amp-youtube data-videoid="kfVsfOSbJY0" layout="responsive" width="500" height="281" title="Rebecca Black - Friday" data-param-fs="1" data-param-hl="en"><a placeholder href="http://www.youtube.com/watch?v=kfVsfOSbJY0&amp;hl=en&amp;fs=1&amp;w=425&amp;h=349"><img src="https://i.ytimg.com/vi/kfVsfOSbJY0/hqdefault.jpg" layout="fill" object-fit="cover" alt="Rebecca Black - Friday"></img></a></amp-youtube></p>' . PHP_EOL,
 				'<p><amp-youtube data-videoid="kfVsfOSbJY0" layout="responsive" width="500" height="281"><a placeholder href="http://www.youtube.com/watch?v=kfVsfOSbJY0&amp;hl=en&amp;fs=1&amp;w=425&amp;h=349"><img src="https://i.ytimg.com/vi/kfVsfOSbJY0/hqdefault.jpg" layout="fill" object-fit="cover"></img></a></amp-youtube></p>' . PHP_EOL,
 			],
 
