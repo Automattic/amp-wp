@@ -127,18 +127,9 @@ class AMP_YouTube_Embed_Handler extends AMP_Base_Embed_Handler {
 
 		$args['video_id'] = $id;
 
-		$args = wp_parse_args(
-			$args,
-			[
-				'video_id'    => false,
-				'layout'      => 'responsive',
-				'width'       => $this->args['width'],
-				'height'      => $this->args['height'],
-				'placeholder' => '',
-			]
-		);
+		$attributes = $this->prepare_attributes( $args, $url );
 
-		if ( empty( $args['video_id'] ) ) {
+		if ( empty( $attributes['data-videoid'] ) ) {
 			return AMP_DOM_Utils::create_node(
 				$dom,
 				'a',
@@ -150,14 +141,6 @@ class AMP_YouTube_Embed_Handler extends AMP_Base_Embed_Handler {
 		}
 
 		$this->did_convert_elements = true;
-
-		$attributes = array_merge(
-			[ 'data-videoid' => $args['video_id'] ],
-			wp_array_slice_assoc( $args, [ 'layout', 'width', 'height' ] )
-		);
-		if ( ! empty( $args['title'] ) ) {
-			$attributes['title'] = $args['title'];
-		}
 
 		return AMP_DOM_Utils::create_node(
 			$dom,
@@ -231,13 +214,14 @@ class AMP_YouTube_Embed_Handler extends AMP_Base_Embed_Handler {
 	}
 
 	/**
-	 * Render embed.
+	 * Prepare attributes for amp-youtube component.
 	 *
-	 * @param array  $args Args.
-	 * @param string $url  URL.
-	 * @return string Rendered.
+	 * @param array  $args amp-youtube component arguments.
+	 * @param string $url  Youtube URL.
+	 *
+	 * @return array prepared arguments for amp-youtube component.
 	 */
-	public function render( $args, $url ) {
+	public function prepare_attributes( $args, $url ) {
 		$args = wp_parse_args(
 			$args,
 			[
@@ -250,7 +234,70 @@ class AMP_YouTube_Embed_Handler extends AMP_Base_Embed_Handler {
 			]
 		);
 
-		if ( empty( $args['video_id'] ) ) {
+		$attributes = array_merge(
+			[ 'data-videoid' => $args['video_id'] ],
+			wp_array_slice_assoc( $args, [ 'layout', 'width', 'height' ] )
+		);
+		if ( ! empty( $args['title'] ) ) {
+			$attributes['title'] = $args['title'];
+		}
+
+		$allowed_data_params = [
+			'cc_lang_pref',
+			'cc_load_policy',
+			'color',
+			'controls',
+			'disablekb',
+			'enablejsapi',
+			'end',
+			'fs',
+			'hl',
+			'iv_load_policy',
+			'list',
+			'listType',
+			'modestbranding',
+			'origin',
+			'playlist',
+			'playsinline',
+			'rel',
+			'widget_referrer',
+		];
+
+		$query_vars  = [];
+		$query_param = wp_parse_url( $url, PHP_URL_QUERY );
+		wp_parse_str( $query_param, $query_vars );
+
+		foreach ( $allowed_data_params as $allowed_data_param ) {
+			if ( isset( $query_vars[ $allowed_data_param ] ) ) {
+				$attributes[ "data-param-$allowed_data_param" ] = $query_vars[ $allowed_data_param ];
+			}
+		}
+
+		foreach ( [ 'autoplay', 'loop' ] as $param ) {
+			if ( isset( $query_vars[ $param ] ) ) {
+				$attributes[ $param ] = $query_vars[ $param ];
+			}
+		}
+
+		if ( ! empty( $args['start'] ) && 0 < intval( $args['start'] ) ) {
+			$attributes['data-param-start'] = intval( $args['start'] );
+		}
+
+		return $attributes;
+	}
+
+	/**
+	 * Render embed.
+	 *
+	 * @param array  $args Args.
+	 * @param string $url  URL.
+	 * @return string Rendered.
+	 */
+	public function render( $args, $url ) {
+
+		$attributes = $this->prepare_attributes( $args, $url );
+
+		if ( empty( $attributes['data-videoid'] ) ) {
 			return AMP_HTML_Utils::build_tag(
 				'a',
 				[
@@ -262,18 +309,6 @@ class AMP_YouTube_Embed_Handler extends AMP_Base_Embed_Handler {
 		}
 
 		$this->did_convert_elements = true;
-
-		$attributes = array_merge(
-			[ 'data-videoid' => $args['video_id'] ],
-			wp_array_slice_assoc( $args, [ 'layout', 'width', 'height' ] )
-		);
-		if ( ! empty( $args['title'] ) ) {
-			$attributes['title'] = $args['title'];
-		}
-
-		if ( ! empty( $args['start'] ) && 0 < intval( $args['start'] ) ) {
-			$attributes['data-param-start'] = intval( $args['start'] );
-		}
 
 		return AMP_HTML_Utils::build_tag( 'amp-youtube', $attributes, $args['placeholder'] );
 	}
