@@ -13,6 +13,7 @@ use AmpProject\AmpWP\Admin\ReaderThemes;
 use AmpProject\AmpWP\Admin\RESTPreloader;
 use AmpProject\AmpWP\Admin\SupportMenu;
 use AmpProject\AmpWP\DependencySupport;
+use AmpProject\AmpWP\LoadingError;
 use AmpProject\AmpWP\Tests\Helpers\AssertContainsCompatibility;
 use WP_UnitTestCase;
 
@@ -42,7 +43,7 @@ class SupportMenuTest extends WP_UnitTestCase {
 
 		parent::setUp();
 
-		$option_menu    = new OptionsMenu( new GoogleFonts(), new ReaderThemes(), new RESTPreloader(), new DependencySupport() );
+		$option_menu    = new OptionsMenu( new GoogleFonts(), new ReaderThemes(), new RESTPreloader(), new DependencySupport(), new LoadingError() );
 		$this->instance = new SupportMenu( $option_menu, new GoogleFonts() );
 	}
 
