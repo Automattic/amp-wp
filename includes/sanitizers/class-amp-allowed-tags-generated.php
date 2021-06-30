@@ -6832,6 +6832,74 @@ class AMP_Allowed_Tags_Generated {
 				),
 			),
 		),
+		'amp-tiktok' => array(
+			array(
+				'attr_spec_list' => array(
+					'data-src' => array(
+						'mandatory' => true,
+						'value_regex' => '\\d',
+					),
+					'media' => array(),
+					'noloading' => array(
+						'value' => array(
+							'',
+						),
+					),
+				),
+				'tag_spec' => array(
+					'amp_layout' => array(
+						'supported_layouts' => array(
+							6,
+							2,
+							3,
+							7,
+							9,
+							1,
+							4,
+						),
+					),
+					'requires_extension' => array(
+						'amp-tiktok',
+					),
+					'spec_name' => 'AMP-TIKTOK',
+					'spec_url' => 'https://amp.dev/documentation/components/amp-tiktok',
+				),
+			),
+			array(
+				'attr_spec_list' => array(
+					'media' => array(),
+					'noloading' => array(
+						'value' => array(
+							'',
+						),
+					),
+				),
+				'tag_spec' => array(
+					'amp_layout' => array(
+						'supported_layouts' => array(
+							6,
+							2,
+							3,
+							7,
+							9,
+							1,
+							4,
+						),
+					),
+					'child_tags' => array(
+						'child_tag_name_oneof' => array(
+							'blockquote',
+						),
+						'mandatory_min_num_child_tags' => 1,
+					),
+					'requires_extension' => array(
+						'amp-tiktok',
+					),
+					'spec_name' => 'AMP-TIKTOK blockquote',
+					'spec_url' => 'https://amp.dev/documentation/components/amp-tiktok',
+				),
+			),
+		),
 		'amp-timeago' => array(
 			array(
 				'attr_spec_list' => array(
@@ -7874,6 +7942,25 @@ class AMP_Allowed_Tags_Generated {
 					),
 				),
 				'tag_spec' => array(),
+			),
+			array(
+				'attr_spec_list' => array(
+					'align' => array(),
+					'cite' => array(
+						'disallowed_value_regex' => '__amp_source_origin',
+						'value_url' => array(
+							'allow_empty' => true,
+							'protocol' => array(
+								'http',
+								'https',
+							),
+						),
+					),
+				),
+				'tag_spec' => array(
+					'mandatory_ancestor' => 'amp-tiktok blockquote',
+					'spec_name' => 'BLOCKQUOTE with TikTok',
+				),
 			),
 		),
 		'body' => array(
@@ -15988,16 +16075,11 @@ class AMP_Allowed_Tags_Generated {
 				),
 				'tag_spec' => array(
 					'extension_spec' => array(
-						'bento' => array(
-							'has_css' => true,
-							'version' => '1.0',
-						),
 						'latest' => '0.1',
 						'name' => 'amp-facebook-like',
 						'requires_usage' => true,
 						'version' => array(
 							'0.1',
-							'1.0',
 						),
 					),
 				),
@@ -17927,6 +18009,7 @@ class AMP_Allowed_Tags_Generated {
 						'requires_usage' => true,
 						'version' => array(
 							'0.1',
+							'1.0',
 						),
 					),
 				),
@@ -18309,6 +18392,37 @@ class AMP_Allowed_Tags_Generated {
 					),
 					'requires_extension' => array(
 						'amp-subscriptions',
+					),
+				),
+			),
+			array(
+				'attr_spec_list' => array(
+					'async' => array(
+						'mandatory' => true,
+						'value' => array(
+							'',
+						),
+					),
+					'crossorigin' => array(
+						'value' => array(
+							'anonymous',
+						),
+					),
+					'nonce' => array(),
+					'type' => array(
+						'value_casei' => array(
+							'text/javascript',
+						),
+					),
+				),
+				'tag_spec' => array(
+					'extension_spec' => array(
+						'latest' => '0.1',
+						'name' => 'amp-tiktok',
+						'requires_usage' => true,
+						'version' => array(
+							'0.1',
+						),
 					),
 				),
 			),
