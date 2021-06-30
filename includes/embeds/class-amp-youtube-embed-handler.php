@@ -279,8 +279,8 @@ class AMP_YouTube_Embed_Handler extends AMP_Base_Embed_Handler {
 			}
 		}
 
-		if ( ! empty( $args['start'] ) && 0 < intval( $args['start'] ) ) {
-			$attributes['data-param-start'] = intval( $args['start'] );
+		if ( ! empty( $args['start'] ) && 0 < (int) $args['start'] ) {
+			$attributes['data-param-start'] = (int) $args['start'];
 		}
 
 		return $attributes;
@@ -392,8 +392,8 @@ class AMP_YouTube_Embed_Handler extends AMP_Base_Embed_Handler {
 		if ( ! empty( $parsed_url['query'] ) ) {
 			wp_parse_str( $parsed_url['query'], $query_vars );
 
-			if ( ! empty( $query_vars['start'] ) && 0 < intval( $query_vars['start'] ) ) {
-				$start_time = intval( $query_vars['start'] );
+			if ( ! empty( $query_vars['start'] ) && 0 < (int) $query_vars['start'] ) {
+				$start_time = (int) $query_vars['start'];
 			}
 		}
 
@@ -410,7 +410,7 @@ class AMP_YouTube_Embed_Handler extends AMP_Base_Embed_Handler {
 						'seconds' => 0,
 					]
 				);
-				$start_time = ( intval( $matches['seconds'] ) + ( intval( $matches['minutes'] ) * 60 ) );
+				$start_time = ( (int) $matches['seconds'] + ( (int) $matches['minutes'] * 60 ) );
 			}
 		}
 
