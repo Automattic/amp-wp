@@ -6,6 +6,7 @@
  */
 
 use AmpProject\Dom\Document;
+use AmpProject\Dom\Element;
 
 /**
  * Class AMP_YouTube_Embed_Handler
@@ -90,6 +91,7 @@ class AMP_YouTube_Embed_Handler extends AMP_Base_Embed_Handler {
 
 		$nodes = $dom->xpath->query( '//iframe[ contains( @src, "youtu" ) ]' );
 
+		/** @var Element $node */
 		foreach ( $nodes as $node ) {
 
 			$html             = $dom->saveHTML( $node );
@@ -139,8 +141,6 @@ class AMP_YouTube_Embed_Handler extends AMP_Base_Embed_Handler {
 				]
 			);
 		}
-
-		$this->did_convert_elements = true;
 
 		return AMP_DOM_Utils::create_node(
 			$dom,
