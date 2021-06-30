@@ -242,35 +242,18 @@ class AMP_YouTube_Embed_Handler extends AMP_Base_Embed_Handler {
 			$attributes['title'] = $args['title'];
 		}
 
-		$allowed_data_params = [
-			'cc_lang_pref',
-			'cc_load_policy',
-			'color',
-			'controls',
-			'disablekb',
-			'enablejsapi',
-			'end',
-			'fs',
-			'hl',
-			'iv_load_policy',
-			'list',
-			'listType',
-			'modestbranding',
-			'origin',
-			'playlist',
-			'playsinline',
-			'rel',
-			'widget_referrer',
-		];
-
 		$query_vars  = [];
 		$query_param = wp_parse_url( $url, PHP_URL_QUERY );
 		wp_parse_str( $query_param, $query_vars );
+		$query_vars = ( ! empty( $query_vars ) && is_array( $query_vars ) ) ? $query_vars : [];
 
-		foreach ( $allowed_data_params as $allowed_data_param ) {
-			if ( isset( $query_vars[ $allowed_data_param ] ) ) {
-				$attributes[ "data-param-$allowed_data_param" ] = $query_vars[ $allowed_data_param ];
+		foreach ( $query_vars as $key => $value ) {
+
+			if ( in_array( $key, [ 'autoplay', 'loop', 'start' ], true ) ) {
+				continue;
 			}
+
+			$attributes[ "data-param-$key" ] = sanitize_text_field( $value );
 		}
 
 		foreach ( [ 'autoplay', 'loop' ] as $param ) {
