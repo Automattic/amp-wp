@@ -262,9 +262,11 @@ class AMP_YouTube_Embed_Handler extends AMP_Base_Embed_Handler {
 		wp_parse_str( $query_param, $query_vars );
 		$query_vars = ( ! empty( $query_vars ) && is_array( $query_vars ) ) ? $query_vars : [];
 
+		$excluded_param = [ 'autoplay', 'loop', 'start', 'v', 'vi', 'w', 'h' ];
+
 		foreach ( $query_vars as $key => $value ) {
 
-			if ( in_array( $key, [ 'autoplay', 'loop', 'start' ], true ) ) {
+			if ( in_array( $key, $excluded_param, true ) ) {
 				continue;
 			}
 
