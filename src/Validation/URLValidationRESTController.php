@@ -63,7 +63,7 @@ final class URLValidationRESTController extends WP_REST_Controller implements De
 	 * Constructor.
 	 *
 	 * @param URLValidationProvider $url_validation_provider URLValidationProvider instance.
-	 * @param UserAccess            $dev_tools_user_access UserAccess instance.
+	 * @param UserAccess            $dev_tools_user_access   UserAccess instance.
 	 */
 	public function __construct( URLValidationProvider $url_validation_provider, UserAccess $dev_tools_user_access ) {
 		$this->namespace               = 'amp/v1';
@@ -99,6 +99,29 @@ final class URLValidationRESTController extends WP_REST_Controller implements De
 					'methods'             => WP_REST_Server::CREATABLE,
 					'callback'            => [ $this, 'validate_post_url' ],
 					'permission_callback' => [ $this, 'create_item_permissions_check' ],
+				],
+				'schema' => [ $this, 'get_public_item_schema' ],
+			]
+		);
+
+		register_rest_route(
+			$this->namespace,
+			'/validated-urls/(?P<id>[\d]+)',
+			[
+				'args'   => [
+					'id' => [
+						'description'       => __( 'Post ID for the AMP validated URL post.', 'amp' ),
+						'required'          => true,
+						'type'              => 'integer',
+						'minimum'           => 1,
+						'validate_callback' => [ $this, 'validate_amp_validated_url_post_id_param' ],
+					],
+				],
+				[
+					'args'                => $this->get_endpoint_args_for_item_schema( WP_REST_Server::READABLE ),
+					'methods'             => WP_REST_Server::READABLE,
+					'callback'            => [ $this, 'get_validated_url' ],
+					'permission_callback' => [ $this, 'get_item_permissions_check' ],
 				],
 				'schema' => [ $this, 'get_public_item_schema' ],
 			]
@@ -144,12 +167,62 @@ final class URLValidationRESTController extends WP_REST_Controller implements De
 	}
 
 	/**
+	 * Validate AMP validated URL post ID param.
+	 *
+	 * @param string|int      $id      Post ID.
+	 * @param WP_REST_Request $request REST request.
+	 * @param string          $param   Param name ('id').
+	 * @return true|WP_Error True on valid, WP_Error otherwise.
+	 */
+	public function validate_amp_validated_url_post_id_param( $id, $request, $param ) {
+		// First enforce the schema to ensure $id is an integer greater than 0.
+		$validity = rest_validate_request_arg( $id, $request, $param );
+		if ( is_wp_error( $validity ) ) {
+			return $validity;
+		}
+
+		// Make sure the post exists and is of correct post type.
+		$post = get_post( (int) $id );
+		if (
+			! $post instanceof WP_Post
+			||
+			AMP_Validated_URL_Post_Type::POST_TYPE_SLUG !== get_post_type( $post )
+		) {
+			return new WP_Error(
+				'rest_amp_validated_url_post_invalid_id',
+				__( 'Invalid post ID.', 'default' ),
+				[ 'status' => 404 ]
+			);
+		}
+
+		return true;
+	}
+
+	/**
 	 * Checks whether the current user can view AMP validation results.
 	 *
 	 * @param  WP_REST_Request $request Full details about the request.
 	 * @return true|WP_Error True if the request has permission; WP_Error object otherwise.
 	 */
 	public function create_item_permissions_check( $request ) { // phpcs:ignore VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable
+		if ( ! $this->dev_tools_user_access->is_user_enabled() ) {
+			return new WP_Error(
+				'amp_rest_no_dev_tools',
+				__( 'Sorry, you do not have access to dev tools for the AMP plugin for WordPress.', 'amp' ),
+				[ 'status' => rest_authorization_required_code() ]
+			);
+		}
+
+		return true;
+	}
+
+	/**
+	 * Checks whether the current user can view results of a URL AMP validation.
+	 *
+	 * @param  WP_REST_Request $request Full details about the request.
+	 * @return true|WP_Error True if the request has permission; WP_Error object otherwise.
+	 */
+	public function get_item_permissions_check( $request ) { // phpcs:ignore VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable
 		if ( ! $this->dev_tools_user_access->is_user_enabled() ) {
 			return new WP_Error(
 				'amp_rest_no_dev_tools',
@@ -236,6 +309,32 @@ final class URLValidationRESTController extends WP_REST_Controller implements De
 				'title'   => AMP_Validation_Error_Taxonomy::get_error_title_from_code( $result['data'] ),
 			];
 		}
+
+		return rest_ensure_response( $this->filter_response_by_context( $data, $request['context'] ) );
+	}
+
+	/**
+	 * Returns validation information about a URL.
+	 *
+	 * @param WP_REST_Request $request Full details about the request.
+	 *
+	 * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
+	 */
+	public function get_validated_url( $request ) {
+		$post_id       = (int) $request['id'];
+		$validated_url = new ValidatedUrlDataProvider( $post_id );
+
+		if ( is_wp_error( $validated_url->is_valid() ) ) {
+			return $validated_url->is_valid();
+		}
+
+		$data = [
+			'id'          => $validated_url->get_id(),
+			'url'         => $validated_url->get_url(),
+			'date'        => $validated_url->get_date(),
+			'author'      => $validated_url->get_author(),
+			'stylesheets' => $validated_url->get_stylesheets(),
+		];
 
 		return rest_ensure_response( $this->filter_response_by_context( $data, $request['context'] ) );
 	}

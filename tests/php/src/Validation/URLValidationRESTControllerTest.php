@@ -81,6 +81,18 @@ class URLValidationRESTControllerTest extends WP_UnitTestCase {
 		$this->assertTrue( $this->controller->create_item_permissions_check( new WP_REST_Request( 'POST', '/amp/v1/validate-post-url/' ) ) );
 	}
 
+	/** @covers ::get_item_permissions_check() */
+	public function test_get_item_permissions_check() {
+		$this->assertWPError( $this->controller->get_item_permissions_check( new WP_REST_Request( 'GET', '/amp/v1/validated-urls/' ) ) );
+
+		wp_set_current_user( self::factory()->user->create( [ 'role' => 'author' ] ) );
+		$this->assertWPError( $this->controller->get_item_permissions_check( new WP_REST_Request( 'GET', '/amp/v1/validated-urls/' ) ) );
+
+		wp_set_current_user( self::factory()->user->create( [ 'role' => 'administrator' ] ) );
+		$this->user_access->set_user_enabled( wp_get_current_user(), true );
+		$this->assertTrue( $this->controller->get_item_permissions_check( new WP_REST_Request( 'GET', '/amp/v1/validated-urls/' ) ) );
+	}
+
 	/** @covers ::is_valid_preview_nonce() */
 	public function test_is_valid_preview_nonce() {
 		$user_id = self::factory()->user->create( [ 'role' => 'author' ] );
@@ -223,6 +235,99 @@ class URLValidationRESTControllerTest extends WP_UnitTestCase {
 			$this->assertTrue( $response->is_error() );
 			$error = $response->as_error();
 			$this->assertEquals( $expected_validity, $error->get_error_code() );
+		}
+	}
+
+	/** @return array */
+	public function get_data_for_test_get_validated_url() {
+		return [
+			'not_int'              => [
+				'foo',
+				null,
+				'administrator',
+				'rest_no_route',
+			],
+
+			'too_small'            => [
+				-1,
+				null,
+				'administrator',
+				'rest_no_route',
+			],
+
+			'empty_post'           => [
+				0,
+				null,
+				'administrator',
+				'rest_invalid_param',
+			],
+
+			'revision_id'          => [
+				'{{id}}',
+				'revision',
+				'administrator',
+				'rest_invalid_param',
+			],
+
+			'post_id'              => [
+				'{{id}}',
+				'post',
+				'administrator',
+				'rest_invalid_param',
+			],
+
+			'as_author'            => [
+				'{{id}}',
+				\AMP_Validated_URL_Post_Type::POST_TYPE_SLUG,
+				'author',
+				'amp_rest_no_dev_tools',
+			],
+
+			'amp_validated_url_id' => [
+				'{{id}}',
+				\AMP_Validated_URL_Post_Type::POST_TYPE_SLUG,
+				'administrator',
+				false,
+			],
+		];
+	}
+
+	/**
+	 * @dataProvider get_data_for_test_get_validated_url()
+	 * @covers ::get_validated_url()
+	 * @covers ::validate_amp_validated_url_post_id_param()
+	 *
+	 * @param string|int   $post_id        Post ID.
+	 * @param string|null  $post_type      Post type.
+	 * @param string       $user_role      User role.
+	 * @param false|string $expected_error Expected error.
+	 */
+	public function test_get_validated_url( $post_id, $post_type, $user_role, $expected_error ) {
+		add_filter( 'amp_dev_tools_user_default_enabled', '__return_true' );
+		$user_id = self::factory()->user->create( [ 'role' => $user_role ] );
+
+		wp_set_current_user( $user_id );
+
+		if ( isset( $post_id ) && '{{id}}' === $post_id && $post_type ) {
+			$post_id = self::factory()->post->create( compact( 'post_type' ) );
+		}
+
+		$this->controller->register();
+		$request  = new WP_REST_Request( 'GET', '/amp/v1/validated-urls/' . $post_id );
+		$response = rest_get_server()->dispatch( $request );
+
+		if ( false === $expected_error ) {
+			$this->assertFalse( $response->is_error() );
+			$data = $response->get_data();
+			$this->assertEquals( $data['id'], $post_id );
+			$this->assertArrayHasKey( 'url', $data );
+			$this->assertArrayHasKey( 'date', $data );
+			$this->assertArrayHasKey( 'author', $data );
+			$this->assertArrayHasKey( 'stylesheets', $data );
+		} else {
+			$this->assertTrue( $response->is_error() );
+			$error = $response->as_error();
+			$this->assertEquals( $expected_error, $error->get_error_code() );
 		}
 	}
 
