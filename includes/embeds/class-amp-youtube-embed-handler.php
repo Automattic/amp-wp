@@ -89,7 +89,22 @@ class AMP_YouTube_Embed_Handler extends AMP_Base_Embed_Handler {
 	 */
 	public function sanitize_raw_embeds( Document $dom ) {
 
-		$nodes = $dom->xpath->query( '//iframe[ contains( @src, "youtu" ) ]' );
+		$applicable_domains = [ 'youtu.be', 'youtube.com', 'youtube-nocookie.com' ];
+
+		$query_segments = array_map(
+			static function ( $domain ) {
+
+				return sprintf(
+					'starts-with( @src, "https://www.%1$s/" ) or starts-with( @src, "https://%1$s/" ) or starts-with( @src, "http://www.%1$s/" ) or starts-with( @src, "http://%1$s/" )',
+					$domain
+				);
+			},
+			$applicable_domains
+		);
+
+		$query = implode( ' or ', $query_segments );
+
+		$nodes = $dom->xpath->query( sprintf( '//iframe[ %s ]', $query ) );
 
 		/** @var Element $node */
 		foreach ( $nodes as $node ) {
