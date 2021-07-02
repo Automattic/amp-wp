@@ -1,0 +1,35 @@
+html {
+	scroll-behavior: smooth;
+}
+
+@media screen and (max-width: 400px) {
+
+	.wrap {
+		margin-left: 0;
+		margin-right: 10px;
+	}
+}
+
+@media screen and (min-width: 401px) and (max-width: 782px) {
+
+	.wrap {
+		margin-left: 10px;
+		margin-right: 20px;
+	}
+}
+
+#amp-support {
+	max-width: 1060px;
+	margin: 0 auto 6rem;
+}
+
+#amp-support > h1 {
+	font-family: var(--font-poppins);
+	font-size: 1.682rem;
+	font-weight: 600;
+	margin-bottom: 0.55rem;
+}
+
+#amp-support .not-has-dependency-support {
+	margin-bottom: 2.5rem;
+}

@@ -334,6 +334,47 @@ const settingsPage = {
 	],
 };
 
+const supportPage = {
+	...sharedConfig,
+	entry: {
+		'amp-support': './assets/src/support-page',
+	},
+	externals: {
+		'amp-support': 'ampSupport',
+	},
+	plugins: [
+		...sharedConfig.plugins.filter(
+			( plugin ) => ! [ 'DependencyExtractionWebpackPlugin' ].includes( plugin.constructor.name ),
+		),
+		new DependencyExtractionWebpackPlugin( {
+			useDefaults: false,
+			// Most dependencies will be bundled for the AMP setup screen for compatibility across WP versions.
+			requestToHandle: ( handle ) => {
+				switch ( handle ) {
+					case 'lodash':
+						return defaultRequestToHandle( handle );
+
+					default:
+						return undefined;
+				}
+			},
+			requestToExternal: ( external ) => {
+				switch ( external ) {
+					case 'lodash':
+						return defaultRequestToExternal( external );
+
+					default:
+						return undefined;
+				}
+			},
+		} ),
+		new WebpackBar( {
+			name: 'Support Page',
+			color: '#67b255',
+		} ),
+	],
+};
+
 const styles = {
 	...sharedConfig,
 	entry: () => {
@@ -403,6 +444,7 @@ module.exports = [
 	wpPolyfills,
 	onboardingWizard,
 	settingsPage,
+	supportPage,
 	styles,
 	mobileRedirection,
 ];

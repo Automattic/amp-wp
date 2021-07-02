@@ -213,8 +213,9 @@ final class URLValidationRESTController extends WP_REST_Controller implements De
 		}
 
 		$data = [
-			'results'     => [],
-			'review_link' => get_edit_post_link( $validity['post_id'], 'raw' ),
+			'results'      => [],
+			'review_link'  => get_edit_post_link( $validity['post_id'], 'raw' ),
+			'support_link' => admin_url( 'admin.php?page=amp-support&post_id=' . $validity['post_id'] ),
 		];
 
 		foreach ( AMP_Validated_URL_Post_Type::get_invalid_url_validation_errors( $validity['post_id'] ) as $result ) {
@@ -264,7 +265,7 @@ final class URLValidationRESTController extends WP_REST_Controller implements De
 			'title'      => 'amp-wp-url-validation',
 			'type'       => 'object',
 			'properties' => [
-				'results'     => [
+				'results'      => [
 					'description' => __( 'Validation errors for the post.', 'amp' ),
 					'readonly'    => true,
 					'type'        => 'array',
@@ -312,8 +313,13 @@ final class URLValidationRESTController extends WP_REST_Controller implements De
 						],
 					],
 				],
-				'review_link' => [
+				'review_link'  => [
 					'description' => __( 'The URL where validation errors can be reviewed.', 'amp' ),
+					'readonly'    => true,
+					'type'        => 'string',
+				],
+				'support_link' => [
+					'description' => __( 'The URL for AMP support.', 'amp' ),
 					'readonly'    => true,
 					'type'        => 'string',
 				],

@@ -1,0 +1,16 @@
+.list-items {
+
+	&--list-style-disc {
+		list-style: disc;
+	}
+
+	&__heading {
+		font-size: 1rem;
+		margin: 1.5rem 0 .5rem;
+	}
+
+	&__item-key {
+		min-width: 210px;
+		display: inline-block;
+	}
+}

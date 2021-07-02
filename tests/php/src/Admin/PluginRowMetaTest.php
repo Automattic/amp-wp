@@ -81,11 +81,11 @@ class PluginRowMetaTest extends WP_UnitTestCase {
 		$expected_meta = array_merge(
 			$initial_meta,
 			[
-				'<a href="https://wordpress.org/support/plugin/amp/" target="_blank" rel="noreferrer noopener">Contact support</a>',
 				'<a href="https://wordpress.org/support/plugin/amp/reviews/#new-post" target="_blank" rel="noreferrer noopener">Leave review</a>',
 			]
 		);
 
 		$this->assertEquals( $expected_meta, $this->instance->get_plugin_row_meta( $initial_meta, 'amp/amp.php' ) );
+
 	}
 }

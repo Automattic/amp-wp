@@ -1,0 +1,105 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ListItem matches snapshots 1`] = `
+<ul
+  className="list-items"
+>
+  <li
+    className="list-items__item"
+  >
+    <span
+      className="list-items__item-value"
+    >
+      Item 1
+    </span>
+  </li>
+  <li
+    className="list-items__item"
+  >
+    <span
+      className="list-items__item-value"
+    >
+      Item 2
+    </span>
+  </li>
+</ul>
+`;
+
+exports[`ListItem matches snapshots 2`] = `
+<ul
+  className="list-items"
+>
+  <li
+    className="list-items__item"
+  >
+    <strong
+      className="list-items__item-key"
+    >
+      Label 1
+    </strong>
+    <span
+      className="list-items__item-value"
+    >
+      Item 1
+    </span>
+  </li>
+  <li
+    className="list-items__item"
+  >
+    <strong
+      className="list-items__item-key"
+    >
+      Label 2
+    </strong>
+    <span
+      className="list-items__item-value"
+    >
+      Item 2
+    </span>
+  </li>
+</ul>
+`;
+
+exports[`ListItem matches snapshots 3`] = `
+<ul
+  className="list-items"
+>
+  <li
+    className="list-items__item"
+  >
+    <h4
+      className="list-items__heading"
+    >
+      List heading
+    </h4>
+  </li>
+  <li
+    className="list-items__item"
+  >
+    <strong
+      className="list-items__item-key"
+    >
+      Label 1
+    </strong>
+    <span
+      className="list-items__item-value"
+    >
+      Item 1
+    </span>
+  </li>
+  <li
+    className="list-items__item"
+  >
+    <strong
+      className="list-items__item-key"
+    >
+      Label 2
+    </strong>
+    <span
+      className="list-items__item-value"
+    >
+      Item 2
+    </span>
+  </li>
+</ul>
+`;

@@ -21,6 +21,7 @@ const SET_IS_POST_DIRTY = 'SET_IS_POST_DIRTY';
 const SET_IS_SHOWING_REVIEWED = 'SET_IS_SHOWING_REVIEWED';
 const SET_MAYBE_IS_POST_DIRTY = 'SET_MAYBE_IS_POST_DIRTY';
 const SET_REVIEW_LINK = 'SET_REVIEW_LINK';
+const SET_SUPPORT_LINK = 'SET_SUPPORT_LINK';
 const SET_VALIDATION_ERRORS = 'SET_VALIDATION_ERRORS';
 
 export const INITIAL_STATE = {
@@ -33,6 +34,7 @@ export const INITIAL_STATE = {
 	maybeIsPostDirty: false,
 	rawValidationErrors: [],
 	reviewLink: null,
+	supportLink: null,
 	reviewedValidationErrors: [],
 	unreviewedValidationErrors: [],
 	validationErrors: [],
@@ -59,6 +61,9 @@ export function getStore( initialState ) {
 
 				case SET_REVIEW_LINK:
 					return { ...state, reviewLink: action.reviewLink };
+
+				case SET_SUPPORT_LINK:
+					return { ...state, supportLink: action.supportLink };
 
 				case SET_VALIDATION_ERRORS:
 					return {
@@ -116,6 +121,10 @@ export function getStore( initialState ) {
 				type: SET_REVIEW_LINK,
 				reviewLink,
 			} ),
+			setSupportLink: ( supportLink ) => ( {
+				type: SET_SUPPORT_LINK,
+				supportLink,
+			} ),
 			setValidationErrors: ( validationErrors ) => ( {
 				type: SET_VALIDATION_ERRORS,
 				validationErrors,
@@ -129,6 +138,7 @@ export function getStore( initialState ) {
 			getIsShowingReviewed: ( { isShowingReviewed } ) => isShowingReviewed,
 			getMaybeIsPostDirty: ( { maybeIsPostDirty } ) => maybeIsPostDirty,
 			getReviewLink: ( { reviewLink } ) => reviewLink,
+			getSupportLink: ( { supportLink } ) => supportLink,
 			getReviewedValidationErrors: ( { reviewedValidationErrors } ) => reviewedValidationErrors,
 			getUnreviewedValidationErrors: ( { unreviewedValidationErrors } ) => unreviewedValidationErrors,
 			getKeptMarkupValidationErrors: ( { keptMarkupValidationErrors } ) => keptMarkupValidationErrors,

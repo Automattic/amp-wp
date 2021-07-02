@@ -36,7 +36,7 @@ final class PluginRowMeta implements Delayed, Service, Registerable {
 	}
 
 	/**
-	 * Updates the plugin row meta with links to review plugin and get support.
+	 * Updates the plugin row meta with link to review plugin.
 	 *
 	 * @param string[] $meta        An array of the plugin's metadata, including the version, author, author URI,
 	 *                              and plugin URI.
@@ -49,7 +49,6 @@ final class PluginRowMeta implements Delayed, Service, Registerable {
 		}
 
 		$additional_meta = [
-			'<a href="https://wordpress.org/support/plugin/amp/" target="_blank" rel="noreferrer noopener">' . esc_html__( 'Contact support', 'amp' ) . '</a>',
 			'<a href="https://wordpress.org/support/plugin/amp/reviews/#new-post" target="_blank" rel="noreferrer noopener">' . esc_html__( 'Leave review', 'amp' ) . '</a>',
 		];
 
