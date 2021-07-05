@@ -91,6 +91,20 @@ class AMP_Validated_URL_Post_Type {
 	const EDIT_POST_SCRIPT_HANDLE = 'amp-validated-url-post-edit-screen';
 
 	/**
+	 * The handle for the AMP validated URL page script.
+	 *
+	 * @var string
+	 */
+	const AMP_VALIDATED_URL_PAGE_SCRIPT_HANDLE = 'amp-validated-url-page';
+
+	/**
+	 * HTML ID for the app root element.
+	 *
+	 * @var string
+	 */
+	const AMP_VALIDATED_URL_PAGE_APP_ROOT_ID = 'amp-validated-url-root';
+
+	/**
 	 * The query arg for the number of URLs tested.
 	 *
 	 * @var string
@@ -1986,6 +2000,8 @@ class AMP_Validated_URL_Post_Type {
 	 * Enqueue scripts for the edit post screen.
 	 */
 	public static function enqueue_edit_post_screen_scripts() {
+		global $post;
+
 		$current_screen = get_current_screen();
 		if ( 'post' !== $current_screen->base || self::POST_TYPE_SLUG !== $current_screen->post_type ) {
 			return;
@@ -2005,6 +2021,35 @@ class AMP_Validated_URL_Post_Type {
 			$dependencies,
 			$version,
 			true
+		);
+
+		// React-based validated URL page component.
+		$asset_file   = AMP__DIR__ . '/assets/js/' . self::AMP_VALIDATED_URL_PAGE_SCRIPT_HANDLE . '.asset.php';
+		$asset        = require $asset_file;
+		$dependencies = $asset['dependencies'];
+		$version      = $asset['version'];
+
+		wp_enqueue_script(
+			self::AMP_VALIDATED_URL_PAGE_SCRIPT_HANDLE,
+			amp_get_asset_url( 'js/' . self::AMP_VALIDATED_URL_PAGE_SCRIPT_HANDLE . '.js' ),
+			$dependencies,
+			$version,
+			true
+		);
+
+		$validated_url_page_data = [
+			'APP_ROOT_ID'              => self::AMP_VALIDATED_URL_PAGE_APP_ROOT_ID,
+			'POST_ID'                  => $post->ID,
+			'VALIDATED_URLS_REST_PATH' => '/amp/v1/validated-urls',
+		];
+
+		wp_add_inline_script(
+			self::AMP_VALIDATED_URL_PAGE_SCRIPT_HANDLE,
+			sprintf(
+				'var ampSettings = %s;',
+				wp_json_encode( $validated_url_page_data )
+			),
+			'before'
 		);
 
 		// @todo This is likely dead code.
@@ -2280,6 +2325,9 @@ class AMP_Validated_URL_Post_Type {
 	 * @return void
 	 */
 	public static function print_stylesheets_meta_box( $post ) {
+		?>
+			<div id="amp-validated-url-root"></div>
+		<?php
 		$stylesheets = get_post_meta( $post->ID, self::STYLESHEETS_POST_META_KEY, true );
 		if ( empty( $stylesheets ) ) {
 			printf(
