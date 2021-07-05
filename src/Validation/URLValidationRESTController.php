@@ -44,6 +44,13 @@ final class URLValidationRESTController extends WP_REST_Controller implements De
 	private $dev_tools_user_access;
 
 	/**
+	 * ValidatedUrlDataProvider instance.
+	 *
+	 * @var ValidatedUrlDataProvider
+	 */
+	private $validated_url_data_provider;
+
+	/**
 	 * Response schema.
 	 *
 	 * @var array
@@ -62,13 +69,15 @@ final class URLValidationRESTController extends WP_REST_Controller implements De
 	/**
 	 * Constructor.
 	 *
-	 * @param URLValidationProvider $url_validation_provider URLValidationProvider instance.
-	 * @param UserAccess            $dev_tools_user_access   UserAccess instance.
+	 * @param URLValidationProvider    $url_validation_provider     URLValidationProvider instance.
+	 * @param UserAccess               $dev_tools_user_access       UserAccess instance.
+	 * @param ValidatedUrlDataProvider $validated_url_data_provider ValidatedUrlDataProvider instance.
 	 */
-	public function __construct( URLValidationProvider $url_validation_provider, UserAccess $dev_tools_user_access ) {
-		$this->namespace               = 'amp/v1';
-		$this->url_validation_provider = $url_validation_provider;
-		$this->dev_tools_user_access   = $dev_tools_user_access;
+	public function __construct( URLValidationProvider $url_validation_provider, UserAccess $dev_tools_user_access, ValidatedUrlDataProvider $validated_url_data_provider ) {
+		$this->namespace                   = 'amp/v1';
+		$this->url_validation_provider     = $url_validation_provider;
+		$this->dev_tools_user_access       = $dev_tools_user_access;
+		$this->validated_url_data_provider = $validated_url_data_provider;
 	}
 
 	/**
@@ -321,19 +330,19 @@ final class URLValidationRESTController extends WP_REST_Controller implements De
 	 * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
 	 */
 	public function get_validated_url( $request ) {
-		$post_id       = (int) $request['id'];
-		$validated_url = new ValidatedUrlDataProvider( $post_id );
+		$post_id            = (int) $request['id'];
+		$validated_url_data = $this->validated_url_data_provider->for_id( $post_id );
 
-		if ( is_wp_error( $validated_url->is_valid() ) ) {
-			return $validated_url->is_valid();
+		if ( is_wp_error( $validated_url_data ) ) {
+			return $validated_url_data;
 		}
 
 		$data = [
-			'id'          => $validated_url->get_id(),
-			'url'         => $validated_url->get_url(),
-			'date'        => $validated_url->get_date(),
-			'author'      => $validated_url->get_author(),
-			'stylesheets' => $validated_url->get_stylesheets(),
+			'id'          => $validated_url_data->get_id(),
+			'url'         => $validated_url_data->get_url(),
+			'date'        => $validated_url_data->get_date(),
+			'author'      => $validated_url_data->get_author(),
+			'stylesheets' => $validated_url_data->get_stylesheets(),
 		];
 
 		return rest_ensure_response( $this->filter_response_by_context( $data, $request['context'] ) );
