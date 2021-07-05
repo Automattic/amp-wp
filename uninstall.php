@@ -20,6 +20,57 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 function delete_options() {
 
 	delete_option( 'amp-options' );
+	delete_option( 'amp_css_transient_monitor_time_series' );
+	delete_option( 'amp_customize_setting_modified_timestamps' );
+}
+
+/**
+ * Delete transient data from option table if object cache is not available.
+ *
+ * @return void
+ */
+function delete_transient() {
+
+	if ( wp_using_ext_object_cache() ) {
+		return;
+	}
+
+	global $wpdb;
+
+	$transient_groups = [
+		'amp-parsed-stylesheet-v',
+		'amp_img_',
+		'amp_new_validation_error_urls_count',
+		'amp_error_index_counts',
+		'amp_plugin_activation_validation_errors',
+		'amp_themes_wporg',
+		'amp_lock_',
+	];
+
+	$where_clause = [];
+
+	foreach ( $transient_groups as $transient_group ) {
+		$where_clause[] = $wpdb->prepare(
+			' option_name LIKE %s OR option_name LIKE %s ',
+			"_transient_$transient_group%",
+			"_transient_timeout_$transient_group%"
+		);
+	}
+
+	$where_clause = implode( ' OR ', $where_clause );
+
+	$query = "DELETE FROM $wpdb->options WHERE $where_clause";
+
+	/**
+	 * phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery
+	 * phpcs:disable WordPress.DB.DirectDatabaseQuery.NoCaching
+	 * phpcs:disable WordPress.DB.PreparedSQL.NotPrepared
+	 *
+	 * We don't need to cache result.
+	 * Since we are going to delete those records.
+	 */
+	$wpdb->query( $query );
+	// phpcs:enable
 }
 
 /**
@@ -118,5 +169,6 @@ function delete_terms() {
 }
 
 delete_options();
+delete_transient();
 delete_posts();
 delete_terms();
