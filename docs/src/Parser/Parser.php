@@ -87,7 +87,6 @@ final class Parser {
 			$out = [
 				'file' => $this->export_docblock( $file ),
 				'path' => str_replace( DIRECTORY_SEPARATOR, '/', $file->getFilename() ),
-				'root' => $root,
 			];
 
 			if ( ! empty( $file->uses ) ) {
