@@ -50,6 +50,13 @@ class AMP_YouTube_Embed_Handler extends AMP_Base_Embed_Handler {
 	protected $DEFAULT_HEIGHT = 338;
 
 	/**
+	 * List of domains that are applicable for this embed.
+	 *
+	 * @var string[]
+	 */
+	protected $applicable_domains = [ 'youtu.be', 'youtube.com', 'youtube-nocookie.com' ];
+
+	/**
 	 * AMP_YouTube_Embed_Handler constructor.
 	 *
 	 * @param array $args Height, width and maximum width for embed.
@@ -81,15 +88,13 @@ class AMP_YouTube_Embed_Handler extends AMP_Base_Embed_Handler {
 	}
 
 	/**
-	 * Sanitize HTML that are not added via Gutenberg.
+	 * Sanitize YouTube raw embeds.
 	 *
 	 * @param Document $dom  Document.
 	 *
 	 * @return void
 	 */
 	public function sanitize_raw_embeds( Document $dom ) {
-
-		$applicable_domains = [ 'youtu.be', 'youtube.com', 'youtube-nocookie.com' ];
 
 		$query_segments = array_map(
 			static function ( $domain ) {
@@ -99,7 +104,7 @@ class AMP_YouTube_Embed_Handler extends AMP_Base_Embed_Handler {
 					$domain
 				);
 			},
-			$applicable_domains
+			$this->applicable_domains
 		);
 
 		$query = implode( ' or ', $query_segments );
@@ -121,13 +126,13 @@ class AMP_YouTube_Embed_Handler extends AMP_Base_Embed_Handler {
 	}
 
 	/**
-	 * To AMP youtube component from DOM Document.
+	 * Parse embed attributes and return an AMP YouTube component.
 	 *
 	 * @param Document $dom  Document DOM.
-	 * @param string   $html HTML markup of youtube iframe.
-	 * @param string   $url  Youtube URL.
+	 * @param string   $html HTML markup of YouTube iframe.
+	 * @param string   $url  YouTube URL.
 	 *
-	 * @return DOMElement|false DOMElement on success, Otherwise false.
+	 * @return DOMElement|false AMP component, otherwise `false`.
 	 */
 	public function process_embed( Document $dom, $html, $url ) {
 
@@ -232,7 +237,7 @@ class AMP_YouTube_Embed_Handler extends AMP_Base_Embed_Handler {
 	 * Prepare attributes for amp-youtube component.
 	 *
 	 * @param array  $args amp-youtube component arguments.
-	 * @param string $url  Youtube URL.
+	 * @param string $url  YouTube URL.
 	 *
 	 * @return array prepared arguments for amp-youtube component.
 	 */
@@ -249,10 +254,13 @@ class AMP_YouTube_Embed_Handler extends AMP_Base_Embed_Handler {
 			]
 		);
 
-		$attributes = array_merge(
-			[ 'data-videoid' => $args['video_id'] ],
-			wp_array_slice_assoc( $args, [ 'layout', 'width', 'height' ] )
-		);
+		$attributes = [
+			'data-videoid' => $args['video_id'],
+			'layout'       => $args['layout'],
+			'width'        => $args['width'],
+			'height'       => $args['height'],
+		];
+
 		if ( ! empty( $args['title'] ) ) {
 			$attributes['title'] = $args['title'];
 		}
@@ -260,9 +268,9 @@ class AMP_YouTube_Embed_Handler extends AMP_Base_Embed_Handler {
 		$query_vars  = [];
 		$query_param = wp_parse_url( $url, PHP_URL_QUERY );
 		wp_parse_str( $query_param, $query_vars );
-		$query_vars = ( ! empty( $query_vars ) && is_array( $query_vars ) ) ? $query_vars : [];
+		$query_vars = ( is_array( $query_vars ) ) ? $query_vars : [];
 
-		$excluded_param = [ 'autoplay', 'loop', 'start', 'v', 'vi', 'w', 'h' ];
+		$excluded_param = [ 'v', 'vi', 'w', 'h' ];
 
 		foreach ( $query_vars as $key => $value ) {
 
@@ -270,17 +278,17 @@ class AMP_YouTube_Embed_Handler extends AMP_Base_Embed_Handler {
 				continue;
 			}
 
-			$attributes[ "data-param-$key" ] = sanitize_text_field( $value );
-		}
-
-		foreach ( [ 'autoplay', 'loop' ] as $param ) {
-			if ( isset( $query_vars[ $param ] ) ) {
-				$attributes[ $param ] = $query_vars[ $param ];
+			if ( in_array( $key, [ 'autoplay', 'loop' ], true ) ) {
+				$attributes[ $key ] = $value;
+				continue;
 			}
-		}
 
-		if ( ! empty( $args['start'] ) && 0 < (int) $args['start'] ) {
-			$attributes['data-param-start'] = (int) $args['start'];
+			if ( 'start' === $key && 0 < (int) $args['start'] ) {
+				$attributes['data-param-start'] = (int) $args['start'];
+				continue;
+			}
+
+			$attributes[ "data-param-$key" ] = esc_attr( $value );
 		}
 
 		return $attributes;
@@ -329,7 +337,7 @@ class AMP_YouTube_Embed_Handler extends AMP_Base_Embed_Handler {
 		}
 
 		$domain = implode( '.', array_slice( explode( '.', $parsed_url['host'] ), -2 ) );
-		if ( ! in_array( $domain, [ 'youtu.be', 'youtube.com', 'youtube-nocookie.com' ], true ) ) {
+		if ( ! in_array( $domain, $this->applicable_domains, true ) ) {
 			return false;
 		}
 
@@ -374,11 +382,11 @@ class AMP_YouTube_Embed_Handler extends AMP_Base_Embed_Handler {
 	}
 
 	/**
-	 * To get start time of youtube video in second.
+	 * Get the start time of the YouTube video in seconds.
 	 *
-	 * @param string $url Youtube URL.
+	 * @param string $url YouTube URL.
 	 *
-	 * @return int Start time in second.
+	 * @return int Start time in seconds.
 	 */
 	private function get_start_time_from_url( $url ) {
 
@@ -390,19 +398,20 @@ class AMP_YouTube_Embed_Handler extends AMP_Base_Embed_Handler {
 		$parsed_url = wp_parse_url( $url );
 
 		if ( ! empty( $parsed_url['query'] ) ) {
+			$query_vars = [];
 			wp_parse_str( $parsed_url['query'], $query_vars );
 
 			if ( ! empty( $query_vars['start'] ) && 0 < (int) $query_vars['start'] ) {
-				$start_time = (int) $query_vars['start'];
+				return (int) $query_vars['start'];
 			}
 		}
 
-		if ( empty( $start_time ) && ! empty( $parsed_url['fragment'] ) ) {
-			$regex = '/^t=(?<minutes>[0-9])+m(?<seconds>[0-9]+)s$/iU';
+		if ( ! empty( $parsed_url['fragment'] ) ) {
+			$regex = '/^t=(?<minutes>\d+)m(?<seconds>\d+)s$/';
 
 			preg_match( $regex, $parsed_url['fragment'], $matches );
 
-			if ( ! empty( $matches ) ) {
+			if ( isset( $matches['minutes'], $matches['seconds'] ) ) {
 				$matches    = wp_parse_args(
 					$matches,
 					[
