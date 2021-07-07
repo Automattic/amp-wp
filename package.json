@@ -44,6 +44,7 @@
     "uuid": "8.3.2"
   },
   "devDependencies": {
+    "@actions/github": "5.0.0",
     "@babel/core": "7.14.6",
     "@babel/plugin-proposal-class-properties": "7.14.5",
     "@wordpress/babel-preset-default": "6.2.0",
@@ -106,6 +107,7 @@
     "env:start": "./bin/local-env/start.sh",
     "env:stop": "./bin/local-env/stop.sh",
     "env:reset-site": "./bin/local-env/install-wordpress.sh --reset-site",
+    "generate-changelog": "node bin/release-changelog",
     "lint": "npm-run-all --parallel lint:*",
     "lint:css": "wp-scripts lint-style",
     "lint:css:fix": "npm run lint:css -- --fix",

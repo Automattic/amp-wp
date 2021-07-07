@@ -1,0 +1,30 @@
+{
+  "name": "draft-release",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Drafts a release based on the specified milestone",
+  "main": "dist/index.js",
+  "scripts": {
+    "lint": "eslint 'src/**.js' --fix",
+    "build": "ncc build src/index.js",
+    "precommit": "npm run build && git add dist/"
+  },
+  "author": "AMP Project Contributors",
+  "license": "GPL-2.0-or-later",
+  "dependencies": {
+    "@actions/core": "^1.2.7",
+    "@actions/github": "^5.0.0",
+    "@octokit/action": "^3.8.1",
+    "@octokit/request-error": "^2.1.0",
+    "lodash": "^4.17.21"
+  },
+  "devDependencies": {
+    "@zeit/ncc": "^0.22.3",
+    "eslint": "^5.13.0",
+    "eslint-config-airbnb": "^17.1.0",
+    "eslint-config-prettier": "^3.6.0",
+    "eslint-plugin-import": "^2.16.0",
+    "eslint-plugin-prettier": "^2.7.0",
+    "prettier": "^1.16.4"
+  }
+}

@@ -1,0 +1,23 @@
+name: Release Draft
+
+on:
+  workflow_dispatch:
+    inputs:
+      milestone:
+        description: 'Milestone name (eg. v3.2.1)'
+        required: true
+
+jobs:
+  draft_release:
+    name: Draft release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Draft release
+        uses: ./.github/actions/draft-release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          milestone: ${{ github.event.inputs.milestone }}

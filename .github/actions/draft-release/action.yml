@@ -1,0 +1,15 @@
+name: 'Draft release'
+description: 'Drafts a release based on the specified milestone'
+inputs:
+  milestone:
+    description: 'Milestone name'
+    required: true
+  release_branch:
+    description: 'Release branch name'
+    required: true
+outputs:
+  asset_upload_url:
+    description: 'The URL for uploading assets to the release'
+runs:
+  using: 'node12'
+  main: 'dist/index.js'

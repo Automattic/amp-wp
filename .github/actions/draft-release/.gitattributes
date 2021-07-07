@@ -1,0 +1,2 @@
+# Mark generated files so diffs are hidden by default.
+dist/index.js linguist-generated=true
