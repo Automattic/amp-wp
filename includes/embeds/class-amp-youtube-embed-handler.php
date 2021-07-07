@@ -7,6 +7,8 @@
 
 use AmpProject\Dom\Document;
 use AmpProject\Dom\Element;
+use AmpProject\Tag;
+use AmpProject\Attribute;
 
 /**
  * Class AMP_YouTube_Embed_Handler
@@ -88,9 +90,66 @@ class AMP_YouTube_Embed_Handler extends AMP_Base_Embed_Handler {
 	}
 
 	/**
+	 * Filter oEmbed HTML for YouTube to convert to AMP.
+	 *
+	 * @param string $cache Cache for oEmbed.
+	 * @param string $url   Embed URL.
+	 *
+	 * @return string Embed.
+	 */
+	public function filter_embed_oembed_html( $cache, $url ) {
+
+		if ( empty( $cache ) || empty( $url ) ) {
+			return '';
+		}
+
+		$video_id = $this->get_video_id_from_url( $url );
+
+		if ( ! $video_id ) {
+			return $cache;
+		}
+
+		return $this->render( $cache, $url );
+	}
+
+	/**
+	 * Convert YouTube iframe into AMP YouTube component.
+	 *
+	 * @param string $html HTML markup of YouTube iframe.
+	 * @param string $url  YouTube URL.
+	 *
+	 * @return string HTML markup of AMP YouTube component.
+	 */
+	public function render( $html, $url ) {
+
+		$props      = $this->match_element_attributes( $html, 'iframe', [ 'title' ] );
+		$attributes = $this->prepare_attributes( $url );
+
+		if ( ! empty( $props['title'] ) ) {
+			$attributes['title'] = $props['title'];
+		}
+
+		if ( empty( $attributes['data-videoid'] ) ) {
+
+			return AMP_HTML_Utils::build_tag(
+				Tag::A,
+				[
+					Attribute::HREF   => esc_url_raw( $url ),
+					Attribute::CLASS_ => 'amp-wp-embed-fallback',
+				],
+				esc_url( $url )
+			);
+		}
+
+		$placeholder = $this->get_placeholder( $url, $attributes );
+
+		return AMP_HTML_Utils::build_tag( 'amp-youtube', $attributes, $placeholder );
+	}
+
+	/**
 	 * Sanitize YouTube raw embeds.
 	 *
-	 * @param Document $dom  Document.
+	 * @param Document $dom Document.
 	 *
 	 * @return void
 	 */
@@ -114,155 +173,106 @@ class AMP_YouTube_Embed_Handler extends AMP_Base_Embed_Handler {
 		/** @var Element $node */
 		foreach ( $nodes as $node ) {
 
-			$html             = $dom->saveHTML( $node );
-			$url              = $node->getAttribute( 'src' );
-			$amp_youtube_node = $this->process_embed( $dom, $html, $url );
+			$amp_youtube_component = $this->get_amp_component( $dom, $node );
 
-			if ( ! empty( $amp_youtube_node ) ) {
-				$node->parentNode->replaceChild( $amp_youtube_node, $node );
+			if ( ! empty( $amp_youtube_component ) ) {
+				$node->parentNode->replaceChild( $amp_youtube_component, $node );
 			}
 		}
 
 	}
 
 	/**
-	 * Parse embed attributes and return an AMP YouTube component.
+	 * Parse YouTube iframe element and return an AMP YouTube component.
 	 *
 	 * @param Document $dom  Document DOM.
-	 * @param string   $html HTML markup of YouTube iframe.
-	 * @param string   $url  YouTube URL.
+	 * @param Element  $node DOMElement of YouTube iframe.
 	 *
-	 * @return DOMElement|false AMP component, otherwise `false`.
+	 * @return DOMElement|false DOMElement on success, Otherwise false.
 	 */
-	public function process_embed( Document $dom, $html, $url ) {
+	private function get_amp_component( Document $dom, Element $node ) {
 
-		$id = $this->get_video_id_from_url( $url );
+		$url      = $node->getAttribute( 'src' );
+		$video_id = $this->get_video_id_from_url( $url );
 
-		if ( ! $id ) {
+		if ( ! $video_id ) {
 			return false;
 		}
 
-		$args = $this->parse_props( $html, $url, $id );
-		if ( empty( $args ) ) {
-			return false;
+		$url        = $node->getAttribute( 'src' );
+		$attributes = $this->prepare_attributes( $url );
+
+		if ( ! empty( $node->getAttribute( 'title' ) ) ) {
+			$attributes['title'] = $node->getAttribute( 'title' );
 		}
 
-		$args['video_id'] = $id;
+		if ( ! empty( $node->getAttribute( 'width' ) ) ) {
+			$attributes['width'] = $node->getAttribute( 'width' );
+		}
 
-		$attributes = $this->prepare_attributes( $args, $url );
+		if ( ! empty( $node->getAttribute( 'height' ) ) ) {
+			$attributes['height'] = $node->getAttribute( 'height' );
+		}
 
 		if ( empty( $attributes['data-videoid'] ) ) {
-			return AMP_DOM_Utils::create_node(
+			$link_node = AMP_DOM_Utils::create_node(
 				$dom,
-				'a',
+				Tag::A,
 				[
-					'href'  => esc_url_raw( $url ),
-					'class' => 'amp-wp-embed-fallback',
+					Attribute::HREF   => esc_url_raw( $url ),
+					Attribute::CLASS_ => 'amp-wp-embed-fallback',
 				]
 			);
+			$link_node->appendChild( $dom->createTextNode( $url ) );
+
+			return $link_node;
 		}
 
-		return AMP_DOM_Utils::create_node(
+		$video_title = ( ! empty( $attributes['title'] ) ) ? $attributes['title'] : null;
+
+		$amp_node = AMP_DOM_Utils::create_node(
 			$dom,
 			'amp-youtube',
 			$attributes
 		);
-	}
 
-	/**
-	 * Filter oEmbed HTML for YouTube to convert to AMP.
-	 *
-	 * @param string $cache Cache for oEmbed.
-	 * @param string $url   Embed URL.
-	 * @return string Embed.
-	 */
-	public function filter_embed_oembed_html( $cache, $url ) {
-		$id = $this->get_video_id_from_url( $url );
-		if ( ! $id ) {
-			return $cache;
+		if ( ! empty( $amp_node ) && is_a( $amp_node, 'DOMElement' ) ) {
+			$placeholder = $this->get_placeholder_component( $amp_node, $attributes );
+
+			if ( $placeholder ) {
+				$amp_node->appendChild( $placeholder );
+			}
 		}
 
-		$props = $this->parse_props( $cache, $url, $id );
-		if ( empty( $props ) ) {
-			return $cache;
-		}
-
-		$props['video_id'] = $id;
-		return $this->render( $props, $url );
-	}
-
-	/**
-	 * Parse AMP component from iframe.
-	 *
-	 * @param string $html     HTML.
-	 * @param string $url      Embed URL, for fallback purposes.
-	 * @param string $video_id YouTube video ID.
-	 * @return array|null Props for rendering the component, or null if unable to parse.
-	 */
-	private function parse_props( $html, $url, $video_id ) {
-		$props = $this->match_element_attributes( $html, 'iframe', [ 'title', 'height', 'width' ] );
-		if ( ! isset( $props ) ) {
-			return null;
-		}
-
-		$img_attributes = [
-			'src'        => esc_url_raw( sprintf( 'https://i.ytimg.com/vi/%s/hqdefault.jpg', $video_id ) ),
-			'layout'     => 'fill',
-			'object-fit' => 'cover',
-		];
-		if ( ! empty( $props['title'] ) ) {
-			$img_attributes['alt'] = $props['title'];
-		}
-		$img = AMP_HTML_Utils::build_tag( 'img', $img_attributes );
-
-		$props['placeholder'] = AMP_HTML_Utils::build_tag(
-			'a',
-			[
-				'placeholder' => '',
-				'href'        => esc_url_raw( $url ),
-			],
-			$img
-		);
-
-		// Find start time of video.
-		$start_time = $this->get_start_time_from_url( $url );
-		if ( ! empty( $start_time ) && 0 < intval( $start_time ) ) {
-			$props['start'] = intval( $start_time );
-		}
-
-		return $props;
+		return $amp_node;
 	}
 
 	/**
 	 * Prepare attributes for amp-youtube component.
 	 *
-	 * @param array  $args amp-youtube component arguments.
-	 * @param string $url  YouTube URL.
+	 * @param string $url YouTube video URL.
 	 *
 	 * @return array prepared arguments for amp-youtube component.
 	 */
-	public function prepare_attributes( $args, $url ) {
-		$args = wp_parse_args(
-			$args,
-			[
-				'video_id'    => false,
-				'layout'      => 'responsive',
-				'width'       => $this->args['width'],
-				'height'      => $this->args['height'],
-				'placeholder' => '',
-				'start'       => 0,
-			]
-		);
+	private function prepare_attributes( $url ) {
+
+		$video_id = $this->get_video_id_from_url( $url );
+
+		if ( ! $video_id ) {
+			return [];
+		}
 
 		$attributes = [
-			'data-videoid' => $args['video_id'],
-			'layout'       => $args['layout'],
-			'width'        => $args['width'],
-			'height'       => $args['height'],
+			'data-videoid' => $video_id,
+			'layout'       => 'responsive',
+			'width'        => $this->args['width'],
+			'height'       => $this->args['height'],
 		];
 
-		if ( ! empty( $args['title'] ) ) {
-			$attributes['title'] = $args['title'];
+		// Find start time of video.
+		$start_time = $this->get_start_time_from_url( $url );
+		if ( ! empty( $start_time ) && 0 < (int) $start_time ) {
+			$attributes['data-param-start'] = (int) $start_time;
 		}
 
 		$query_vars  = [];
@@ -270,7 +280,7 @@ class AMP_YouTube_Embed_Handler extends AMP_Base_Embed_Handler {
 		wp_parse_str( $query_param, $query_vars );
 		$query_vars = ( is_array( $query_vars ) ) ? $query_vars : [];
 
-		$excluded_param = [ 'v', 'vi', 'w', 'h' ];
+		$excluded_param = [ 'start', 'v', 'vi', 'w', 'h' ];
 
 		foreach ( $query_vars as $key => $value ) {
 
@@ -283,11 +293,6 @@ class AMP_YouTube_Embed_Handler extends AMP_Base_Embed_Handler {
 				continue;
 			}
 
-			if ( 'start' === $key && 0 < (int) $args['start'] ) {
-				$attributes['data-param-start'] = (int) $args['start'];
-				continue;
-			}
-
 			$attributes[ "data-param-$key" ] = esc_attr( $value );
 		}
 
@@ -295,48 +300,103 @@ class AMP_YouTube_Embed_Handler extends AMP_Base_Embed_Handler {
 	}
 
 	/**
-	 * Render embed.
+	 * Placeholder component for amp YouTube component..
 	 *
-	 * @param array  $args Args.
-	 * @param string $url  URL.
-	 * @return string Rendered.
+	 * @param DOMElement $amp_component DOM Element of AMP component.
+	 * @param array      $attributes    YouTube Attributes.
+	 *
+	 * @return DOMElement|false DOMElement on success otherwise false.
 	 */
-	public function render( $args, $url ) {
-
-		$attributes = $this->prepare_attributes( $args, $url );
+	private function get_placeholder_component( DOMElement $amp_component, $attributes ) {
 
 		if ( empty( $attributes['data-videoid'] ) ) {
-			return AMP_HTML_Utils::build_tag(
-				'a',
-				[
-					'href'  => esc_url_raw( $url ),
-					'class' => 'amp-wp-embed-fallback',
-				],
-				esc_html( $url )
-			);
+			return false;
 		}
 
-		$this->did_convert_elements = true;
+		$video_id = $attributes['data-videoid'];
 
-		$args['placeholder'] = ( ! empty( $args['placeholder'] ) ) ? $args['placeholder'] : '';
+		$img_attributes = [
+			Attribute::SRC        => esc_url_raw( sprintf( 'https://i.ytimg.com/vi/%s/hqdefault.jpg', $video_id ) ),
+			Attribute::LAYOUT     => 'fill',
+			Attribute::OBJECT_FIT => 'cover',
+		];
 
-		return AMP_HTML_Utils::build_tag( 'amp-youtube', $attributes, $args['placeholder'] );
+		if ( $attributes['title'] ) {
+			$img_attributes[ Attribute::ALT ] = $attributes['title'];
+		}
+
+		$img_node = AMP_DOM_Utils::create_node(
+			Document::fromNode( $amp_component->ownerDocument ),
+			Tag::IMG,
+			$img_attributes
+		);
+
+		$placeholder = AMP_DOM_Utils::create_node(
+			Document::fromNode( $amp_component->ownerDocument ),
+			Tag::A,
+			[
+				Attribute::PLACEHOLDER => '',
+				Attribute::HREF        => esc_url_raw( sprintf( 'https://www.youtube.com/watch?v=%s', $video_id ) ),
+			]
+		);
+
+		$placeholder->appendChild( $img_node );
+
+		return $placeholder;
+	}
+
+	/**
+	 * To get placeholder for amp component.
+	 *
+	 * @param string $url        YouTube URL.
+	 * @param array  $attributes YouTube Attributes.
+	 *
+	 * @return string
+	 */
+	private function get_placeholder( $url, $attributes ) {
+
+		if ( empty( $attributes['data-videoid'] ) ) {
+			return '';
+		}
+
+		$img_attributes = [
+			Attribute::SRC        => esc_url_raw( sprintf( 'https://i.ytimg.com/vi/%s/hqdefault.jpg', $attributes['data-videoid'] ) ),
+			Attribute::LAYOUT     => 'fill',
+			Attribute::OBJECT_FIT => 'cover',
+		];
+
+		if ( ! empty( $attributes['title'] ) ) {
+			$img_attributes[ Attribute::ALT ] = $attributes['title'];
+		}
+
+		$img = AMP_HTML_Utils::build_tag( 'img', $img_attributes );
+
+		return AMP_HTML_Utils::build_tag(
+			Tag::A,
+			[
+				Attribute::PLACEHOLDER => '',
+				Attribute::HREF        => esc_url_raw( $url ),
+			],
+			$img
+		);
 	}
 
 	/**
 	 * Determine the video ID from the URL.
 	 *
 	 * @param string $url URL.
+	 *
 	 * @return string|false Video ID, or false if none could be retrieved.
 	 */
 	private function get_video_id_from_url( $url ) {
+
 		$parsed_url = wp_parse_url( $url );
 
 		if ( ! isset( $parsed_url['host'] ) ) {
 			return false;
 		}
 
-		$domain = implode( '.', array_slice( explode( '.', $parsed_url['host'] ), -2 ) );
+		$domain = implode( '.', array_slice( explode( '.', $parsed_url['host'] ), - 2 ) );
 		if ( ! in_array( $domain, $this->applicable_domains, true ) ) {
 			return false;
 		}
@@ -434,9 +494,11 @@ class AMP_YouTube_Embed_Handler extends AMP_Base_Embed_Handler {
 	 *
 	 * @param string $html Empty variable to be replaced with shortcode markup.
 	 * @param array  $attr The shortcode attributes.
+	 *
 	 * @return string|null $markup The markup to output.
 	 */
 	public function video_override( $html, $attr ) {
+
 		if ( ! isset( $attr['src'] ) ) {
 			return $html;
 		}
@@ -445,6 +507,6 @@ class AMP_YouTube_Embed_Handler extends AMP_Base_Embed_Handler {
 			return $html;
 		}
 
-		return $this->render( compact( 'video_id' ), $attr['src'] );
+		return $this->render( $html, $attr['src'] );
 	}
 }
