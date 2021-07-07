@@ -15,7 +15,7 @@
     "ext-libxml": "*",
     "ext-spl": "*",
     "ampproject/amp-toolbox": "0.6.0",
-    "cweagans/composer-patches": "1.7.0",
+    "cweagans/composer-patches": "~1.0",
     "fasterimage/fasterimage": "1.5.0",
     "sabberworm/php-css-parser": "dev-master#bfdd976"
   },
@@ -30,7 +30,7 @@
     "phpcompatibility/phpcompatibility-wp": "2.1.1",
     "phpdocumentor/reflection": "~3.0",
     "phpunit/phpunit": "^5.7 || ^6.5 || ^7.5",
-    "roave/security-advisories": "dev-master",
+    "roave/security-advisories": "dev-latest",
     "sirbrillig/phpcs-variable-analysis": "2.11.0",
     "wp-cli/export-command": "^2.0",
     "wp-cli/extension-command": "^2.0",
@@ -44,7 +44,7 @@
   },
   "config": {
     "platform": {
-      "php": "5.6"
+      "php": "5.6.20"
     },
     "sort-packages": true
   },
