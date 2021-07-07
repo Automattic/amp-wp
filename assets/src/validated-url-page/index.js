@@ -22,6 +22,7 @@ import { ErrorBoundary } from '../components/error-boundary';
 import { ErrorContextProvider } from '../components/error-context-provider';
 import { ErrorScreen } from '../components/error-screen';
 import { ValidatedUrl, ValidatedUrlProvider } from '../components/validated-url-provider';
+import StylesheetsSummary from './components/stylesheets-summary';
 
 let errorHandler;
 
@@ -56,16 +57,14 @@ Providers.propTypes = {
  * Validated URL page application root.
  */
 function Root() {
-	const { fetchingValidatedUrl, validatedUrl } = useContext( ValidatedUrl );
+	const { fetchingValidatedUrl, stylesheetSizes } = useContext( ValidatedUrl );
 
 	if ( fetchingValidatedUrl !== false ) {
 		return <Loading />;
 	}
 
 	return (
-		<p>
-			{ validatedUrl.url }
-		</p>
+		<StylesheetsSummary stylesheetSizes={ stylesheetSizes } />
 	);
 }
 
