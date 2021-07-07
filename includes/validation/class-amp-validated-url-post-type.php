@@ -2021,22 +2021,6 @@ class AMP_Validated_URL_Post_Type {
 			true
 		);
 
-		$post = get_post();
-
-		// @todo This is likely dead code.
-		$current_screen = get_current_screen();
-		if ( $current_screen && 'post' === $current_screen->base && self::POST_TYPE_SLUG === $current_screen->post_type ) {
-			$data = [
-				'amp_enabled' => self::is_amp_enabled_on_post( $post ),
-			];
-
-			wp_localize_script(
-				self::EDIT_POST_SCRIPT_HANDLE,
-				'ampValidation',
-				$data
-			);
-		}
-
 		// React-based validated URL page component.
 		$asset_file   = AMP__DIR__ . '/assets/js/' . self::AMP_VALIDATED_URL_PAGE_SCRIPT_HANDLE . '.asset.php';
 		$asset        = require $asset_file;
@@ -2051,6 +2035,7 @@ class AMP_Validated_URL_Post_Type {
 			true
 		);
 
+		$post                    = get_post();
 		$validated_url_page_data = [
 			'APP_ROOT_ID'              => self::AMP_VALIDATED_URL_PAGE_APP_ROOT_ID,
 			'POST_ID'                  => $post->ID,
