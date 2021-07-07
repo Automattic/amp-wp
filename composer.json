@@ -31,7 +31,7 @@
     "phpdocumentor/reflection": "~3.0",
     "phpunit/phpunit": "^5.7 || ^6.5 || ^7.5",
     "roave/security-advisories": "dev-master",
-    "sirbrillig/phpcs-variable-analysis": "2.11.1",
+    "sirbrillig/phpcs-variable-analysis": "2.11.2",
     "wp-cli/export-command": "^2.0",
     "wp-cli/extension-command": "^2.0",
     "wp-cli/wp-cli": "^2.4",
