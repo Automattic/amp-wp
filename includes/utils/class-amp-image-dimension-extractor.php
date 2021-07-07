@@ -140,6 +140,7 @@ class AMP_Image_Dimension_Extractor {
 	private static function register_callbacks() {
 		self::$callbacks_registered = true;
 
+		add_filter( 'amp_extract_image_dimensions_batch', [ __CLASS__, 'extract_by_filename_or_filesystem' ] );
 		add_filter( 'amp_extract_image_dimensions_batch', [ __CLASS__, 'extract_by_downloading_images' ], 999, 1 );
 
 		/**
@@ -148,6 +149,128 @@ class AMP_Image_Dimension_Extractor {
 		 * @since 0.5.1
 		 */
 		do_action( 'amp_extract_image_dimensions_batch_callbacks_registered' );
+	}
+
+	/**
+	 * To get attachment ID from attached path.
+	 *
+	 * @param string $path Attached path.
+	 *
+	 * @return int Positive number on success, Otherwise 0.
+	 */
+	private static function get_attachment_id_from_path( $path ) {
+
+		if ( empty( $path ) ) {
+			return 0;
+		}
+
+		$path = wp_parse_url( $path, PHP_URL_PATH );
+
+		if ( empty( $path ) ) {
+			return 0;
+		}
+
+		global $wpdb;
+
+		$cache_key     = md5( $path );
+		$cache_group   = 'amp_attachment_id_from_path';
+		$attachment_id = wp_cache_get( $cache_key, $cache_group );
+
+		if ( empty( $attachment_id ) ) {
+			$attachment_id = $wpdb->get_col( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
+				$wpdb->prepare(
+					"SELECT post_id FROM $wpdb->postmeta WHERE meta_key='_wp_attached_file' AND meta_value=%s ORDER BY post_id ASC;",
+					$path
+				)
+			);
+
+			$attachment_id = ( ! empty( $attachment_id ) && is_array( $attachment_id ) ) ? array_pop( $attachment_id ) : 0;
+
+			wp_cache_set( $cache_key, $attachment_id, $cache_group, 3 * HOUR_IN_SECONDS );
+		}
+
+		return (int) $attachment_id;
+	}
+
+	/**
+	 * Extract dimensions from filename if dimension exists or from file system.
+	 *
+	 * @param array $dimensions Image urls mapped to dimensions.
+	 *
+	 * @return array Dimensions mapped to image urls, or false if they could not be retrieved
+	 */
+	public static function extract_by_filename_or_filesystem( $dimensions ) {
+
+		if ( empty( $dimensions ) || ! is_array( $dimensions ) ) {
+			return [];
+		}
+
+		$upload_dir      = wp_get_upload_dir();
+		$base_upload_uri = strtolower( trim( $upload_dir['baseurl'] ) );
+
+		foreach ( $dimensions as $url => $value ) {
+
+			// Check whether some other callback attached to the filter already provided dimensions for this image.
+			if ( ! empty( $value ) && is_array( $value ) ) {
+				continue;
+			}
+
+			// Check if it's internal media or not. If it's not then bail out.
+			if ( false === strpos( strtolower( trim( $url ) ), $base_upload_uri ) ) {
+				continue;
+			}
+
+			// Get media path.
+			$attached_path = ltrim( str_replace( $base_upload_uri, '', $url ), '/' );
+
+			// Try to get attachment id from media path.
+			$attachment_id      = static::get_attachment_id_from_path( $attached_path );
+			$attachment_id      = ( ! empty( $attachment_id ) && 0 < (int) $attachment_id ) ? (int) $attachment_id : 0;
+			$possible_dimension = [];
+
+			// If attachment is exist fetch size from attachment metadata.
+			if ( ! empty( $attachment_id ) ) {
+				$possible_dimension = wp_get_attachment_metadata( $attachment_id );
+			}
+
+			// If attachment is exist and dimension not available in metadata then try to fetch from file system.
+			if ( ! empty( $attachment_id ) && ( empty( $possible_dimension ) || ! is_array( $possible_dimension ) ) ) {
+				$image_file = sprintf( '%s/%s', trim( $upload_dir['basedir'] ), $attached_path );
+
+				if ( function_exists( 'wp_getimagesize' ) ) {
+					$imagesize = wp_getimagesize( $image_file );
+				} else {
+					$imagesize = getimagesize( $image_file );
+				}
+
+				if ( ! empty( $imagesize ) && is_array( $imagesize ) ) {
+					$possible_dimension = [
+						'width'  => (int) $imagesize[0],
+						'height' => (int) $imagesize[1],
+					];
+				}
+			}
+
+			// If not exists then whether file contain dimension or not.
+			if ( empty( $attachment_id ) ) {
+				$basename                   = basename( $attached_path );
+				$filename_without_extension = explode( '.', $basename );
+				$extension                  = array_pop( $filename_without_extension );
+				$filename_without_extension = implode( '.', $filename_without_extension );
+
+				$regex = '/-(?<width>\d+)x(?<height>\d+)(?:\.' . $extension . ')$/m';
+				preg_match( $regex, $attached_path, $possible_dimension );
+			}
+
+			if ( ! empty( $possible_dimension['width'] ) && ! empty( $possible_dimension['height'] ) ) {
+				$dimensions[ $url ] = [
+					'width'  => (int) $possible_dimension['width'],
+					'height' => (int) $possible_dimension['height'],
+				];
+			}
+		}
+
+		return $dimensions;
 	}
 
 	/**

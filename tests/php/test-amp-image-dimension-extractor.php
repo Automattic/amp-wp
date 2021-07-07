@@ -184,4 +184,56 @@ class AMP_Image_Dimension_Extractor_Extract_Test extends WP_UnitTestCase {
 
 		$this->assertEquals( $expected, $user_agent );
 	}
+
+	/**
+	 * @covers \AMP_Image_Dimension_Extractor::extract_by_filename_or_filesystem
+	 * @covers \AMP_Image_Dimension_Extractor::get_attachment_id_from_path
+	 */
+	public function test_extract_by_filename_or_filesystem() {
+
+		$attachment_id = $this->factory()->attachment->create_upload_object( __DIR__ . '/data/images/wordpress-logo.png' );
+
+		$full_image       = wp_get_attachment_image_src( $attachment_id, 'full' );
+		$thumbnail_image  = wp_get_attachment_image_src( $attachment_id, 'thumbnail' );
+		$external_image   = 'https://via.placeholder.com/1500/000.png/FF0';
+		$external_image_2 = 'https://via.placeholder.com/1000/000.png/FF0';
+
+		$expected = [
+			$full_image[0]      => [
+				'width'  => $full_image[1],
+				'height' => $full_image[2],
+			],
+			$thumbnail_image[0] => [
+				'width'  => $thumbnail_image[1],
+				'height' => $thumbnail_image[2],
+			],
+			$external_image     => [],
+			$external_image_2   => [
+				'width'  => 1000,
+				'height' => 1000,
+			],
+		];
+
+		$input = [
+			$full_image[0]      => [],
+			$thumbnail_image[0] => [],
+			$external_image     => [],
+			$external_image_2   => [
+				'width'  => 1000,
+				'height' => 1000,
+			],
+		];
+
+		$this->assertEmpty( AMP_Image_Dimension_Extractor::extract_by_filename_or_filesystem( [] ) );
+
+		$output = AMP_Image_Dimension_Extractor::extract_by_filename_or_filesystem( $input );
+		$this->assertEquals( $expected, $output );
+
+		// Check after removing attachment metadata, To check fallback to filesystem.
+
+		wp_update_attachment_metadata( $attachment_id, [] );
+
+		$output = AMP_Image_Dimension_Extractor::extract_by_filename_or_filesystem( $input );
+		$this->assertEquals( $expected, $output );
+	}
 }
