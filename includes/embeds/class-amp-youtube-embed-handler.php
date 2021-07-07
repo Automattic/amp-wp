@@ -202,19 +202,14 @@ class AMP_YouTube_Embed_Handler extends AMP_Base_Embed_Handler {
 			return false;
 		}
 
-		$url        = $node->getAttribute( 'src' );
 		$attributes = $this->prepare_attributes( $url );
 
-		if ( ! empty( $node->getAttribute( 'title' ) ) ) {
-			$attributes['title'] = $node->getAttribute( 'title' );
-		}
+		$iframe_props = [ 'title', 'height', 'width' ];
 
-		if ( ! empty( $node->getAttribute( 'width' ) ) ) {
-			$attributes['width'] = $node->getAttribute( 'width' );
-		}
-
-		if ( ! empty( $node->getAttribute( 'height' ) ) ) {
-			$attributes['height'] = $node->getAttribute( 'height' );
+		foreach ( $iframe_props as $iframe_prop ) {
+			if ( ! empty( $node->getAttribute( $iframe_prop ) ) ) {
+				$attributes[ $iframe_prop ] = $node->getAttribute( $iframe_prop );
+			}
 		}
 
 		if ( empty( $attributes['data-videoid'] ) ) {
@@ -230,8 +225,6 @@ class AMP_YouTube_Embed_Handler extends AMP_Base_Embed_Handler {
 
 			return $link_node;
 		}
-
-		$video_title = ( ! empty( $attributes['title'] ) ) ? $attributes['title'] : null;
 
 		$amp_node = AMP_DOM_Utils::create_node(
 			$dom,
@@ -293,6 +286,11 @@ class AMP_YouTube_Embed_Handler extends AMP_Base_Embed_Handler {
 
 			if ( in_array( $key, [ 'autoplay', 'loop' ], true ) ) {
 				$attributes[ $key ] = $value;
+				continue;
+			}
+
+			if ( 'channel' === $key ) {
+				$attributes['data-live-channelid'] = $value;
 				continue;
 			}
 
