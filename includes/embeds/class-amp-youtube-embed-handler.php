@@ -122,11 +122,14 @@ class AMP_YouTube_Embed_Handler extends AMP_Base_Embed_Handler {
 	 */
 	public function render( $html, $url ) {
 
-		$props      = $this->match_element_attributes( $html, 'iframe', [ 'title' ] );
 		$attributes = $this->prepare_attributes( $url );
 
-		if ( ! empty( $props['title'] ) ) {
-			$attributes['title'] = $props['title'];
+		$iframe_props = [ 'title', 'height', 'width' ];
+		$props        = $this->match_element_attributes( $html, 'iframe', $iframe_props );
+		foreach ( $iframe_props as $iframe_prop ) {
+			if ( ! empty( $props[ $iframe_prop ] ) ) {
+				$attributes[ $iframe_prop ] = $props[ $iframe_prop ];
+			}
 		}
 
 		if ( empty( $attributes['data-videoid'] ) ) {
