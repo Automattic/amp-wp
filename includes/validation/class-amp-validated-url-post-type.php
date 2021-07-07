@@ -2000,8 +2000,6 @@ class AMP_Validated_URL_Post_Type {
 	 * Enqueue scripts for the edit post screen.
 	 */
 	public static function enqueue_edit_post_screen_scripts() {
-		global $post;
-
 		$current_screen = get_current_screen();
 		if ( 'post' !== $current_screen->base || self::POST_TYPE_SLUG !== $current_screen->post_type ) {
 			return;
@@ -2022,6 +2020,22 @@ class AMP_Validated_URL_Post_Type {
 			$version,
 			true
 		);
+
+		$post = get_post();
+
+		// @todo This is likely dead code.
+		$current_screen = get_current_screen();
+		if ( $current_screen && 'post' === $current_screen->base && self::POST_TYPE_SLUG === $current_screen->post_type ) {
+			$data = [
+				'amp_enabled' => self::is_amp_enabled_on_post( $post ),
+			];
+
+			wp_localize_script(
+				self::EDIT_POST_SCRIPT_HANDLE,
+				'ampValidation',
+				$data
+			);
+		}
 
 		// React-based validated URL page component.
 		$asset_file   = AMP__DIR__ . '/assets/js/' . self::AMP_VALIDATED_URL_PAGE_SCRIPT_HANDLE . '.asset.php';
@@ -2051,21 +2065,6 @@ class AMP_Validated_URL_Post_Type {
 			),
 			'before'
 		);
-
-		// @todo This is likely dead code.
-		$current_screen = get_current_screen();
-		if ( $current_screen && 'post' === $current_screen->base && self::POST_TYPE_SLUG === $current_screen->post_type ) {
-			$post = get_post();
-			$data = [
-				'amp_enabled' => self::is_amp_enabled_on_post( $post ),
-			];
-
-			wp_localize_script(
-				self::EDIT_POST_SCRIPT_HANDLE,
-				'ampValidation',
-				$data
-			);
-		}
 
 		if ( function_exists( 'wp_set_script_translations' ) ) {
 			wp_set_script_translations( self::EDIT_POST_SCRIPT_HANDLE, 'amp' );
