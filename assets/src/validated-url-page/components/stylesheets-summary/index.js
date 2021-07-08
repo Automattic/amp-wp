@@ -8,6 +8,11 @@ import PropTypes from 'prop-types';
  */
 import { __, _x } from '@wordpress/i18n';
 
+/**
+ * Internal dependencies
+ */
+import { numberFormat } from '../../../utils/number-format';
+
 export default function StylesheetsSummary( { stylesheetSizes } ) {
 	return (
 		<table className="amp-stylesheet-summary">
@@ -17,7 +22,8 @@ export default function StylesheetsSummary( { stylesheetSizes } ) {
 						{ __( 'Total CSS size prior to minification:', 'amp' ) }
 					</th>
 					<td>
-						{ stylesheetSizes.included.originalSize }
+						{ numberFormat( stylesheetSizes.included.originalSize ) }
+						{ ' ' }
 						<abbr title={ __( 'bytes', 'amp' ) }>
 							{ _x( 'B', 'abbreviation for bytes', 'amp' ) }
 						</abbr>
@@ -28,7 +34,8 @@ export default function StylesheetsSummary( { stylesheetSizes } ) {
 						{ __( 'Total CSS size after minification:', 'amp' ) }
 					</th>
 					<td>
-						{ stylesheetSizes.included.finalSize }
+						{ numberFormat( stylesheetSizes.included.finalSize ) }
+						{ ' ' }
 						<abbr title={ __( 'bytes', 'amp' ) }>
 							{ _x( 'B', 'abbreviation for bytes', 'amp' ) }
 						</abbr>
