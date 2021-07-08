@@ -195,13 +195,7 @@ class AMP_YouTube_Embed_Handler extends AMP_Base_Embed_Handler {
 	 */
 	private function get_amp_component( Document $dom, Element $node ) {
 
-		$url      = $node->getAttribute( 'src' );
-		$video_id = $this->get_video_id_from_url( $url );
-
-		if ( ! $video_id ) {
-			return false;
-		}
-
+		$url        = $node->getAttribute( 'src' );
 		$attributes = $this->prepare_attributes( $url );
 
 		$iframe_props = [ 'title', 'height', 'width' ];
@@ -212,7 +206,7 @@ class AMP_YouTube_Embed_Handler extends AMP_Base_Embed_Handler {
 			}
 		}
 
-		if ( empty( $attributes['data-videoid'] ) ) {
+		if ( empty( $attributes['data-videoid'] ) && empty( $attributes['data-live-channelid'] ) ) {
 			$link_node = AMP_DOM_Utils::create_node(
 				$dom,
 				Tag::A,
@@ -252,18 +246,21 @@ class AMP_YouTube_Embed_Handler extends AMP_Base_Embed_Handler {
 	 */
 	private function prepare_attributes( $url ) {
 
-		$video_id = $this->get_video_id_from_url( $url );
-
-		if ( ! $video_id ) {
+		if ( empty( $url ) ) {
 			return [];
 		}
 
 		$attributes = [
-			'data-videoid' => $video_id,
-			'layout'       => 'responsive',
-			'width'        => $this->args['width'],
-			'height'       => $this->args['height'],
+			'layout' => 'responsive',
+			'width'  => $this->args['width'],
+			'height' => $this->args['height'],
 		];
+
+		$video_id = $this->get_video_id_from_url( $url );
+
+		if ( ! empty( $video_id ) ) {
+			$attributes['data-videoid'] = $video_id;
+		}
 
 		// Find start time of video.
 		$start_time = $this->get_start_time_from_url( $url );
@@ -436,6 +433,15 @@ class AMP_YouTube_Embed_Handler extends AMP_Base_Embed_Handler {
 		// Other top-level segments indicate non-video URLs. There are examples of URLs having segments including
 		// 'v', 'vi', and 'e' but these do not work anymore. In any case, they are added here for completeness.
 		if ( ! empty( $segments[1] ) && in_array( $segments[0], [ 'embed', 'watch', 'v', 'vi', 'e' ], true ) ) {
+
+			/**
+			 * Ignore live streaming channel URLs. For example:
+			 * * https://www.youtube.com/embed/live_stream?channel=UCkaNo2FUEWips2z4BkOHl6Q
+			 */
+			if ( 'embed' === $segments[0] && 'live_stream' === $segments[1] && isset( $query_vars['channel'] ) ) {
+				return false;
+			}
+
 			return $segments[1];
 		}
 
