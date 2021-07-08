@@ -109,19 +109,23 @@ class Test_AMP_YouTube_Embed_Handler extends WP_UnitTestCase {
 	public function sanitize_raw_embeds_data_provider() {
 
 		return [
-			'youtube-embed' => [
+			'youtube-embed'          => [
 				'source'   => '<iframe src="https://www.youtube.com/embed/q4xKvHANqjk?controls=0&amp;autoplay=1&amp;loop=1&amp;modestbranding=1" title="YouTube video player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="" width="560" height="315" frameborder="0"></iframe>',
 				'expected' => '<amp-youtube layout="responsive" width="560" height="315" data-videoid="q4xKvHANqjk" data-param-controls="0" autoplay="1" loop="1" data-param-modestbranding="1" title="YouTube video player"><a placeholder="" href="https://www.youtube.com/watch?v=q4xKvHANqjk"><img src="https://i.ytimg.com/vi/q4xKvHANqjk/hqdefault.jpg" layout="fill" object-fit="cover" alt="YouTube video player"></a></amp-youtube>',
 			],
-			'with_http'     => [
+			'with_http'              => [
 				'source'   => '<iframe src="http://www.youtube.com/embed/q4xKvHANqjk?controls=0&amp;autoplay=1&amp;loop=1&amp;modestbranding=1" title="YouTube video player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="" width="560" height="315" frameborder="0"></iframe>',
 				'expected' => '<amp-youtube layout="responsive" width="560" height="315" data-videoid="q4xKvHANqjk" data-param-controls="0" autoplay="1" loop="1" data-param-modestbranding="1" title="YouTube video player"><a placeholder="" href="https://www.youtube.com/watch?v=q4xKvHANqjk"><img src="https://i.ytimg.com/vi/q4xKvHANqjk/hqdefault.jpg" layout="fill" object-fit="cover" alt="YouTube video player"></a></amp-youtube>',
 			],
-			'short-url'     => [
+			'short-url'              => [
 				'source'   => '<iframe src="https://youtu.be/kfVsfOSbJY0?controls=0&amp;autoplay=1&amp;loop=1&amp;modestbranding=1" title="YouTube video player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="" width="560" height="315" frameborder="0"></iframe>',
 				'expected' => '<amp-youtube layout="responsive" width="560" height="315" data-videoid="kfVsfOSbJY0" data-param-controls="0" autoplay="1" loop="1" data-param-modestbranding="1" title="YouTube video player"><a placeholder="" href="https://www.youtube.com/watch?v=kfVsfOSbJY0"><img src="https://i.ytimg.com/vi/kfVsfOSbJY0/hqdefault.jpg" layout="fill" object-fit="cover" alt="YouTube video player"></a></amp-youtube>',
 			],
-			'none-youtube'  => [
+			'live_streaming_channel' => [
+				'source'   => '<iframe src="https://www.youtube.com/embed/live_stream?channel=UCkaNo2FUEWips2z4BkOHl6Q" title="YouTube video player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="" width="560" height="315" frameborder="0"></iframe>',
+				'expected' => '<amp-youtube layout="responsive" width="560" height="315" data-live-channelid="UCkaNo2FUEWips2z4BkOHl6Q" title="YouTube video player"></amp-youtube>',
+			],
+			'none-youtube'           => [
 				'source'   => '<iframe src="https://mysite.com/blog/youtube-iz-da-best" title="YouTube video player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="" width="560" height="315" frameborder="0"></iframe>',
 				'expected' => '<iframe src="https://mysite.com/blog/youtube-iz-da-best" title="YouTube video player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="" width="560" height="315" frameborder="0"></iframe>',
 			],
@@ -334,6 +338,10 @@ class Test_AMP_YouTube_Embed_Handler extends WP_UnitTestCase {
 			],
 			'false_because_no_id'              => [
 				'http://youtube.com/?wrong=XOY3ZUO6P0k',
+				false,
+			],
+			'live_streaming_channel'           => [
+				'https://www.youtube.com/embed/live_stream?channel=UCkaNo2FUEWips2z4BkOHl6Q',
 				false,
 			],
 		];
