@@ -29,11 +29,18 @@ export const ValidatedUrl = createContext();
  *
  * @param {Object} props Component props.
  * @param {any} props.children Component children.
+ * @param {number} props.cssBudgetBytes CSS budget value in bytes.
  * @param {boolean} props.hasErrorBoundary Whether the component is wrapped in an error boundary.
  * @param {number} props.postId Validated URL post ID.
  * @param {string} props.validatedUrlsRestPath REST endpoint to retrieve validated URL data.
  */
-export function ValidatedUrlProvider( { children, hasErrorBoundary = false, postId, validatedUrlsRestPath } ) {
+export function ValidatedUrlProvider( {
+	children,
+	cssBudgetBytes,
+	hasErrorBoundary = false,
+	postId,
+	validatedUrlsRestPath,
+} ) {
 	const [ validatedUrl, setValidatedUrl ] = useState( {} );
 	const [ stylesheetSizes, setStylesheetSizes ] = useState( {} );
 	const [ fetchingValidatedUrl, setFetchingValidatedUrl ] = useState( null );
@@ -71,7 +78,7 @@ export function ValidatedUrlProvider( { children, hasErrorBoundary = false, post
 				}
 
 				setValidatedUrl( fetchedValidatedUrl );
-				setStylesheetSizes( calculateStylesheetSizes( fetchedValidatedUrl?.stylesheets ) );
+				setStylesheetSizes( calculateStylesheetSizes( fetchedValidatedUrl?.stylesheets, cssBudgetBytes ) );
 			} catch ( e ) {
 				if ( hasUnmounted.current === true ) {
 					return;
@@ -88,10 +95,17 @@ export function ValidatedUrlProvider( { children, hasErrorBoundary = false, post
 
 			setFetchingValidatedUrl( false );
 		} )();
-	}, [ error, fetchingValidatedUrl, hasErrorBoundary, postId, setAsyncError, setError, validatedUrl, validatedUrlsRestPath ] );
+	}, [ cssBudgetBytes, error, fetchingValidatedUrl, hasErrorBoundary, postId, setAsyncError, setError, validatedUrl, validatedUrlsRestPath ] );
 
 	return (
-		<ValidatedUrl.Provider value={ { validatedUrl, fetchingValidatedUrl, stylesheetSizes } }>
+		<ValidatedUrl.Provider
+			value={ {
+				cssBudgetBytes,
+				fetchingValidatedUrl,
+				stylesheetSizes,
+				validatedUrl,
+			} }
+		>
 			{ children }
 		</ValidatedUrl.Provider>
 	);
@@ -99,6 +113,7 @@ export function ValidatedUrlProvider( { children, hasErrorBoundary = false, post
 
 ValidatedUrlProvider.propTypes = {
 	children: PropTypes.any,
+	cssBudgetBytes: PropTypes.number,
 	hasErrorBoundary: PropTypes.bool,
 	postId: PropTypes.number,
 	validatedUrlsRestPath: PropTypes.string,

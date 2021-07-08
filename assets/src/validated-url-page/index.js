@@ -4,6 +4,7 @@
 import PropTypes from 'prop-types';
 import {
 	APP_ROOT_ID,
+	CSS_BUDGET_BYTES,
 	POST_ID,
 	VALIDATED_URLS_REST_PATH,
 } from 'amp-settings'; // From WP inline script.
@@ -39,6 +40,7 @@ function Providers( { children } ) {
 		<ErrorContextProvider>
 			<ErrorBoundary>
 				<ValidatedUrlProvider
+					cssBudgetBytes={ Number( CSS_BUDGET_BYTES ) }
 					hasErrorBoundary={ true }
 					postId={ Number( POST_ID ) }
 					validatedUrlsRestPath={ VALIDATED_URLS_REST_PATH }
@@ -57,14 +59,21 @@ Providers.propTypes = {
  * Validated URL page application root.
  */
 function Root() {
-	const { fetchingValidatedUrl, stylesheetSizes } = useContext( ValidatedUrl );
+	const {
+		cssBudgetBytes,
+		fetchingValidatedUrl,
+		stylesheetSizes,
+	} = useContext( ValidatedUrl );
 
 	if ( fetchingValidatedUrl !== false ) {
 		return <Loading />;
 	}
 
 	return (
-		<StylesheetsSummary stylesheetSizes={ stylesheetSizes } />
+		<StylesheetsSummary
+			cssBudgetBytes={ cssBudgetBytes }
+			stylesheetSizes={ stylesheetSizes }
+		/>
 	);
 }
 
