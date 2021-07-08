@@ -6,12 +6,12 @@ import PropTypes from 'prop-types';
 /**
  * WordPress dependencies
  */
-import { __, _x } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
  */
-import { numberFormat } from '../../../utils/number-format';
+import FormattedMemoryValue from '../../../components/formatted-memory-value';
 
 export default function StylesheetsSummary( { stylesheetSizes } ) {
 	return (
@@ -22,11 +22,7 @@ export default function StylesheetsSummary( { stylesheetSizes } ) {
 						{ __( 'Total CSS size prior to minification:', 'amp' ) }
 					</th>
 					<td>
-						{ numberFormat( stylesheetSizes.included.originalSize ) }
-						{ ' ' }
-						<abbr title={ __( 'bytes', 'amp' ) }>
-							{ _x( 'B', 'abbreviation for bytes', 'amp' ) }
-						</abbr>
+						<FormattedMemoryValue value={ stylesheetSizes.included.originalSize } unit="B" />
 					</td>
 				</tr>
 				<tr>
@@ -34,11 +30,7 @@ export default function StylesheetsSummary( { stylesheetSizes } ) {
 						{ __( 'Total CSS size after minification:', 'amp' ) }
 					</th>
 					<td>
-						{ numberFormat( stylesheetSizes.included.finalSize ) }
-						{ ' ' }
-						<abbr title={ __( 'bytes', 'amp' ) }>
-							{ _x( 'B', 'abbreviation for bytes', 'amp' ) }
-						</abbr>
+						<FormattedMemoryValue value={ stylesheetSizes.included.finalSize } unit="B" />
 					</td>
 				</tr>
 			</tbody>
