@@ -62,7 +62,6 @@ Providers.propTypes = {
  */
 function Root() {
 	const {
-		cssBudgetBytes,
 		fetchingValidatedUrl,
 		stylesheetSizes,
 	} = useContext( ValidatedUrl );
@@ -72,10 +71,7 @@ function Root() {
 	}
 
 	return (
-		<StylesheetsSummary
-			cssBudgetBytes={ cssBudgetBytes }
-			stylesheetSizes={ stylesheetSizes }
-		/>
+		<StylesheetsSummary stylesheetSizes={ stylesheetSizes } />
 	);
 }
 

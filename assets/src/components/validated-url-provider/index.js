@@ -20,7 +20,7 @@ import apiFetch from '@wordpress/api-fetch';
  */
 import { ErrorContext } from '../error-context-provider';
 import { useAsyncError } from '../../utils/use-async-error';
-import { calculateStylesheetSizes } from '../../validated-url-page/helpers';
+import { calculateStylesheetStats } from '../../validated-url-page/helpers';
 
 export const ValidatedUrl = createContext();
 
@@ -80,7 +80,7 @@ export function ValidatedUrlProvider( {
 				}
 
 				setValidatedUrl( fetchedValidatedUrl );
-				setStylesheetSizes( calculateStylesheetSizes( fetchedValidatedUrl?.stylesheets, cssBudgetBytes, cssBudgetWarningPercentage ) );
+				setStylesheetSizes( calculateStylesheetStats( fetchedValidatedUrl?.stylesheets, cssBudgetBytes, cssBudgetWarningPercentage ) );
 			} catch ( e ) {
 				if ( hasUnmounted.current === true ) {
 					return;
@@ -102,7 +102,6 @@ export function ValidatedUrlProvider( {
 	return (
 		<ValidatedUrl.Provider
 			value={ {
-				cssBudgetBytes,
 				fetchingValidatedUrl,
 				stylesheetSizes,
 				validatedUrl,

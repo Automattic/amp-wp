@@ -3,17 +3,17 @@ export const STYLESHEETS_BUDGET_STATUS_WARNING = 'warning';
 export const STYLESHEETS_BUDGET_STATUS_EXCEEDED = 'exceeded';
 
 /**
- * Calculate stylesheets sizes.
+ * Calculate stylesheets stats.
  *
- * Calculates total CSS size prior and after the minification based on the
- * stylesheets data.
+ * Calculates total CSS size and other stats prior and after the minification
+ * based on the stylesheets data.
  *
  * @param {Array} stylesheets List of stylesheets.
- * @param {number} cssBudgetBytes CSS budget value in bytes.
- * @param {number} cssBudgetWarningPercentage CSS budget warning level percentage.
+ * @param {number} budgetBytes CSS budget value in bytes.
+ * @param {number} budgetWarningPercentage CSS budget warning level percentage.
  * @return {Object|null} Stylesheets sizes data or null.
  */
-export function calculateStylesheetSizes( stylesheets, cssBudgetBytes, cssBudgetWarningPercentage ) {
+export function calculateStylesheetStats( stylesheets, budgetBytes, budgetWarningPercentage ) {
 	if ( ! stylesheets || stylesheets?.length === 0 ) {
 		return null;
 	}
@@ -32,8 +32,9 @@ export function calculateStylesheetSizes( stylesheets, cssBudgetBytes, cssBudget
 			finalSize: 0,
 			stylesheets: [],
 		},
-		budget: {
-			usage: 0,
+		usage: {
+			actualPercentage: 0,
+			budgetBytes,
 			status: STYLESHEETS_BUDGET_STATUS_VALID,
 		},
 	};
@@ -62,7 +63,7 @@ export function calculateStylesheetSizes( stylesheets, cssBudgetBytes, cssBudget
 				};
 			}
 
-			const isExcessive = sizes.included.finalSize + stylesheet.final_size >= cssBudgetBytes;
+			const isExcessive = sizes.included.finalSize + stylesheet.final_size >= budgetBytes;
 
 			return {
 				...sizes,
@@ -82,12 +83,12 @@ export function calculateStylesheetSizes( stylesheets, cssBudgetBytes, cssBudget
 		}, initialState );
 
 	// Calculate CSS budget used.
-	result.budget.usage = ( result.included.finalSize + result.excluded.finalSize ) / cssBudgetBytes * 100;
+	result.usage.actualPercentage = ( result.included.finalSize + result.excluded.finalSize ) / budgetBytes * 100;
 
-	if ( result.budget.usage > 100 ) {
-		result.budget.status = STYLESHEETS_BUDGET_STATUS_EXCEEDED;
-	} else if ( result.budget.usage > cssBudgetWarningPercentage ) {
-		result.budget.status = STYLESHEETS_BUDGET_STATUS_WARNING;
+	if ( result.usage.actualPercentage > 100 ) {
+		result.usage.status = STYLESHEETS_BUDGET_STATUS_EXCEEDED;
+	} else if ( result.usage.actualPercentage > budgetWarningPercentage ) {
+		result.usage.status = STYLESHEETS_BUDGET_STATUS_WARNING;
 	}
 
 	return result;

@@ -2,16 +2,16 @@
  * Internal dependencies
  */
 import {
-	calculateStylesheetSizes,
+	calculateStylesheetStats,
 	STYLESHEETS_BUDGET_STATUS_VALID,
 	STYLESHEETS_BUDGET_STATUS_WARNING,
 	STYLESHEETS_BUDGET_STATUS_EXCEEDED,
 } from '..';
 
-describe( 'calculateStylesheetSizes', () => {
+describe( 'calculateStylesheetStats', () => {
 	it( 'returns null if no stylesheets are provided', () => {
-		expect( calculateStylesheetSizes() ).toBeNull();
-		expect( calculateStylesheetSizes( [] ) ).toBeNull();
+		expect( calculateStylesheetStats() ).toBeNull();
+		expect( calculateStylesheetStats( [] ) ).toBeNull();
 	} );
 
 	it( 'returns correct sizes prior and after minification', () => {
@@ -65,7 +65,7 @@ describe( 'calculateStylesheetSizes', () => {
 				final_size: 0,
 			},
 		];
-		expect( calculateStylesheetSizes( stylesheets, 25, 20 ) ).toMatchObject( {
+		expect( calculateStylesheetStats( stylesheets, 25, 20 ) ).toMatchObject( {
 			included: {
 				originalSize: 400,
 				finalSize: 50,
@@ -106,7 +106,7 @@ describe( 'calculateStylesheetSizes', () => {
 			},
 		];
 
-		const result = calculateStylesheetSizes( stylesheets, 75000, 80 );
+		const result = calculateStylesheetStats( stylesheets, 75000, 80 );
 		expect( result.included.stylesheets ).toHaveLength( 1 );
 		expect( result.included.stylesheets ).toContain( 'included' );
 	} );
@@ -131,9 +131,10 @@ describe( 'calculateStylesheetSizes', () => {
 			},
 		];
 
-		const result = calculateStylesheetSizes( stylesheets, 50, 80 );
-		expect( result.budget.usage ).toBe( 200 );
-		expect( result.budget.status ).toBe( STYLESHEETS_BUDGET_STATUS_EXCEEDED );
+		const result = calculateStylesheetStats( stylesheets, 50, 80 );
+		expect( result.usage.budgetBytes ).toBe( 50 );
+		expect( result.usage.actualPercentage ).toBe( 200 );
+		expect( result.usage.status ).toBe( STYLESHEETS_BUDGET_STATUS_EXCEEDED );
 	} );
 
 	it( 'sets the warning budget values correctly', () => {
@@ -156,9 +157,10 @@ describe( 'calculateStylesheetSizes', () => {
 			},
 		];
 
-		const result = calculateStylesheetSizes( stylesheets, 200, 40 );
-		expect( result.budget.usage ).toBe( 50 );
-		expect( result.budget.status ).toBe( STYLESHEETS_BUDGET_STATUS_WARNING );
+		const result = calculateStylesheetStats( stylesheets, 200, 40 );
+		expect( result.usage.budgetBytes ).toBe( 200 );
+		expect( result.usage.actualPercentage ).toBe( 50 );
+		expect( result.usage.status ).toBe( STYLESHEETS_BUDGET_STATUS_WARNING );
 	} );
 
 	it( 'sets the valid budget values correctly', () => {
@@ -181,8 +183,9 @@ describe( 'calculateStylesheetSizes', () => {
 			},
 		];
 
-		const result = calculateStylesheetSizes( stylesheets, 200, 60 );
-		expect( result.budget.usage ).toBe( 50 );
-		expect( result.budget.status ).toBe( STYLESHEETS_BUDGET_STATUS_VALID );
+		const result = calculateStylesheetStats( stylesheets, 200, 60 );
+		expect( result.usage.budgetBytes ).toBe( 200 );
+		expect( result.usage.actualPercentage ).toBe( 50 );
+		expect( result.usage.status ).toBe( STYLESHEETS_BUDGET_STATUS_VALID );
 	} );
 } );
