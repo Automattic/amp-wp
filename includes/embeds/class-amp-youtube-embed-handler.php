@@ -479,7 +479,7 @@ class AMP_YouTube_Embed_Handler extends AMP_Base_Embed_Handler {
 
 			preg_match( $regex, $parsed_url['fragment'], $matches );
 
-			if ( isset( $matches['minutes'], $matches['seconds'] ) ) {
+			if ( is_array( $matches ) ) {
 				$matches    = wp_parse_args(
 					$matches,
 					[
