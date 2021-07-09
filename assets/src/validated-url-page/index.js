@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import {
 	APP_ROOT_ID,
 	CSS_BUDGET_BYTES,
+	CSS_BUDGET_WARNING_PERCENTAGE,
 	POST_ID,
 	VALIDATED_URLS_REST_PATH,
 } from 'amp-settings'; // From WP inline script.
@@ -41,6 +42,7 @@ function Providers( { children } ) {
 			<ErrorBoundary>
 				<ValidatedUrlProvider
 					cssBudgetBytes={ Number( CSS_BUDGET_BYTES ) }
+					cssBudgetWarningPercentage={ Number( CSS_BUDGET_WARNING_PERCENTAGE ) }
 					hasErrorBoundary={ true }
 					postId={ Number( POST_ID ) }
 					validatedUrlsRestPath={ VALIDATED_URLS_REST_PATH }

@@ -11,8 +11,9 @@ import { __, sprintf } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import FormattedMemoryValue from '../../../components/formatted-memory-value';
 import { numberFormat } from '../../../utils/number-format';
+import FormattedMemoryValue from '../../../components/formatted-memory-value';
+import { ValidationStatusIcon } from '../../../components/icon';
 
 /**
  * Render stylesheets summary table.
@@ -48,7 +49,11 @@ export default function StylesheetsSummary( { cssBudgetBytes, stylesheetSizes } 
 						{ ':' }
 					</th>
 					<td>
-						{ `${ numberFormat( parseFloat( stylesheetSizes.budgetUsed * 100 ).toFixed( 1 ) ) }%` }
+						{ `${ numberFormat( parseFloat( stylesheetSizes.budget.usage ).toFixed( 1 ) ) }%` }
+						{ ' ' }
+						{ stylesheetSizes.budget.status === 'exceeded' && <ValidationStatusIcon type="error" boxed /> }
+						{ stylesheetSizes.budget.status === 'warning' && <ValidationStatusIcon type="warning" boxed /> }
+						{ stylesheetSizes.budget.status === 'valid' && <ValidationStatusIcon type="valid" boxed /> }
 					</td>
 				</tr>
 				<tr>
@@ -83,6 +88,9 @@ StylesheetsSummary.propTypes = {
 			finalSize: PropTypes.number,
 			stylesheets: PropTypes.arrayOf( PropTypes.string ),
 		} ),
-		budgetUsed: PropTypes.number,
+		budget: PropTypes.shape( {
+			usage: PropTypes.number,
+			status: PropTypes.oneOf( [ 'valid', 'warning', 'exceeded' ] ),
+		} ),
 	} ),
 };

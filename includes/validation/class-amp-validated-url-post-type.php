@@ -2035,6 +2035,13 @@ class AMP_Validated_URL_Post_Type {
 			true
 		);
 
+		wp_enqueue_style(
+			self::AMP_VALIDATED_URL_PAGE_SCRIPT_HANDLE,
+			amp_get_asset_url( 'css/' . self::AMP_VALIDATED_URL_PAGE_SCRIPT_HANDLE . '.css' ),
+			[],
+			$version
+		);
+
 		// @todo: Determine $css_budget_bytes value in a better place.
 		$css_budget_bytes = null;
 		foreach ( AMP_Allowed_Tags_Generated::get_allowed_tag( 'style' ) as $spec_rule ) {
@@ -2045,10 +2052,11 @@ class AMP_Validated_URL_Post_Type {
 
 		$post                    = get_post();
 		$validated_url_page_data = [
-			'APP_ROOT_ID'              => self::AMP_VALIDATED_URL_PAGE_APP_ROOT_ID,
-			'CSS_BUDGET_BYTES'         => $css_budget_bytes,
-			'POST_ID'                  => $post->ID,
-			'VALIDATED_URLS_REST_PATH' => '/amp/v1/validated-urls',
+			'APP_ROOT_ID'                   => self::AMP_VALIDATED_URL_PAGE_APP_ROOT_ID,
+			'CSS_BUDGET_BYTES'              => $css_budget_bytes,
+			'CSS_BUDGET_WARNING_PERCENTAGE' => AMP_Style_Sanitizer::CSS_BUDGET_WARNING_PERCENTAGE,
+			'POST_ID'                       => $post->ID,
+			'VALIDATED_URLS_REST_PATH'      => '/amp/v1/validated-urls',
 		];
 
 		wp_add_inline_script(

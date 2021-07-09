@@ -60,7 +60,7 @@ describe( 'calculateStylesheetSizes', () => {
 				final_size: 0,
 			},
 		];
-		expect( calculateStylesheetSizes( stylesheets, 25 ) ).toMatchObject( {
+		expect( calculateStylesheetSizes( stylesheets, 25, 20 ) ).toMatchObject( {
 			included: {
 				originalSize: 400,
 				finalSize: 50,
@@ -74,7 +74,6 @@ describe( 'calculateStylesheetSizes', () => {
 				finalSize: 50,
 				stylesheets: [ 'excluded-1', 'excluded-2', 'excluded-3' ],
 			},
-			budgetUsed: 4,
 		} );
 	} );
 
@@ -102,8 +101,83 @@ describe( 'calculateStylesheetSizes', () => {
 			},
 		];
 
-		const result = calculateStylesheetSizes( stylesheets, 75000 );
+		const result = calculateStylesheetSizes( stylesheets, 75000, 80 );
 		expect( result.included.stylesheets ).toHaveLength( 1 );
 		expect( result.included.stylesheets ).toContain( 'included' );
+	} );
+
+	it( 'sets the exceeded budget values correctly', () => {
+		const stylesheets = [
+			{
+				hash: '1',
+				group: 'amp-custom',
+				included: true,
+				priority: 10,
+				original_size: 100,
+				final_size: 50,
+			},
+			{
+				hash: '2',
+				group: 'amp-custom',
+				included: true,
+				priority: 10,
+				original_size: 100,
+				final_size: 50,
+			},
+		];
+
+		const result = calculateStylesheetSizes( stylesheets, 50, 80 );
+		expect( result.budget.usage ).toBe( 200 );
+		expect( result.budget.status ).toBe( 'exceeded' );
+	} );
+
+	it( 'sets the warning budget values correctly', () => {
+		const stylesheets = [
+			{
+				hash: '1',
+				group: 'amp-custom',
+				included: true,
+				priority: 10,
+				original_size: 100,
+				final_size: 50,
+			},
+			{
+				hash: '2',
+				group: 'amp-custom',
+				included: true,
+				priority: 10,
+				original_size: 100,
+				final_size: 50,
+			},
+		];
+
+		const result = calculateStylesheetSizes( stylesheets, 200, 40 );
+		expect( result.budget.usage ).toBe( 50 );
+		expect( result.budget.status ).toBe( 'warning' );
+	} );
+
+	it( 'sets the valid budget values correctly', () => {
+		const stylesheets = [
+			{
+				hash: '1',
+				group: 'amp-custom',
+				included: true,
+				priority: 10,
+				original_size: 100,
+				final_size: 50,
+			},
+			{
+				hash: '2',
+				group: 'amp-custom',
+				included: true,
+				priority: 10,
+				original_size: 100,
+				final_size: 50,
+			},
+		];
+
+		const result = calculateStylesheetSizes( stylesheets, 200, 60 );
+		expect( result.budget.usage ).toBe( 50 );
+		expect( result.budget.status ).toBe( 'valid' );
 	} );
 } );

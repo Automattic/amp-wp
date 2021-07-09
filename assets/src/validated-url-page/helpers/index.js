@@ -6,9 +6,10 @@
  *
  * @param {Array} stylesheets List of stylesheets.
  * @param {number} cssBudgetBytes CSS budget value in bytes.
+ * @param {number} cssBudgetWarningPercentage CSS budget warning level percentage.
  * @return {Object|null} Stylesheets sizes data or null.
  */
-export function calculateStylesheetSizes( stylesheets, cssBudgetBytes ) {
+export function calculateStylesheetSizes( stylesheets, cssBudgetBytes, cssBudgetWarningPercentage ) {
 	if ( ! stylesheets || stylesheets?.length === 0 ) {
 		return null;
 	}
@@ -27,7 +28,10 @@ export function calculateStylesheetSizes( stylesheets, cssBudgetBytes ) {
 			finalSize: 0,
 			stylesheets: [],
 		},
-		budgetUsed: 0,
+		budget: {
+			usage: 0,
+			status: 'valid',
+		},
 	};
 
 	const result = stylesheets
@@ -74,7 +78,13 @@ export function calculateStylesheetSizes( stylesheets, cssBudgetBytes ) {
 		}, initialState );
 
 	// Calculate CSS budget used.
-	result.budgetUsed = ( result.included.finalSize + result.excluded.finalSize ) / cssBudgetBytes;
+	result.budget.usage = ( result.included.finalSize + result.excluded.finalSize ) / cssBudgetBytes * 100;
+
+	if ( result.budget.usage > 100 ) {
+		result.budget.status = 'exceeded';
+	} else if ( result.budget.usage > cssBudgetWarningPercentage ) {
+		result.budget.status = 'warning';
+	}
 
 	return result;
 }

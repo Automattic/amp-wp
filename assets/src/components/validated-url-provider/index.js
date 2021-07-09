@@ -30,6 +30,7 @@ export const ValidatedUrl = createContext();
  * @param {Object} props Component props.
  * @param {any} props.children Component children.
  * @param {number} props.cssBudgetBytes CSS budget value in bytes.
+ * @param {number} props.cssBudgetWarningPercentage CSS budget warning level percentage.
  * @param {boolean} props.hasErrorBoundary Whether the component is wrapped in an error boundary.
  * @param {number} props.postId Validated URL post ID.
  * @param {string} props.validatedUrlsRestPath REST endpoint to retrieve validated URL data.
@@ -37,6 +38,7 @@ export const ValidatedUrl = createContext();
 export function ValidatedUrlProvider( {
 	children,
 	cssBudgetBytes,
+	cssBudgetWarningPercentage,
 	hasErrorBoundary = false,
 	postId,
 	validatedUrlsRestPath,
@@ -78,7 +80,7 @@ export function ValidatedUrlProvider( {
 				}
 
 				setValidatedUrl( fetchedValidatedUrl );
-				setStylesheetSizes( calculateStylesheetSizes( fetchedValidatedUrl?.stylesheets, cssBudgetBytes ) );
+				setStylesheetSizes( calculateStylesheetSizes( fetchedValidatedUrl?.stylesheets, cssBudgetBytes, cssBudgetWarningPercentage ) );
 			} catch ( e ) {
 				if ( hasUnmounted.current === true ) {
 					return;
@@ -95,7 +97,7 @@ export function ValidatedUrlProvider( {
 
 			setFetchingValidatedUrl( false );
 		} )();
-	}, [ cssBudgetBytes, error, fetchingValidatedUrl, hasErrorBoundary, postId, setAsyncError, setError, validatedUrl, validatedUrlsRestPath ] );
+	}, [ cssBudgetBytes, cssBudgetWarningPercentage, error, fetchingValidatedUrl, hasErrorBoundary, postId, setAsyncError, setError, validatedUrl, validatedUrlsRestPath ] );
 
 	return (
 		<ValidatedUrl.Provider
@@ -114,6 +116,7 @@ export function ValidatedUrlProvider( {
 ValidatedUrlProvider.propTypes = {
 	children: PropTypes.any,
 	cssBudgetBytes: PropTypes.number,
+	cssBudgetWarningPercentage: PropTypes.number,
 	hasErrorBoundary: PropTypes.bool,
 	postId: PropTypes.number,
 	validatedUrlsRestPath: PropTypes.string,
