@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 /**
  * WordPress dependencies
  */
-import { __, sprintf } from '@wordpress/i18n';
+import { __, _n, sprintf } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
@@ -52,7 +52,7 @@ export default function StylesheetsSummary( { stylesheetSizes } ) {
 							{ __( 'Total CSS size prior to minification:', 'amp' ) }
 						</th>
 						<td>
-							<FormattedMemoryValue value={ included.originalSize } unit="B" />
+							<FormattedMemoryValue value={ included.originalSize + excluded.originalSize } unit="B" />
 						</td>
 					</tr>
 					<tr>
@@ -60,7 +60,7 @@ export default function StylesheetsSummary( { stylesheetSizes } ) {
 							{ __( 'Total CSS size after minification:', 'amp' ) }
 						</th>
 						<td>
-							<FormattedMemoryValue value={ included.finalSize } unit="B" />
+							<FormattedMemoryValue value={ included.finalSize + excluded.finalSize } unit="B" />
 						</td>
 					</tr>
 					<tr>
@@ -87,7 +87,12 @@ export default function StylesheetsSummary( { stylesheetSizes } ) {
 						<th>
 							{ sprintf(
 								// translators: %d stands for the number of stylesheets
-								__( 'Excluded minified CSS size (%d stylesheets):', 'amp' ),
+								_n(
+									'Excluded minified CSS size (%d stylesheet):',
+									'Excluded minified CSS size (%d stylesheets):',
+									excluded.stylesheets.length,
+									'amp',
+								),
 								excluded.stylesheets.length,
 							) }
 						</th>
@@ -104,7 +109,10 @@ export default function StylesheetsSummary( { stylesheetSizes } ) {
 			) }
 			{ status === STYLESHEETS_BUDGET_STATUS_EXCEEDED && (
 				<AMPNotice size={ NOTICE_SIZE_LARGE } type={ NOTICE_TYPE_ERROR }>
-					{ __( 'You have exceeded the CSS budget. Stylesheets deemed of lesser priority have been excluded from the page. Please review the flagged stylesheets below and determine if the current theme or a particular plugin is including excessive CSS.', 'amp' ) }
+					{ excluded.stylesheets.length === 0
+						? __( 'You have exceeded the CSS budget. The page will not be served as a valid AMP page.', 'amp' )
+						: __( 'You have exceeded the CSS budget. Stylesheets deemed of lesser priority have been excluded from the page.', 'amp' ) }
+					{ __( 'Please review the flagged stylesheets below and determine if the current theme or a particular plugin is including excessive CSS.', 'amp' ) }
 				</AMPNotice>
 			) }
 		</>
