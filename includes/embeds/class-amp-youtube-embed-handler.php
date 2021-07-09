@@ -475,7 +475,7 @@ class AMP_YouTube_Embed_Handler extends AMP_Base_Embed_Handler {
 		}
 
 		if ( ! empty( $parsed_url['fragment'] ) ) {
-			$regex = '/^t=(?<minutes>\d+)m(?<seconds>\d+)s$/';
+			$regex = '/^t=(?:(?<minutes>\d+)m)?(?:(?<seconds>\d+)s?)?$/';
 
 			preg_match( $regex, $parsed_url['fragment'], $matches );
 
