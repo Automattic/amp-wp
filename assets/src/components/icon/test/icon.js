@@ -120,7 +120,7 @@ describe( 'Icons', () => {
 	it( 'renders the valid ValidationStatusIcon', () => {
 		act( () => {
 			render(
-				<ValidationStatusIcon type="valid" />,
+				<ValidationStatusIcon isValid={ true } />,
 				container,
 			);
 		} );
@@ -131,7 +131,7 @@ describe( 'Icons', () => {
 	it( 'renders the warning ValidationStatusIcon', () => {
 		act( () => {
 			render(
-				<ValidationStatusIcon type="warning" />,
+				<ValidationStatusIcon isWarning={ true } />,
 				container,
 			);
 		} );
@@ -142,7 +142,7 @@ describe( 'Icons', () => {
 	it( 'renders the error ValidationStatusIcon', () => {
 		act( () => {
 			render(
-				<ValidationStatusIcon type="error" />,
+				<ValidationStatusIcon isError={ true } />,
 				container,
 			);
 		} );
@@ -153,7 +153,7 @@ describe( 'Icons', () => {
 	it( 'renders the boxed ValidationStatusIcon', () => {
 		act( () => {
 			render(
-				<ValidationStatusIcon type="valid" boxed />,
+				<ValidationStatusIcon isValid={ true } isBoxed={ true } />,
 				container,
 			);
 		} );

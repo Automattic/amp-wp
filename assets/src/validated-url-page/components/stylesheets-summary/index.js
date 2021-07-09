@@ -53,9 +53,9 @@ export default function StylesheetsSummary( { cssBudgetBytes, stylesheetSizes } 
 						<td>
 							{ `${ numberFormat( parseFloat( stylesheetSizes.budget.usage ).toFixed( 1 ) ) }%` }
 							{ ' ' }
-							{ stylesheetSizes.budget.status === 'exceeded' && <ValidationStatusIcon type="error" boxed /> }
-							{ stylesheetSizes.budget.status === 'warning' && <ValidationStatusIcon type="warning" boxed /> }
-							{ stylesheetSizes.budget.status === 'valid' && <ValidationStatusIcon type="valid" boxed /> }
+							{ stylesheetSizes.budget.status === 'exceeded' && <ValidationStatusIcon isError isBoxed /> }
+							{ stylesheetSizes.budget.status === 'warning' && <ValidationStatusIcon isWarning isBoxed /> }
+							{ stylesheetSizes.budget.status === 'valid' && <ValidationStatusIcon isValid isBoxed /> }
 						</td>
 					</tr>
 					<tr>
