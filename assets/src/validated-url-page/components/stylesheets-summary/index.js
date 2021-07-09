@@ -14,6 +14,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { numberFormat } from '../../../utils/number-format';
 import FormattedMemoryValue from '../../../components/formatted-memory-value';
 import { ValidationStatusIcon } from '../../../components/icon';
+import { AMPNotice, NOTICE_SIZE_LARGE, NOTICE_TYPE_WARNING, NOTICE_TYPE_ERROR } from '../../../components/amp-notice';
 
 /**
  * Render stylesheets summary table.
@@ -24,52 +25,64 @@ import { ValidationStatusIcon } from '../../../components/icon';
  */
 export default function StylesheetsSummary( { cssBudgetBytes, stylesheetSizes } ) {
 	return (
-		<table className="amp-stylesheet-summary">
-			<tbody>
-				<tr>
-					<th>
-						{ __( 'Total CSS size prior to minification:', 'amp' ) }
-					</th>
-					<td>
-						<FormattedMemoryValue value={ stylesheetSizes.included.originalSize } unit="B" />
-					</td>
-				</tr>
-				<tr>
-					<th>
-						{ __( 'Total CSS size after minification:', 'amp' ) }
-					</th>
-					<td>
-						<FormattedMemoryValue value={ stylesheetSizes.included.finalSize } unit="B" />
-					</td>
-				</tr>
-				<tr>
-					<th>
-						{ __( 'Percentage of used CSS budget', 'amp' ) }
-						{ cssBudgetBytes && [ ' (', <FormattedMemoryValue value={ cssBudgetBytes / 1000 } unit="kB" key="" />, ')' ] }
-						{ ':' }
-					</th>
-					<td>
-						{ `${ numberFormat( parseFloat( stylesheetSizes.budget.usage ).toFixed( 1 ) ) }%` }
-						{ ' ' }
-						{ stylesheetSizes.budget.status === 'exceeded' && <ValidationStatusIcon type="error" boxed /> }
-						{ stylesheetSizes.budget.status === 'warning' && <ValidationStatusIcon type="warning" boxed /> }
-						{ stylesheetSizes.budget.status === 'valid' && <ValidationStatusIcon type="valid" boxed /> }
-					</td>
-				</tr>
-				<tr>
-					<th>
-						{ sprintf(
-							// translators: %d stands for the number of stylesheets
-							__( 'Excluded minified CSS size (%d stylesheets):', 'amp' ),
-							stylesheetSizes.excluded.stylesheets.length,
-						) }
-					</th>
-					<td>
-						<FormattedMemoryValue value={ stylesheetSizes.excluded.finalSize } unit="B" />
-					</td>
-				</tr>
-			</tbody>
-		</table>
+		<>
+			<table className="amp-stylesheet-summary">
+				<tbody>
+					<tr>
+						<th>
+							{ __( 'Total CSS size prior to minification:', 'amp' ) }
+						</th>
+						<td>
+							<FormattedMemoryValue value={ stylesheetSizes.included.originalSize } unit="B" />
+						</td>
+					</tr>
+					<tr>
+						<th>
+							{ __( 'Total CSS size after minification:', 'amp' ) }
+						</th>
+						<td>
+							<FormattedMemoryValue value={ stylesheetSizes.included.finalSize } unit="B" />
+						</td>
+					</tr>
+					<tr>
+						<th>
+							{ __( 'Percentage of used CSS budget', 'amp' ) }
+							{ cssBudgetBytes && [ ' (', <FormattedMemoryValue value={ cssBudgetBytes / 1000 } unit="kB" key="" />, ')' ] }
+							{ ':' }
+						</th>
+						<td>
+							{ `${ numberFormat( parseFloat( stylesheetSizes.budget.usage ).toFixed( 1 ) ) }%` }
+							{ ' ' }
+							{ stylesheetSizes.budget.status === 'exceeded' && <ValidationStatusIcon type="error" boxed /> }
+							{ stylesheetSizes.budget.status === 'warning' && <ValidationStatusIcon type="warning" boxed /> }
+							{ stylesheetSizes.budget.status === 'valid' && <ValidationStatusIcon type="valid" boxed /> }
+						</td>
+					</tr>
+					<tr>
+						<th>
+							{ sprintf(
+								// translators: %d stands for the number of stylesheets
+								__( 'Excluded minified CSS size (%d stylesheets):', 'amp' ),
+								stylesheetSizes.excluded.stylesheets.length,
+							) }
+						</th>
+						<td>
+							<FormattedMemoryValue value={ stylesheetSizes.excluded.finalSize } unit="B" />
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			{ stylesheetSizes.budget.status === 'warning' && (
+				<AMPNotice size={ NOTICE_SIZE_LARGE } type={ NOTICE_TYPE_WARNING }>
+					{ __( 'You are nearing the limit of the CSS budget. Once this limit is reached, stylesheets deemed of lesser priority will be excluded from the page. Please review the stylesheets below and determine if the current theme or a particular plugin is including excessive CSS.', 'amp' ) }
+				</AMPNotice>
+			) }
+			{ stylesheetSizes.budget.status === 'exceeded' && (
+				<AMPNotice size={ NOTICE_SIZE_LARGE } type={ NOTICE_TYPE_ERROR }>
+					{ __( 'You have exceeded the CSS budget. Stylesheets deemed of lesser priority have been excluded from the page. Please review the flagged stylesheets below and determine if the current theme or a particular plugin is including excessive CSS.', 'amp' ) }
+				</AMPNotice>
+			) }
+		</>
 	);
 }
 StylesheetsSummary.propTypes = {
