@@ -79,3 +79,30 @@
 .is-pressed .amp-error-count-badge {
 	border-color: #1e1e1e;
 }
+
+/*
+ * AMP validation status icons.
+ */
+.amp-validation-status-icon {
+	display: inline-block;
+	height: 16px;
+	vertical-align: middle;
+	width: 16px;
+}
+
+.amp-validation-status-icon--boxed {
+	border-radius: 5px;
+	padding: 2px;
+}
+
+.amp-validation-status-icon--boxed.amp-validation-status-icon--valid {
+	background-color: #d3e5e5;
+}
+
+.amp-validation-status-icon--boxed.amp-validation-status-icon--warning {
+	background-color: #fff6dd;
+}
+
+.amp-validation-status-icon--boxed.amp-validation-status-icon--error {
+	background-color: #f7ded4;
+}

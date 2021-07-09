@@ -10,6 +10,9 @@ import './style.css';
 import AMPLogoIcon from '../../../images/amp-logo-icon.svg';
 import AMPToolbarIcon from '../../../images/amp-icon-toolbar.svg';
 import AMPToolbarIconBroken from '../../../images/amp-toolbar-icon-broken.svg';
+import AMPValidIcon from '../../../images/amp-valid.svg';
+import AMPWarningIcon from '../../../images/amp-warning.svg';
+import AMPAlertIcon from '../../../images/amp-alert.svg';
 
 /**
  * Plugin icon.
@@ -93,4 +96,25 @@ export function StatusIcon( { broken = false } ) {
 }
 StatusIcon.propTypes = {
 	broken: PropTypes.bool,
+};
+
+/**
+ * The warning icon with an exclamation mark symbol.
+ *
+ * @param {Object} props
+ * @param {string} props.type Icon type.
+ * @param {boolean} props.boxed Whether the icon should be contained in a box.
+ */
+export function ValidationStatusIcon( { type, boxed = false } ) {
+	return (
+		<span className={ `amp-validation-status-icon amp-validation-status-icon--${ type } ${ boxed ? 'amp-validation-status-icon--boxed' : '' }` }>
+			{ type === 'valid' && <AMPValidIcon /> }
+			{ type === 'warning' && <AMPWarningIcon /> }
+			{ type === 'error' && <AMPAlertIcon /> }
+		</span>
+	);
+}
+ValidationStatusIcon.propTypes = {
+	type: PropTypes.oneOf( [ 'valid', 'warning', 'error' ] ).isRequired,
+	boxed: PropTypes.bool,
 };
