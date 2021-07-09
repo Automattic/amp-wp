@@ -10,7 +10,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
  */
 import AMPValidationErrorsKeptIcon from '../../../../images/amp-validation-errors-kept.svg';
 import { BLOCK_VALIDATION_STORE_KEY } from '../../store';
-import { StatusIcon } from '../icon';
+import { StatusIcon } from '../../../components/icon';
 import { SidebarNotification } from '../sidebar-notification';
 import { useErrorsFetchingStateChanges } from '../../hooks/use-errors-fetching-state-changes';
 

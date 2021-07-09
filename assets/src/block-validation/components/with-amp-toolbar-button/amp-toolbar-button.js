@@ -13,7 +13,7 @@ import { useDispatch } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import { ToolbarIcon } from '../icon';
+import { ToolbarIcon } from '../../../components/icon';
 import { PLUGIN_NAME, SIDEBAR_NAME } from '../../plugins/amp-block-validation';
 import { useAMPDocumentToggle } from '../../hooks/use-amp-document-toggle';
 

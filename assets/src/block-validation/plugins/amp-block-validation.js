@@ -9,7 +9,7 @@ import { useSelect } from '@wordpress/data';
  * Internal dependencies
  */
 import { BLOCK_VALIDATION_STORE_KEY } from '../store';
-import { MoreMenuIcon, ToolbarIcon } from '../components/icon';
+import { MoreMenuIcon, ToolbarIcon } from '../../components/icon';
 import { Sidebar } from '../components/sidebar';
 import { InvalidBlockOutline } from '../components/invalid-block-outline';
 import { usePostDirtyStateChanges } from '../hooks/use-post-dirty-state-changes';

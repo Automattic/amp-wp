@@ -7,9 +7,12 @@ import PropTypes from 'prop-types';
  * Internal dependencies
  */
 import './style.css';
-import AMPLogoIcon from '../../../../images/amp-logo-icon.svg';
-import AMPToolbarIcon from '../../../../images/amp-icon-toolbar.svg';
-import AMPToolbarIconBroken from '../../../../images/amp-toolbar-icon-broken.svg';
+import AMPLogoIcon from '../../../images/amp-logo-icon.svg';
+import AMPToolbarIcon from '../../../images/amp-icon-toolbar.svg';
+import AMPToolbarIconBroken from '../../../images/amp-toolbar-icon-broken.svg';
+import AMPValidIcon from '../../../images/amp-valid.svg';
+import AMPWarningIcon from '../../../images/amp-warning.svg';
+import AMPAlertIcon from '../../../images/amp-alert.svg';
 
 /**
  * Plugin icon.
@@ -93,4 +96,41 @@ export function StatusIcon( { broken = false } ) {
 }
 StatusIcon.propTypes = {
 	broken: PropTypes.bool,
+};
+
+/**
+ * Renders the validation status icon.
+ *
+ * @param {Object} props
+ * @param {boolean} props.isError Flag indicating the icon is for an error status.
+ * @param {boolean} props.isWarning Flag indicating the icon is for a warning status.
+ * @param {boolean} props.isValid Flag indicating the icon is for a valid status.
+ * @param {boolean} props.isBoxed Whether the icon should be contained in a box.
+ */
+export function ValidationStatusIcon( { isError, isWarning, isValid, isBoxed = false } ) {
+	let type;
+
+	if ( isError ) {
+		type = 'error';
+	} else if ( isWarning ) {
+		type = 'warning';
+	} else if ( isValid ) {
+		type = 'valid';
+	} else {
+		return null;
+	}
+
+	return (
+		<span className={ `amp-validation-status-icon amp-validation-status-icon--${ type } ${ isBoxed ? 'amp-validation-status-icon--boxed' : '' }` }>
+			{ isValid && <AMPValidIcon /> }
+			{ isWarning && <AMPWarningIcon /> }
+			{ isError && <AMPAlertIcon /> }
+		</span>
+	);
+}
+ValidationStatusIcon.propTypes = {
+	isError: PropTypes.bool,
+	isWarning: PropTypes.bool,
+	isValid: PropTypes.bool,
+	isBoxed: PropTypes.bool,
 };

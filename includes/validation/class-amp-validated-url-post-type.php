@@ -91,6 +91,20 @@ class AMP_Validated_URL_Post_Type {
 	const EDIT_POST_SCRIPT_HANDLE = 'amp-validated-url-post-edit-screen';
 
 	/**
+	 * The handle for the AMP validated URL page script.
+	 *
+	 * @var string
+	 */
+	const AMP_VALIDATED_URL_PAGE_SCRIPT_HANDLE = 'amp-validated-url-page';
+
+	/**
+	 * HTML ID for the app root element.
+	 *
+	 * @var string
+	 */
+	const AMP_VALIDATED_URL_PAGE_APP_ROOT_ID = 'amp-validated-url-root';
+
+	/**
 	 * The query arg for the number of URLs tested.
 	 *
 	 * @var string
@@ -2007,20 +2021,52 @@ class AMP_Validated_URL_Post_Type {
 			true
 		);
 
-		// @todo This is likely dead code.
-		$current_screen = get_current_screen();
-		if ( $current_screen && 'post' === $current_screen->base && self::POST_TYPE_SLUG === $current_screen->post_type ) {
-			$post = get_post();
-			$data = [
-				'amp_enabled' => self::is_amp_enabled_on_post( $post ),
-			];
+		// React-based validated URL page component.
+		$asset_file   = AMP__DIR__ . '/assets/js/' . self::AMP_VALIDATED_URL_PAGE_SCRIPT_HANDLE . '.asset.php';
+		$asset        = require $asset_file;
+		$dependencies = $asset['dependencies'];
+		$version      = $asset['version'];
 
-			wp_localize_script(
-				self::EDIT_POST_SCRIPT_HANDLE,
-				'ampValidation',
-				$data
-			);
+		wp_enqueue_script(
+			self::AMP_VALIDATED_URL_PAGE_SCRIPT_HANDLE,
+			amp_get_asset_url( 'js/' . self::AMP_VALIDATED_URL_PAGE_SCRIPT_HANDLE . '.js' ),
+			$dependencies,
+			$version,
+			true
+		);
+
+		wp_enqueue_style(
+			self::AMP_VALIDATED_URL_PAGE_SCRIPT_HANDLE,
+			amp_get_asset_url( 'css/' . self::AMP_VALIDATED_URL_PAGE_SCRIPT_HANDLE . '.css' ),
+			[],
+			$version
+		);
+
+		// @todo: Determine $css_budget_bytes value in a better place.
+		$css_budget_bytes = null;
+		foreach ( AMP_Allowed_Tags_Generated::get_allowed_tag( 'style' ) as $spec_rule ) {
+			if ( isset( $spec_rule[ AMP_Rule_Spec::TAG_SPEC ]['spec_name'] ) && AMP_Style_Sanitizer::STYLE_AMP_CUSTOM_SPEC_NAME === $spec_rule[ AMP_Rule_Spec::TAG_SPEC ]['spec_name'] ) {
+				$css_budget_bytes = $spec_rule[ AMP_Rule_Spec::CDATA ]['max_bytes'];
+			}
 		}
+
+		$post                    = get_post();
+		$validated_url_page_data = [
+			'APP_ROOT_ID'                   => self::AMP_VALIDATED_URL_PAGE_APP_ROOT_ID,
+			'CSS_BUDGET_BYTES'              => $css_budget_bytes,
+			'CSS_BUDGET_WARNING_PERCENTAGE' => AMP_Style_Sanitizer::CSS_BUDGET_WARNING_PERCENTAGE,
+			'POST_ID'                       => $post->ID,
+			'VALIDATED_URLS_REST_PATH'      => '/amp/v1/validated-urls',
+		];
+
+		wp_add_inline_script(
+			self::AMP_VALIDATED_URL_PAGE_SCRIPT_HANDLE,
+			sprintf(
+				'var ampSettings = %s;',
+				wp_json_encode( $validated_url_page_data )
+			),
+			'before'
+		);
 
 		if ( function_exists( 'wp_set_script_translations' ) ) {
 			wp_set_script_translations( self::EDIT_POST_SCRIPT_HANDLE, 'amp' );
@@ -2280,6 +2326,9 @@ class AMP_Validated_URL_Post_Type {
 	 * @return void
 	 */
 	public static function print_stylesheets_meta_box( $post ) {
+		?>
+			<div id="amp-validated-url-root"></div>
+		<?php
 		$stylesheets = get_post_meta( $post->ID, self::STYLESHEETS_POST_META_KEY, true );
 		if ( empty( $stylesheets ) ) {
 			printf(
