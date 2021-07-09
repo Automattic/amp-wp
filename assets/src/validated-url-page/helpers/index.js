@@ -1,3 +1,7 @@
+export const STYLESHEETS_BUDGET_STATUS_VALID = 'valid';
+export const STYLESHEETS_BUDGET_STATUS_WARNING = 'warning';
+export const STYLESHEETS_BUDGET_STATUS_EXCEEDED = 'exceeded';
+
 /**
  * Calculate stylesheets sizes.
  *
@@ -30,7 +34,7 @@ export function calculateStylesheetSizes( stylesheets, cssBudgetBytes, cssBudget
 		},
 		budget: {
 			usage: 0,
-			status: 'valid',
+			status: STYLESHEETS_BUDGET_STATUS_VALID,
 		},
 	};
 
@@ -81,9 +85,9 @@ export function calculateStylesheetSizes( stylesheets, cssBudgetBytes, cssBudget
 	result.budget.usage = ( result.included.finalSize + result.excluded.finalSize ) / cssBudgetBytes * 100;
 
 	if ( result.budget.usage > 100 ) {
-		result.budget.status = 'exceeded';
+		result.budget.status = STYLESHEETS_BUDGET_STATUS_EXCEEDED;
 	} else if ( result.budget.usage > cssBudgetWarningPercentage ) {
-		result.budget.status = 'warning';
+		result.budget.status = STYLESHEETS_BUDGET_STATUS_WARNING;
 	}
 
 	return result;

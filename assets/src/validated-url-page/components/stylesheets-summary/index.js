@@ -14,7 +14,17 @@ import { __, sprintf } from '@wordpress/i18n';
 import { numberFormat } from '../../../utils/number-format';
 import FormattedMemoryValue from '../../../components/formatted-memory-value';
 import { ValidationStatusIcon } from '../../../components/icon';
-import { AMPNotice, NOTICE_SIZE_LARGE, NOTICE_TYPE_WARNING, NOTICE_TYPE_ERROR } from '../../../components/amp-notice';
+import {
+	AMPNotice,
+	NOTICE_SIZE_LARGE,
+	NOTICE_TYPE_WARNING,
+	NOTICE_TYPE_ERROR,
+} from '../../../components/amp-notice';
+import {
+	STYLESHEETS_BUDGET_STATUS_VALID,
+	STYLESHEETS_BUDGET_STATUS_WARNING,
+	STYLESHEETS_BUDGET_STATUS_EXCEEDED,
+} from '../../helpers';
 
 /**
  * Render stylesheets summary table.
@@ -53,9 +63,15 @@ export default function StylesheetsSummary( { cssBudgetBytes, stylesheetSizes } 
 						<td>
 							{ `${ numberFormat( parseFloat( stylesheetSizes.budget.usage ).toFixed( 1 ) ) }%` }
 							{ ' ' }
-							{ stylesheetSizes.budget.status === 'exceeded' && <ValidationStatusIcon isError isBoxed /> }
-							{ stylesheetSizes.budget.status === 'warning' && <ValidationStatusIcon isWarning isBoxed /> }
-							{ stylesheetSizes.budget.status === 'valid' && <ValidationStatusIcon isValid isBoxed /> }
+							{ stylesheetSizes.budget.status === STYLESHEETS_BUDGET_STATUS_EXCEEDED && (
+								<ValidationStatusIcon isError isBoxed />
+							) }
+							{ stylesheetSizes.budget.status === STYLESHEETS_BUDGET_STATUS_WARNING && (
+								<ValidationStatusIcon isWarning isBoxed />
+							) }
+							{ stylesheetSizes.budget.status === STYLESHEETS_BUDGET_STATUS_VALID && (
+								<ValidationStatusIcon isValid isBoxed />
+							) }
 						</td>
 					</tr>
 					<tr>
@@ -72,12 +88,12 @@ export default function StylesheetsSummary( { cssBudgetBytes, stylesheetSizes } 
 					</tr>
 				</tbody>
 			</table>
-			{ stylesheetSizes.budget.status === 'warning' && (
+			{ stylesheetSizes.budget.status === STYLESHEETS_BUDGET_STATUS_WARNING && (
 				<AMPNotice size={ NOTICE_SIZE_LARGE } type={ NOTICE_TYPE_WARNING }>
 					{ __( 'You are nearing the limit of the CSS budget. Once this limit is reached, stylesheets deemed of lesser priority will be excluded from the page. Please review the stylesheets below and determine if the current theme or a particular plugin is including excessive CSS.', 'amp' ) }
 				</AMPNotice>
 			) }
-			{ stylesheetSizes.budget.status === 'exceeded' && (
+			{ stylesheetSizes.budget.status === STYLESHEETS_BUDGET_STATUS_EXCEEDED && (
 				<AMPNotice size={ NOTICE_SIZE_LARGE } type={ NOTICE_TYPE_ERROR }>
 					{ __( 'You have exceeded the CSS budget. Stylesheets deemed of lesser priority have been excluded from the page. Please review the flagged stylesheets below and determine if the current theme or a particular plugin is including excessive CSS.', 'amp' ) }
 				</AMPNotice>
@@ -103,7 +119,11 @@ StylesheetsSummary.propTypes = {
 		} ),
 		budget: PropTypes.shape( {
 			usage: PropTypes.number,
-			status: PropTypes.oneOf( [ 'valid', 'warning', 'exceeded' ] ),
+			status: PropTypes.oneOf( [
+				STYLESHEETS_BUDGET_STATUS_VALID,
+				STYLESHEETS_BUDGET_STATUS_WARNING,
+				STYLESHEETS_BUDGET_STATUS_EXCEEDED,
+			] ),
 		} ),
 	} ),
 };

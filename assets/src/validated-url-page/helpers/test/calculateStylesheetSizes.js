@@ -1,7 +1,12 @@
 /**
  * Internal dependencies
  */
-import { calculateStylesheetSizes } from '..';
+import {
+	calculateStylesheetSizes,
+	STYLESHEETS_BUDGET_STATUS_VALID,
+	STYLESHEETS_BUDGET_STATUS_WARNING,
+	STYLESHEETS_BUDGET_STATUS_EXCEEDED,
+} from '..';
 
 describe( 'calculateStylesheetSizes', () => {
 	it( 'returns null if no stylesheets are provided', () => {
@@ -128,7 +133,7 @@ describe( 'calculateStylesheetSizes', () => {
 
 		const result = calculateStylesheetSizes( stylesheets, 50, 80 );
 		expect( result.budget.usage ).toBe( 200 );
-		expect( result.budget.status ).toBe( 'exceeded' );
+		expect( result.budget.status ).toBe( STYLESHEETS_BUDGET_STATUS_EXCEEDED );
 	} );
 
 	it( 'sets the warning budget values correctly', () => {
@@ -153,7 +158,7 @@ describe( 'calculateStylesheetSizes', () => {
 
 		const result = calculateStylesheetSizes( stylesheets, 200, 40 );
 		expect( result.budget.usage ).toBe( 50 );
-		expect( result.budget.status ).toBe( 'warning' );
+		expect( result.budget.status ).toBe( STYLESHEETS_BUDGET_STATUS_WARNING );
 	} );
 
 	it( 'sets the valid budget values correctly', () => {
@@ -178,6 +183,6 @@ describe( 'calculateStylesheetSizes', () => {
 
 		const result = calculateStylesheetSizes( stylesheets, 200, 60 );
 		expect( result.budget.usage ).toBe( 50 );
-		expect( result.budget.status ).toBe( 'valid' );
+		expect( result.budget.status ).toBe( STYLESHEETS_BUDGET_STATUS_VALID );
 	} );
 } );
